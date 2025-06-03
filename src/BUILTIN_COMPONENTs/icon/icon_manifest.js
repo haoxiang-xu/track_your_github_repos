@@ -1,10 +1,5 @@
-export const iconManifest = {
-  /* { System UI Icons } ------------------------------------------------------------------------------------------------------------- */
-
-  /* { System UI Icons } ------------------------------------------------------------------------------------------------------------- */
-
-  /* { File types Icons } ============================================================================================================ */
-  /* { Programming Languages } */
+const fileTypeIcons = {
+  /* { Programming Languages } --------------------------------------------------- */
   JS: () => import("./SVGs/file_types/js.svg"),
   TS: () => import("./SVGs/file_types/ts.svg"),
   HTML: () => import("./SVGs/file_types/html.svg"),
@@ -20,11 +15,11 @@ export const iconManifest = {
   SQL: () => import("./SVGs/file_types/sql.svg"),
   SWIFT: () => import("./SVGs/file_types/swift.svg"),
 
-  /* { Image } */
+  /* { Image } ------------------------------------------------------------------- */
   PNG: () => import("./SVGs/file_types/png.svg"),
   SVG: () => import("./SVGs/file_types/svg.svg"),
 
-  /* { Document } */
+  /* { Document } ---------------------------------------------------------------- */
   TXT: () => import("./SVGs/file_types/txt.svg"),
   PDF: () => import("./SVGs/file_types/pdf.svg"),
   DOCX: () => import("./SVGs/file_types/docx.svg"),
@@ -34,14 +29,27 @@ export const iconManifest = {
   MD: () => import("./SVGs/file_types/md.svg"),
   MARKDOWN: () => import("./SVGs/file_types/markdown.svg"),
 
-  /* { Configuration } */
+  /* { Configuration } ----------------------------------------------------------- */
   DS_STORE: () => import("./SVGs/file_types/DS_store.svg"),
   GITIGNORE: () => import("./SVGs/file_types/gitignore.svg"),
   DOCKERIGNORE: () => import("./SVGs/file_types/dockerignore.svg"),
 
-  /* { Other } */
+  /* { Other } ------------------------------------------------------------------- */
   ZIP: () => import("./SVGs/file_types/zip.svg"),
-
-
-  /* { File types Icons } ============================================================================================================ */
 };
+const defaultUI = {
+  arrow_down: () => import("./SVGs/default_UI/arrow-down.svg"),
+  arrow_left_down: () => import("./SVGs/default_UI/arrow-left-down.svg"),
+  arrow_left_up: () => import("./SVGs/default_UI/arrow-left-up.svg"),
+  arrow_left: () => import("./SVGs/default_UI/arrow-left.svg"),
+  arrow_right_down: () => import("./SVGs/default_UI/arrow-right-down.svg"),
+  arrow_right_up: () => import("./SVGs/default_UI/arrow-right-up.svg"),
+  arrow_right: () => import("./SVGs/default_UI/arrow-right.svg"),
+  arrow_up: () => import("./SVGs/default_UI/arrow-up.svg"),
+
+  user: () => import("./SVGs/default_UI/user.svg"),
+  search: () => import("./SVGs/default_UI/search.svg"),
+  settings: () => import("./SVGs/default_UI/settings.svg"),
+};
+
+export { fileTypeIcons, defaultUI };

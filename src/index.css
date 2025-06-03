@@ -1,24 +1,26 @@
 body {
   margin: 0;
-  font-family: 'Jost', sans-serif;
+  font-family: "Jost", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
 
 @font-face {
-  font-family: 'Jost';
-  src: url('/fonts/Jost/Jost-VariableFont_wght.ttf') format('truetype');
+  font-family: "Jost";
+  src: url("BUILTIN_COMPONENTs/fonts/Jost/Jost-VariableFont_wght.ttf")
+    format("truetype");
   font-weight: 100 900;
   font-style: normal;
 }
 @font-face {
-  font-family: 'Jost';
-  src: url('/fonts/Jost/Jost-Italic-VariableFont_wght.ttf') format('truetype');
+  font-family: "Jost";
+  src: url("BUILTIN_COMPONENTs/fonts/Jost/Jost-Italic-VariableFont_wght.ttf")
+    format("truetype");
   font-weight: 100 900;
   font-style: italic;
 }
