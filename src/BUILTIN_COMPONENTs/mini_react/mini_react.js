@@ -5,14 +5,14 @@ const useSystemTheme = () => {
   const [systemTheme, setSystemTheme] = useState(
     window.matchMedia &&
       window.matchMedia("(prefers-color-scheme: dark)").matches
-      ? "dark_theme"
-      : "light_theme"
+      ? "dark_mode"
+      : "light_mode"
   );
 
   useEffect(() => {
     const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
     const handleChange = (e) => {
-      setSystemTheme(e.matches ? "dark_theme" : "light_theme");
+      setSystemTheme(e.matches ? "dark_mode" : "light_mode");
     };
     mediaQuery.addEventListener("change", handleChange);
     return () => mediaQuery.removeEventListener("change", handleChange);

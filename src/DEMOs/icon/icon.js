@@ -29,7 +29,6 @@ const IconDemo = () => {
             margin: "10px",
             cursor: "pointer",
             padding: "12px",
-            border: "2px solid rgb(34, 31, 76)",
             boxSizing: "border-box",
             borderRadius: "16px",
           }}

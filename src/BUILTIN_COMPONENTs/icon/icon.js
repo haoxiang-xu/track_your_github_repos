@@ -6,12 +6,10 @@ import { fileTypeSVGs, UISVGs } from "./icon_manifest";
 
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
 import { ConfigContext } from "../../CONTAINERs/config/context";
-import { StyleContext } from "../../CONTAINERs/style/context";
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
 
 const Icon = ({ src, color, ...props }) => {
   const { theme } = useContext(ConfigContext);
-  const { defaultIconRGBA } = useContext(StyleContext);
   const [component, setComponent] = useState(null);
   const [isIconLoaded, setIsIconLoaded] = useState(false);
 
@@ -33,13 +31,7 @@ const Icon = ({ src, color, ...props }) => {
         setComponent(
           <SVG
             fill={
-              color ||
-              (defaultIconRGBA &&
-                defaultIconRGBA.r &&
-                defaultIconRGBA.g &&
-                defaultIconRGBA.b)
-                ? `rgba(${defaultIconRGBA.r}, ${defaultIconRGBA.g}, ${defaultIconRGBA.b}, ${defaultIconRGBA.a})`
-                : "currentColor"
+              color || theme?.background_layer?.icon?.color || "currentColor"
             }
             {...props}
           ></SVG>
@@ -62,7 +54,7 @@ const Icon = ({ src, color, ...props }) => {
         error
       );
     }
-  }, [src, color, defaultIconRGBA, props]);
+  }, [src, theme, color]);
   useEffect(() => {
     if (!src) return;
     try {
@@ -90,7 +82,7 @@ const Icon = ({ src, color, ...props }) => {
       );
       setIsIconLoaded(false);
     }
-  }, [src, theme, fetch_SVG_file, props]);
+  }, [src, theme, fetch_SVG_file]);
 
   if (!isIconLoaded) return null;
   return component ? component : null;
