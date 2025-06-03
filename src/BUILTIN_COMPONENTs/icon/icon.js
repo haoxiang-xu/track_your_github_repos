@@ -90,7 +90,7 @@ const Icon = ({ src, color, ...props }) => {
       );
       setIsIconLoaded(false);
     }
-  }, [src, theme]);
+  }, [src, theme, fetch_SVG_file, props]);
 
   if (!isIconLoaded) return null;
   return component ? component : null;

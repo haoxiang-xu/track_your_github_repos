@@ -4,8 +4,22 @@ import Icon from "../../BUILTIN_COMPONENTs/icon/icon";
 
 const IconDemo = () => {
   return (
-    <div className="icon-demo">
-      <h2>Icon Demo</h2>
+    <div className="icon-demo"
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: "20px",
+      }}
+    >
+      <span
+        style={{
+          fontSize: "36px",
+          marginBottom: "20px",
+          color: "rgb(0, 0, 0)",
+        }}
+      >Icon Demo</span>
       <div className="icon-list">
         <Icon
           src="settings"
