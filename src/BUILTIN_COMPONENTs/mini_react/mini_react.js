@@ -8,7 +8,6 @@ const useSystemTheme = () => {
       ? "dark_mode"
       : "light_mode"
   );
-
   useEffect(() => {
     const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
     const handleChange = (e) => {
@@ -17,7 +16,6 @@ const useSystemTheme = () => {
     mediaQuery.addEventListener("change", handleChange);
     return () => mediaQuery.removeEventListener("change", handleChange);
   }, []);
-
   return systemTheme;
 };
 const useWindowSize = () => {
