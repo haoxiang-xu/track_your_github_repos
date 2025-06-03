@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext, useCallback } from "react";
 
 /* { Constants } ------------------------------------------------------------------------------------------------------------- */
 import { fileTypeSVGs, UISVGs } from "./icon_manifest";
@@ -15,7 +15,7 @@ const Icon = ({ src, color, ...props }) => {
   const [component, setComponent] = useState(null);
   const [isIconLoaded, setIsIconLoaded] = useState(false);
 
-  const fetch_SVG_file = async () => {
+  const fetch_SVG_file = useCallback(async () => {
     try {
       let svg = null;
       if (src in fileTypeSVGs) {
@@ -62,7 +62,7 @@ const Icon = ({ src, color, ...props }) => {
         error
       );
     }
-  };
+  }, [src, color, defaultIconRGBA, props]);
   useEffect(() => {
     if (!src) return;
     try {
