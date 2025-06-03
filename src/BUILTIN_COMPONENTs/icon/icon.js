@@ -11,7 +11,7 @@ import { StyleContext } from "../../CONTAINERs/style/context";
 
 const Icon = ({ src, color, ...props }) => {
   const { theme } = useContext(ConfigContext);
-  const { defaultIconRGB } = useContext(StyleContext);
+  const { defaultIconRGBA } = useContext(StyleContext);
   const [component, setComponent] = useState(null);
   const [isIconLoaded, setIsIconLoaded] = useState(false);
 
@@ -32,10 +32,17 @@ const Icon = ({ src, color, ...props }) => {
         const SVG = UISVGs[src];
         setComponent(
           <SVG
-            fill={color || defaultIconRGB}
+            fill={
+              color ||
+              (defaultIconRGBA &&
+                defaultIconRGBA.r &&
+                defaultIconRGBA.g &&
+                defaultIconRGBA.b)
+                ? `rgba(${defaultIconRGBA.r}, ${defaultIconRGBA.g}, ${defaultIconRGBA.b}, ${defaultIconRGBA.a})`
+                : "currentColor"
+            }
             {...props}
-          >
-          </SVG>
+          ></SVG>
         );
       } else {
         svg = await import(`./SVGs/${src}.svg`);

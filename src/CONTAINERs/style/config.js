@@ -1,4 +1,4 @@
-const defaultRGBA = {
+const default_RGBA = {
   light_theme: {
     r: 255,
     g: 255,
@@ -12,7 +12,7 @@ const defaultRGBA = {
     a: 1,
   },
 };
-const defaultFontRGBA = {
+const default_font_RGBA = {
   light_theme: {
     r: 0,
     g: 0,
@@ -26,7 +26,7 @@ const defaultFontRGBA = {
     a: 1,
   },
 };
-const defaultIconRGBA = {
+const default_icon_RGBA = {
   light_theme: {
     r: 0,
     g: 0,
@@ -41,4 +41,4 @@ const defaultIconRGBA = {
   },
 };
 
-export { defaultRGBA, defaultFontRGBA, defaultIconRGBA };
+export { default_RGBA, default_font_RGBA, default_icon_RGBA };

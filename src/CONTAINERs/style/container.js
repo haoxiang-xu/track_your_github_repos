@@ -1,7 +1,7 @@
 import { useEffect, useState, useContext } from "react";
 
 /* { Constants } ------------------------------------------------------------------------------------------------------------- */
-import { defaultRGBA, defaultFontRGBA, defaultIconRGBA } from "./config";
+import { default_RGBA, default_font_RGBA, default_icon_RGBA } from "./config";
 /* { Constants } ------------------------------------------------------------------------------------------------------------- */
 
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
@@ -13,19 +13,19 @@ const StyleContainer = ({ children }) => {
   const { theme } = useContext(ConfigContext);
 
   /* { RGB } ================================================================================================================= */
-  const [defaultRGB, setDefaultRGB] = useState({
+  const [defaultRGBA, setDefaultRGBA] = useState({
     r: 255,
     g: 255,
     b: 255,
     a: 1,
   });
-  const [defaultFonrRGB, setDefaultFontRGB] = useState({
+  const [defaultFonrRGBA, setDefaultFontRGBA] = useState({
     r: 0,
     g: 0,
     b: 0,
     a: 1,
   });
-  const [defaultIconRGB, setDefaultIconRGB] = useState({
+  const [defaultIconRGBA, setDefaultIconRGBA] = useState({
     r: 0,
     g: 0,
     b: 0,
@@ -33,14 +33,14 @@ const StyleContainer = ({ children }) => {
   });
   useEffect(() => {
     if (theme === "light_theme") {
-      setDefaultRGB(defaultRGBA.light_theme);
-      setDefaultFontRGB(defaultFontRGBA.light_theme);
-      setDefaultIconRGB(defaultIconRGBA.light_theme);
+      setDefaultRGBA(default_RGBA.light_theme);
+      setDefaultFontRGBA(default_font_RGBA.light_theme);
+      setDefaultIconRGBA(default_icon_RGBA.light_theme);
     }
     if (theme === "dark_theme") {
-      setDefaultRGB(defaultRGBA.dark_theme);
-      setDefaultFontRGB(defaultFontRGBA.dark_theme);
-      setDefaultIconRGB(defaultIconRGBA.dark_theme);
+      setDefaultRGBA(default_RGBA.dark_theme);
+      setDefaultFontRGBA(default_font_RGBA.dark_theme);
+      setDefaultIconRGBA(default_icon_RGBA.dark_theme);
     }
   }, [theme]);
   /* { RGB } ================================================================================================================= */
@@ -48,9 +48,9 @@ const StyleContainer = ({ children }) => {
   return (
     <StyleContext.Provider
       value={{
-        defaultRGB,
-        defaultFonrRGB,
-        defaultIconRGB,
+        defaultRGBA,
+        defaultFonrRGBA,
+        defaultIconRGBA,
       }}
     >
       {children}
