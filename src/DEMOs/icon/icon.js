@@ -9,32 +9,40 @@ const IconDemo = () => {
       <div className="icon-list">
         <Icon
           src="settings"
-          color="rgb(90, 86, 145)"
           style={{
             width: "50px",
             height: "50px",
             margin: "10px",
             cursor: "pointer",
+            padding: "12px",
+            border: "2px solid rgb(34, 31, 76)",
+            boxSizing: "border-box",
+            borderRadius: "16px",
           }}
         />
         <Icon
-          src="user"
-          color="#75ff33"
+          src="CSS"
           style={{
             width: "50px",
             height: "50px",
             margin: "10px",
             cursor: "pointer",
+            padding: "12px",
+            backgroundColor: "rgba(150, 150, 150, 0.2)",
+            borderRadius: "16px",
           }}
         />
         <Icon
           src="search"
-          color="#ff33a1"
+          color="rgb(255, 255, 255)"
           style={{
             width: "50px",
             height: "50px",
             margin: "10px",
             cursor: "pointer",
+            padding: "12px",
+            backgroundColor: "rgba(44, 44, 44, 0.8)",
+            borderRadius: "16px",
           }}
         />
       </div>

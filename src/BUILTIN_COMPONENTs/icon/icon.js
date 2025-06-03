@@ -1,7 +1,7 @@
-import { useState, useEffect, useRef, useContext } from "react";
+import { useState, useEffect, useContext } from "react";
 
 /* { Constants } ------------------------------------------------------------------------------------------------------------- */
-import { fileTypeIcons, defaultUI } from "./icon_manifest";
+import { fileTypeSVGs, UISVGs } from "./icon_manifest";
 /* { Constants } ------------------------------------------------------------------------------------------------------------- */
 
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
@@ -18,8 +18,8 @@ const Icon = ({ src, color, ...props }) => {
   const fetch_SVG_file = async () => {
     try {
       let svg = null;
-      if (src in fileTypeIcons) {
-        svg = await fileTypeIcons[src]();
+      if (src in fileTypeSVGs) {
+        svg = await fileTypeSVGs[src]();
         setComponent(
           <img
             src={svg.default}
@@ -28,15 +28,14 @@ const Icon = ({ src, color, ...props }) => {
             {...props}
           />
         );
-      } else if (src in defaultUI) {
-        const svg = await defaultUI[src]();
+      } else if (src in UISVGs) {
+        const SVG = UISVGs[src];
         setComponent(
-          <img
-            src={svg.default}
-            alt={src.replace(/_/g, " ")}
-            draggable={false}
+          <SVG
+            fill={color || defaultIconRGB}
             {...props}
-          />
+          >
+          </SVG>
         );
       } else {
         svg = await import(`./SVGs/${src}.svg`);
