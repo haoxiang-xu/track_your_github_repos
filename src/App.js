@@ -5,7 +5,7 @@ import ConfigContainer from "./CONTAINERs/config/container";
 /* { Containers } -------------------------------------------------------------------------------------------------------------- */
 
 /* { Demos } ------------------------------------------------------------------------------------------------------------------- */
-import Icon from "./DEMOs/icon/icon";
+import IconDemo from "./DEMOs/icon_demo/icon_demo";
 /* { Demos } ------------------------------------------------------------------------------------------------------------------- */
 
 const App = () => {
@@ -13,7 +13,7 @@ const App = () => {
     <ConfigContainer>
         <Router>
           <Routes>
-            <Route path="/mini/icon" element={<Icon />} />
+            <Route path="/mini/icon" element={<IconDemo />} />
           </Routes>
         </Router>
     </ConfigContainer>
