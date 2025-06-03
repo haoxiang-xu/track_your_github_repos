@@ -15,7 +15,7 @@ const App = () => {
       <StyleContainer>
         <Router>
           <Routes>
-            <Route path="/mini-engine/icon" element={<Icon />} />
+            <Route path="/mini/icon" element={<Icon />} />
           </Routes>
         </Router>
       </StyleContainer>
