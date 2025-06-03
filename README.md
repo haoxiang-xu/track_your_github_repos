@@ -4,7 +4,7 @@
 ></link>
 
 <div align="center">
-  <img src="assets/mini_engine_logo.png" alt="Mini Engine Logo" style="height: 128px">
+  <img src="assets/logo.png" alt="Mini Engine Logo" style="height: 128px">
   <h1>Mini Engine</h1>
   <p>A starting point for your React Project.</p>
 </div>
