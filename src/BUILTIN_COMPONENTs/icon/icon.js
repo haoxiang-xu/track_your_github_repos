@@ -30,9 +30,7 @@ const Icon = ({ src, color, ...props }) => {
         const SVG = UISVGs[src];
         setComponent(
           <SVG
-            fill={
-              color || theme?.background_layer?.icon?.color || "currentColor"
-            }
+            fill={color || theme?.icon?.color || "currentColor"}
             {...props}
           ></SVG>
         );

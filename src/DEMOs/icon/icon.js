@@ -41,20 +41,17 @@ const IconDemo = () => {
             margin: "10px",
             cursor: "pointer",
             padding: "12px",
-            backgroundColor: "rgba(150, 150, 150, 0.2)",
             borderRadius: "16px",
           }}
         />
         <Icon
           src="search"
-          color="rgb(255, 255, 255)"
           style={{
             width: "50px",
             height: "50px",
             margin: "10px",
             cursor: "pointer",
             padding: "12px",
-            backgroundColor: "rgba(44, 44, 44, 0.8)",
             borderRadius: "16px",
           }}
         />
