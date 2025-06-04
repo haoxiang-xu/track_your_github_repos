@@ -1,6 +1,5 @@
 /* { Components } -------------------------------------------------------------------------------------------------------------- */
 import GrainyBackground from "../BUILTIN_COMPONENTs/background/grainy_background/grainy_background";
-import Switch from "../BUILTIN_COMPONENTs/switch/switch";
 import logo from "../logo.svg";
 /* { Components } -------------------------------------------------------------------------------------------------------------- */
 
@@ -68,7 +67,6 @@ const DemoPage = () => {
         >
           A starting point for your React Project.
         </p>
-        <Switch />
       </div>
     </div>
   );

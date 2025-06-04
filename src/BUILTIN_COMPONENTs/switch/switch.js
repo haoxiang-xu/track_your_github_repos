@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext, useCallback } from "react";
 
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
 import { ConfigContext } from "../../CONTAINERs/config/context";
@@ -8,6 +8,37 @@ import { ConfigContext } from "../../CONTAINERs/config/context";
 import Icon from "../icon/icon";
 /* { Components } ------------------------------------------------------------------------------------------------------------ */
 
+const LightSwitch = ({ style }) => {
+  const default_style = {
+    backgroundColor: "#5F3BAD",
+    backgroundColor_on: "#ED6D03",
+  };
+  const { onThemeMode, setOnThemeMode } = useContext(ConfigContext);
+
+  const preprocess_style = useCallback(() => {
+    let reprocessed_style = { ...style };
+    for (const property in default_style) {
+      if (reprocessed_style[property] === undefined) {
+        reprocessed_style[property] = default_style[property];
+      }
+    }
+    return reprocessed_style;
+  }, [style]);
+
+  return (
+    <Switch
+      style={preprocess_style(style)}
+      on_icon_src="sun"
+      off_icon_src="moon"
+      on={onThemeMode === "light_mode"}
+      setOn={() => {
+        setOnThemeMode(
+          onThemeMode === "dark_mode" ? "light_mode" : "dark_mode"
+        );
+      }}
+    />
+  );
+};
 const Switch = ({
   style,
   on_icon_src = "circle",
@@ -27,8 +58,8 @@ const Switch = ({
       }
       if (on) {
         reprocessed_style.backgroundColor =
-          reprocessed_style.BackgroundColor_on ||
-          theme?.switch?.BackgroundColor_on ||
+          reprocessed_style.backgroundColor_on ||
+          theme?.switch?.backgroundColor_on ||
           reprocessed_style.backgroundColor ||
           theme?.switch?.backgroundColor;
       }
@@ -107,4 +138,4 @@ const Switch = ({
   );
 };
 
-export default Switch;
+export { Switch as default, Switch, LightSwitch };

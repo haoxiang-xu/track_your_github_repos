@@ -1,7 +1,20 @@
 {
   "light_mode": {
     "icon": { "color": "#222222" },
-    "switch": {}
+    "switch": {
+      "transition": "background-color 0.36s cubic-bezier(0.32, 1, 0.32, 1)",
+      "position": "relative",
+      "height": 32,
+      "width": 52,
+      "backgroundColor": "#CCCCCC",
+      "backgroundColor_on": "#65C467",
+      "borderRadius": 20,
+      "color": "#FFFFFF",
+      "boxShadow": "inset 0 2px 3px rgba(0, 0, 0, 0.16)",
+      "border": "2px solid #FFFFFF",
+      "cursor": "pointer"
+    },
+    "backgroundColor": "#FFFFFF"
   },
   "dark_mode": {
     "icon": { "color": "#CCCCCC" },
@@ -17,6 +30,7 @@
       "boxShadow": "inset 0 2px 3px rgba(0, 0, 0, 0.16)",
       "border": "2px solid #FFFFFF",
       "cursor": "pointer"
-    }
+    },
+    "backgroundColor": "#222222"
   }
 }

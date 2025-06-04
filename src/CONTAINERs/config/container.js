@@ -105,6 +105,8 @@ const ConfigContainer = ({ children }) => {
         availableThemes,
         theme,
         setTheme,
+        onThemeMode,
+        setOnThemeMode,
         /* { ENVIRONMENT } ==================================== */
         windowSize,
         envBrowser,
