@@ -20,6 +20,7 @@ const Icon = ({ src, color, ...props }) => {
         svg = await fileTypeSVGs[src]();
         setComponent(
           <img
+            className="mini-ui-img-icon"
             src={svg.default}
             alt={src.replace(/_/g, " ")}
             draggable={false}
@@ -30,6 +31,7 @@ const Icon = ({ src, color, ...props }) => {
         const SVG = UISVGs[src];
         setComponent(
           <SVG
+            className="mini-ui-svg-icon"
             fill={color || theme?.icon?.color || "currentColor"}
             {...props}
           ></SVG>
@@ -38,6 +40,7 @@ const Icon = ({ src, color, ...props }) => {
         svg = await import(`./SVGs/${src}.svg`);
         setComponent(
           <img
+            className="mini-ui-img-icon"
             src={svg.default}
             alt={src.replace(/_/g, " ")}
             draggable={false}
@@ -65,6 +68,7 @@ const Icon = ({ src, color, ...props }) => {
       } else {
         setComponent(
           <img
+            className="mini-ui-img-icon"
             src={src}
             alt={src.replace(/_/g, " ")}
             draggable={false}
