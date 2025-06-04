@@ -24,10 +24,10 @@ const ConfigContainer = ({ children }) => {
     setOnThemeMode(system_theme);
     setAvailableThemes(Object.keys(available_themes));
     setSelectedTheme(Object.keys(available_themes)[0]);
-  }, [system_theme, available_themes]);
+  }, [system_theme]);
   useEffect(() => {
     initialize_theme();
-  }, []);
+  }, [initialize_theme]);
   useEffect(() => {
     if (
       available_themes &&
@@ -36,7 +36,7 @@ const ConfigContainer = ({ children }) => {
     ) {
       setTheme(available_themes[selectedTheme][onThemeMode]);
     }
-  }, [onThemeMode, available_themes, selectedTheme]);
+  }, [onThemeMode, selectedTheme]);
   /* { global theme } ---------------------------------------------------------------------------------------------------- */
   /* { STYLE } =========================================================================================================== */
 
@@ -102,6 +102,7 @@ const ConfigContainer = ({ children }) => {
         /* { STYLE } ========================================== */
         syncWithSystemTheme,
         setSyncWithSystemTheme,
+        availableThemes,
         theme,
         setTheme,
         /* { ENVIRONMENT } ==================================== */

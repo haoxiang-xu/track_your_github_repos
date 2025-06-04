@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext, useCallback } from "react";
+import { useRef, useState, useEffect, useContext, useCallback } from "react";
 
 /* { Constants } ------------------------------------------------------------------------------------------------------------- */
 import { fileTypeSVGs, UISVGs } from "./icon_manifest";
@@ -10,13 +10,25 @@ import { ConfigContext } from "../../CONTAINERs/config/context";
 
 const Icon = ({ src, color, ...props }) => {
   const { theme } = useContext(ConfigContext);
-  const [component, setComponent] = useState(null);
-  const [isIconLoaded, setIsIconLoaded] = useState(false);
+  const propsRef = useRef(props);
+  propsRef.current = props;
+  const [component, setComponent] = useState(
+    <div className="mini-ui-img-icon placeholder" {...props} />
+  );
 
-  const fetch_SVG_file = useCallback(async () => {
+  const fetch_icon = useCallback(async () => {
+    const currentProps = propsRef.current;
     try {
       let svg = null;
-      if (src in fileTypeSVGs) {
+      if (src in UISVGs) {
+        const SVG = await UISVGs[src];
+        setComponent(
+          <SVG
+            className="mini-ui-svg-icon"
+            fill={color || theme?.icon?.color || "currentColor"}
+          ></SVG>
+        );
+      } else if (src in fileTypeSVGs) {
         svg = await fileTypeSVGs[src]();
         setComponent(
           <img
@@ -24,17 +36,11 @@ const Icon = ({ src, color, ...props }) => {
             src={svg.default}
             alt={src.replace(/_/g, " ")}
             draggable={false}
-            {...props}
+            style={{
+              height: "100%",
+              width: "100%",
+            }}
           />
-        );
-      } else if (src in UISVGs) {
-        const SVG = UISVGs[src];
-        setComponent(
-          <SVG
-            className="mini-ui-svg-icon"
-            fill={color || theme?.icon?.color || "currentColor"}
-            {...props}
-          ></SVG>
         );
       } else {
         svg = await import(`./SVGs/${src}.svg`);
@@ -44,11 +50,13 @@ const Icon = ({ src, color, ...props }) => {
             src={svg.default}
             alt={src.replace(/_/g, " ")}
             draggable={false}
-            {...props}
+            style={{
+              height: "100%",
+              width: "100%",
+            }}
           />
         );
       }
-      setIsIconLoaded(true);
     } catch (error) {
       console.error(
         "[Error occurred while fetching SVG file BUILTIN_COMPONENTs/icon/icon.js]:",
@@ -58,13 +66,14 @@ const Icon = ({ src, color, ...props }) => {
   }, [src, theme, color]);
   useEffect(() => {
     if (!src) return;
+    const currentProps = propsRef.current;
     try {
       if (
         src.indexOf("png") === -1 &&
         src.indexOf("jpg") === -1 &&
         src.indexOf("jpeg") === -1
       ) {
-        fetch_SVG_file();
+        fetch_icon();
       } else {
         setComponent(
           <img
@@ -72,22 +81,22 @@ const Icon = ({ src, color, ...props }) => {
             src={src}
             alt={src.replace(/_/g, " ")}
             draggable={false}
-            {...props}
+            style={{
+              height: "100%",
+              width: "100%",
+            }}
           />
         );
-        setIsIconLoaded(true);
       }
     } catch (error) {
       console.error(
         "[Error occurred while setting icon source BUILTIN_COMPONENTs/icon/icon.js]:",
         error
       );
-      setIsIconLoaded(false);
     }
-  }, [src, theme, fetch_SVG_file]);
+  }, [src, theme, fetch_icon]);
 
-  if (!isIconLoaded) return null;
-  return component ? component : null;
+  return <div {...props}>{component}</div>;
 };
 
 export default Icon;

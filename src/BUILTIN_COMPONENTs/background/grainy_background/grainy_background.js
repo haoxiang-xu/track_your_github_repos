@@ -28,7 +28,7 @@ const GrainyBackground = ({
     return () => {
       document.head.removeChild(styleElement);
     };
-  }, []);
+  }, [animationDuration]);
 
   return (
     <>

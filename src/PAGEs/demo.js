@@ -28,7 +28,15 @@ const DemoPage = () => {
           id="demo-page-intro-container-logo"
           src={logo}
           alt="Mini UI Logo"
-          style={{ width: "128px", height: "128px" }}
+          style={{
+            width: "128px",
+            height: "128px",
+            userSelect: "none",
+            WebkitUserSelect: "none",
+            MozUserSelect: "none",
+            msUserSelect: "none",
+            pointerEvents: "none",
+          }}
         />
         <span
           id="demo-page-intro-container-title"
@@ -60,16 +68,7 @@ const DemoPage = () => {
         >
           A starting point for your React Project.
         </p>
-        <Switch
-          id="demo-page-intro-container-switch"
-          style={{ marginTop: "16px" }}
-          label="Sync with system theme"
-          onChange={(e) => {
-            console.log("Switch toggled:", e.target.checked);
-          }}
-          checked={true}
-          disabled={false}
-        />
+        <Switch />
       </div>
     </div>
   );

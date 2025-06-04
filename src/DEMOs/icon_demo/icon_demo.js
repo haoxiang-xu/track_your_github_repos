@@ -52,7 +52,7 @@ const IconDemo = () => {
         {fileTypeSVGs
           ? Object.entries(fileTypeSVGs).map(([key]) => {
               return (
-                <div key={key} style={{}}>
+                <div key={key}>
                   <Icon
                     src={key}
                     style={{
