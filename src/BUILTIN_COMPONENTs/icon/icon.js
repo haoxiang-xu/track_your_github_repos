@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect, useContext, useCallback } from "react";
+import { useState, useEffect, useContext, useCallback } from "react";
 
 /* { Constants } ------------------------------------------------------------------------------------------------------------- */
 import { fileTypeSVGs, UISVGs } from "./icon_manifest";
@@ -10,14 +10,12 @@ import { ConfigContext } from "../../CONTAINERs/config/context";
 
 const Icon = ({ src, color, ...props }) => {
   const { theme } = useContext(ConfigContext);
-  const propsRef = useRef(props);
-  propsRef.current = props;
+
   const [component, setComponent] = useState(
     <div className="mini-ui-img-icon placeholder" {...props} />
   );
 
   const fetch_icon = useCallback(async () => {
-    const currentProps = propsRef.current;
     try {
       let svg = null;
       if (src in UISVGs) {
@@ -66,7 +64,6 @@ const Icon = ({ src, color, ...props }) => {
   }, [src, theme, color]);
   useEffect(() => {
     if (!src) return;
-    const currentProps = propsRef.current;
     try {
       if (
         src.indexOf("png") === -1 &&
