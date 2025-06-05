@@ -23,7 +23,7 @@ const Icon = ({ src, color, ...props }) => {
         setComponent(
           <SVG
             className="mini-ui-svg-icon"
-            fill={color || theme?.icon?.color || "currentColor"}
+            fill={color ? color : theme?.icon?.color}
           ></SVG>
         );
       } else if (src in fileTypeSVGs) {
@@ -66,12 +66,19 @@ const Icon = ({ src, color, ...props }) => {
     if (!src) return;
     try {
       if (
-        src.indexOf("png") === -1 &&
-        src.indexOf("jpg") === -1 &&
-        src.indexOf("jpeg") === -1
+        src.toLowerCase() === "null" ||
+        src.toLowerCase() === "undefined" ||
+        src.toLowerCase() === "none" ||
+        src === "" ||
+        src.toLowerCase() === "placeholder" ||
+        src.toLowerCase() === "nan"
       ) {
-        fetch_icon();
-      } else {
+        setComponent(<div className="mini-ui-img-icon placeholder" />);
+      } else if (
+        src.indexOf("png") === 1 ||
+        src.indexOf("jpg") === 1 ||
+        src.indexOf("jpeg") === 1
+      ) {
         setComponent(
           <img
             className="mini-ui-img-icon"
@@ -84,6 +91,8 @@ const Icon = ({ src, color, ...props }) => {
             }}
           />
         );
+      } else {
+        fetch_icon();
       }
     } catch (error) {
       console.error(
@@ -93,7 +102,7 @@ const Icon = ({ src, color, ...props }) => {
     }
   }, [src, theme, fetch_icon]);
 
-  return <div {...props}>{component}</div>;
+  return <div style={{ ...props.style, color: color }}>{component}</div>;
 };
 
 export default Icon;

@@ -5,29 +5,82 @@ import { ConfigContext } from "../../CONTAINERs/config/context";
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
 
 /* { Components } -------------------------------------------------------------------------------------------------------------- */
-import { Switch, LightSwitch } from "../../BUILTIN_COMPONENTs/switch/switch";
+import {
+  Switch,
+  LightSwitch,
+  NotificationSwitch,
+  MaterialSwitch,
+} from "../../BUILTIN_COMPONENTs/switch/switch";
 /* { Components } -------------------------------------------------------------------------------------------------------------- */
 
 const SwitchDemo = () => {
   const { theme } = useContext(ConfigContext);
-  const [on, setOn] = useState(false);
+  const [switchStatus, setSwitchStatus] = useState({
+    default: false,
+    notification: false,
+    null: false,
+    material: false,
+  });
+  const handle_switch_on_click = (switch_id) => {
+    setSwitchStatus((prevStatus) => ({
+      ...prevStatus,
+      [switch_id]: !prevStatus[switch_id],
+    }));
+  };
 
   return (
     <div
       id="switch-demo"
       style={{
         transition: "background-color 0.36s cubic-bezier(0.32, 1, 0.32, 1)",
-        position: "relative",
-        height: "100vh",
-        overflow: "hidden",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
+        position: "absolute",
+        top: "0",
+        left: "0",
+        width: "100%",
+        height: "100%",
+
         backgroundColor: theme?.backgroundColor || "white",
       }}
     >
-      <Switch on={on} setOn={setOn} />
-      <LightSwitch />
+      <div
+        style={{
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          display: "flex",
+          flexWrap: "wrap",
+          gap: "6px",
+          maxWidth: "256px",
+          padding: "10px",
+        }}
+      >
+        <Switch
+          on={switchStatus.default}
+          setOn={() => handle_switch_on_click("default")}
+        />
+        <LightSwitch />
+        <NotificationSwitch
+          on={switchStatus.notification}
+          setOn={() => handle_switch_on_click("notification")}
+        />
+        <Switch
+          style={{
+            width: 64,
+            height: 32,
+            backgroundColor: "#59a2cc",
+            backgroundColor_on: "#ff9718",
+          }}
+          on={switchStatus.null}
+          setOn={() => handle_switch_on_click("null")}
+          on_icon_src={"null"}
+          off_icon_src={"null"}
+        />
+        <MaterialSwitch
+          on={switchStatus.material}
+          setOn={() => handle_switch_on_click("material")}
+        />
+      </div>
     </div>
   );
 };
