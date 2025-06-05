@@ -50,24 +50,40 @@ const SwitchDemo = () => {
           transform: "translate(-50%, -50%)",
           display: "flex",
           flexWrap: "wrap",
-          gap: "6px",
-          maxWidth: "256px",
+          gap: "24px",
           padding: "10px",
         }}
       >
         <Switch
+          style={{
+            width: 200,
+            height: 100,
+            borderRadius: 50,
+          }}
           on={switchStatus.default}
           setOn={() => handle_switch_on_click("default")}
         />
-        <LightSwitch />
+        <LightSwitch
+          style={{
+            width: 200,
+            height: 100,
+            borderRadius: 50,
+          }}
+        />
         <NotificationSwitch
+          style={{
+            width: 200,
+            height: 100,
+            borderRadius: 50,
+          }}
           on={switchStatus.notification}
           setOn={() => handle_switch_on_click("notification")}
         />
         <Switch
           style={{
-            width: 64,
-            height: 32,
+            width: 300,
+            height: 100,
+            borderRadius: 50,
             backgroundColor: "#59a2cc",
             backgroundColor_on: "#ff9718",
           }}
@@ -77,6 +93,10 @@ const SwitchDemo = () => {
           off_icon_src={"null"}
         />
         <MaterialSwitch
+          style={{
+            width: 200,
+            height: 100,
+          }}
           on={switchStatus.material}
           setOn={() => handle_switch_on_click("material")}
         />

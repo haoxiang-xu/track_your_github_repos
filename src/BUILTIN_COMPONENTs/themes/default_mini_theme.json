@@ -11,7 +11,6 @@
       "borderRadius": 20,
       "color": "#FFFFFF",
       "boxShadow": "inset 0 2px 3px rgba(0, 0, 0, 0.16)",
-      "border": "2px solid #FFFFFF",
       "cursor": "pointer"
     },
     "backgroundColor": "#FFFFFF"
@@ -28,7 +27,6 @@
       "borderRadius": 20,
       "color": "#222222",
       "boxShadow": "inset 0 2px 3px rgba(0, 0, 0, 0.16)",
-      "border": "2px solid #222222",
       "cursor": "pointer"
     },
     "backgroundColor": "#222222"

@@ -17,6 +17,7 @@ const MaterialSwitch = ({
 }) => {
   const { theme } = useContext(ConfigContext);
   const [switchStyle, setSwitchStyle] = useState({});
+  const [highlighterOffset, setHighlighterOffset] = useState(0);
   const [onHover, setOnHover] = useState(false);
   useEffect(() => {
     if (style) {
@@ -45,6 +46,20 @@ const MaterialSwitch = ({
       });
     }
   }, [theme, style, on]);
+  useEffect(() => {
+    const to_even_int = (val) => {
+      let n = parseInt(val, 10);
+      if (n % 2 !== 0) {
+        n = n - 1;
+      }
+      return n;
+    };
+    if (typeof switchStyle?.height === "number") {
+      setHighlighterOffset(to_even_int(Math.max(2, switchStyle?.height / 4)));
+    } else {
+      setHighlighterOffset(0);
+    }
+  }, [switchStyle]);
   const handle_switch_on_click = () => {
     setOn(!on);
   };
@@ -89,20 +104,29 @@ const MaterialSwitch = ({
 
           position: "absolute",
           top: "50%",
-          left: on
-            ? switchStyle?.width -
-              switchStyle?.height -
-              3 +
-              (switchStyle.height + 6) / 2
-            : -3 + (switchStyle.height + 6) / 2,
+          left: (() => {
+            if (
+              typeof switchStyle?.width === "number" &&
+              typeof switchStyle?.height === "number"
+            ) {
+              return on
+                ? switchStyle.width -
+                    switchStyle.height -
+                    highlighterOffset / 2 +
+                    (switchStyle.height + highlighterOffset) / 2
+                : -highlighterOffset / 2 +
+                    (switchStyle.height + highlighterOffset) / 2;
+            }
+            return 0;
+          })(),
 
           height:
             typeof switchStyle?.height === "number" && onHover
-              ? switchStyle.height + 6
+              ? switchStyle?.height + highlighterOffset
               : 0,
           width:
             typeof switchStyle?.height === "number" && onHover
-              ? switchStyle.height + 6
+              ? switchStyle?.height + highlighterOffset
               : 0,
 
           borderRadius: "50%",
@@ -229,6 +253,7 @@ const Switch = ({
 }) => {
   const { theme } = useContext(ConfigContext);
   const [switchStyle, setSwitchStyle] = useState({});
+  const [thumbOffset, setThumbOffset] = useState(0);
   useEffect(() => {
     if (style) {
       let reprocessed_style = { ...style };
@@ -256,6 +281,20 @@ const Switch = ({
       });
     }
   }, [theme, style, on]);
+  useEffect(() => {
+    const to_even_int = (val) => {
+      let n = parseInt(val, 10);
+      if (n % 2 !== 0) {
+        n = n - 1;
+      }
+      return n;
+    };
+    if (typeof switchStyle?.height === "number") {
+      setThumbOffset(to_even_int(Math.max(2, switchStyle?.height / 16)));
+    } else {
+      setThumbOffset(0);
+    }
+  }, [switchStyle]);
   const handle_switch_on_click = () => {
     setOn(!on);
   };
@@ -274,15 +313,17 @@ const Switch = ({
             "background-color 0.36s cubic-bezier(0.32, 1, 0.32, 1)",
           position: "absolute",
           top: "50%",
-          left: on ? switchStyle?.width - switchStyle?.height + 3 : 3,
+          left: on
+            ? switchStyle?.width - switchStyle?.height + thumbOffset
+            : thumbOffset,
 
           height:
             typeof switchStyle?.height === "number"
-              ? switchStyle.height - 6
+              ? switchStyle.height - thumbOffset * 2
               : undefined,
           width:
             typeof switchStyle?.height === "number"
-              ? switchStyle.height - 6
+              ? switchStyle.height - thumbOffset * 2
               : undefined,
 
           borderRadius: Math.max(0, switchStyle?.borderRadius - 3) || "50%",
