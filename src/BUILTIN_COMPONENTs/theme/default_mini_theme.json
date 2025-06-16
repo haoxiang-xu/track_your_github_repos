@@ -13,6 +13,20 @@
       "boxShadow": "inset 0 2px 3px rgba(0, 0, 0, 0.16)",
       "cursor": "pointer"
     },
+    "button": {
+      "position": "relative",
+      "display": "inline-block",
+      "alignItems": "center",
+      "justifyContent": "center",
+      "flexDirection": "column",
+      "backgroundColor": "#1876D2",
+      "color": "#FFFFFF",
+      "borderRadius": 12,
+      "border": "1px solid #CCCCCC",
+      "boxShadow": "0 2px 3px rgba(0, 0, 0, 0.16)",
+      "padding": "8px",
+      "cursor": "pointer"
+    },
     "backgroundColor": "#FFFFFF"
   },
   "dark_mode": {
@@ -27,6 +41,20 @@
       "borderRadius": 20,
       "color": "#222222",
       "boxShadow": "inset 0 2px 3px rgba(0, 0, 0, 0.16)",
+      "cursor": "pointer"
+    },
+    "button": {
+      "position": "relative",
+      "display": "inline-block",
+      "alignItems": "center",
+      "justifyContent": "center",
+      "flexDirection": "column",
+      "backgroundColor": "rgba(255, 255, 255, 0.16)",
+      "backdropFilter": "blur(8px)",
+      "color": "#FFFFFF",
+      "borderRadius": 10,
+      "boxShadow": "0 4px 16px rgba(0, 0, 0, 0.32)",
+      "padding": "8px",
       "cursor": "pointer"
     },
     "backgroundColor": "#222222"

@@ -6,7 +6,7 @@ import { ConfigContext } from "./context";
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
 
 /* { Data } ------------------------------------------------------------------------------------------------------------------ */
-import available_themes from "../../BUILTIN_COMPONENTs/themes/theme_manifest";
+import available_themes from "../../BUILTIN_COMPONENTs/theme/theme_manifest";
 /* { Data } ------------------------------------------------------------------------------------------------------------------ */
 
 const ConfigContainer = ({ children }) => {
