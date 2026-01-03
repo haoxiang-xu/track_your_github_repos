@@ -317,7 +317,7 @@ const Switch = ({
         });
       }
     }
-  }, [switchStyle]);
+  }, [switchStyle, thumbOffset]);
   const handle_switch_on_click = () => {
     setOn(!on);
   };
