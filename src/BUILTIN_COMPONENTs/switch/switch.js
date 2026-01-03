@@ -96,11 +96,12 @@ const MaterialSwitch = ({
         className="mini-ui-switch-thumb-highlighter"
         style={{
           transition:
-            "left 0.2s cubic-bezier(0.72, -0.16, 0.2, 1.16), " +
-            "background-color 0.36s cubic-bezier(0.32, 1, 0.32, 1), " +
-            "opacity 0.2s cubic-bezier(0.72, -0.16, 0.2, 1.16), " +
-            "height 0.2s cubic-bezier(0.72, -0.16, 0.2, 1.16), " +
-            "width 0.2s cubic-bezier(0.72, -0.16, 0.2, 1.16)",
+            switchStyle.transition ||
+            "none" +
+              ", " +
+              "opacity 0.2s cubic-bezier(0.72, -0.16, 0.2, 1.16), " +
+              "height 0.2s cubic-bezier(0.72, -0.16, 0.2, 1.16), " +
+              "width 0.2s cubic-bezier(0.72, -0.16, 0.2, 1.16)",
 
           position: "absolute",
           top: "50%",
@@ -140,9 +141,7 @@ const MaterialSwitch = ({
       <div
         className="mini-ui-switch-thumb"
         style={{
-          transition:
-            "left 0.2s cubic-bezier(0.72, -0.16, 0.2, 1.16), " +
-            "background-color 0.36s cubic-bezier(0.32, 1, 0.32, 1)",
+          transition: switchStyle.transition || "none",
           position: "absolute",
           top: "50%",
           left: on ? switchStyle?.width - switchStyle?.height : 0,
@@ -167,7 +166,6 @@ const MaterialSwitch = ({
           src={on ? on_icon_src : off_icon_src}
           color={switchStyle.backgroundColor}
           style={{
-            transition: "left 0.2s cubic-bezier(0.72, -0.16, 0.2, 1.16)",
             position: "absolute",
             top: "50%",
             left: "50%",
@@ -333,7 +331,7 @@ const Switch = ({
       <div
         className="mini-ui-switch-thumb"
         style={{
-          transition: "left 0.2s ease, background-color 0.12s ease",
+          transition: theme?.switch?.transition || "none",
           position: "absolute",
           top: "50%",
           left: on
@@ -353,7 +351,7 @@ const Switch = ({
       <Icon
         src={on ? on_icon_src : off_icon_src}
         style={{
-          transition: "left 0.2s ease",
+          transition: theme?.switch?.transition || "none",
           position: "absolute",
           top: "50%",
           left:
@@ -361,7 +359,7 @@ const Switch = ({
             typeof switchStyle?.width === "number"
               ? on
                 ? thumbOffset
-                : switchStyle?.width -  (thumbStyle?.width + thumbOffset)
+                : switchStyle?.width - (thumbStyle?.width + thumbOffset)
               : undefined,
           transform: "translate(0%, -50%)",
 
