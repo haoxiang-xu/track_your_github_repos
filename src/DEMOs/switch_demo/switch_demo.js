@@ -22,6 +22,7 @@ const SwitchDemo = () => {
     material: false,
     square: false,
     small: false,
+    stick: false,
   });
   const handle_switch_on_click = (switch_id) => {
     setSwitchStatus((prevStatus) => ({
@@ -126,8 +127,8 @@ const SwitchDemo = () => {
             height: 80,
             borderRadius: 20,
           }}
-          on={switchStatus.square}
-          setOn={() => handle_switch_on_click("square")}
+          on={switchStatus.stick}
+          setOn={() => handle_switch_on_click("stick")}
         />
       </div>
     </div>
