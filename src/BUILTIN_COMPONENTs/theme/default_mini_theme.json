@@ -27,7 +27,21 @@
       "padding": "8px",
       "cursor": "pointer"
     },
-    "backgroundColor": "#FFFFFF"
+    "font": {
+      "color": "#222222"
+    },
+    "spinner": {
+      "color": "#F4B6A6"
+    },
+    "backgroundColor": "#FFFFFF",
+    "foregroundColor": "#FFFFFF",
+    "scrollingSpace": {
+      "backgroundColor": {
+        "default": "#CCCCCCA3",
+        "active": "#CCCCCC"
+      },
+      "border": "1px solid #CCCCCC00"
+    }
   },
   "dark_mode": {
     "icon": { "color": "#CCCCCC" },
@@ -57,6 +71,20 @@
       "padding": "8px",
       "cursor": "pointer"
     },
-    "backgroundColor": "#222222"
+    "font": {
+      "color": "#FFFFFF"
+    },
+    "spinner": {
+      "color": "#F4B6A6"
+    },
+    "backgroundColor": "#121212",
+    "foregroundColor": "#181818",
+    "scrollingSpace": {
+      "backgroundColor": {
+        "default": "#747880A3",
+        "active": "#747880"
+      },
+      "border": "1px solid #89899600"
+    }
   }
 }
