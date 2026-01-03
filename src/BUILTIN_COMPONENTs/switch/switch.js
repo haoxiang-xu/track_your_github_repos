@@ -10,8 +10,8 @@ import Icon from "../icon/icon";
 
 const MaterialSwitch = ({
   style,
-  on_icon_src = "circle",
-  off_icon_src = "subtract",
+  on_icon_src = "subtract",
+  off_icon_src = "circle",
   on = false,
   setOn = () => {},
 }) => {
@@ -145,15 +145,15 @@ const MaterialSwitch = ({
             "background-color 0.36s cubic-bezier(0.32, 1, 0.32, 1)",
           position: "absolute",
           top: "50%",
-          left: on ? switchStyle?.width - switchStyle?.height + 3 : 3,
+          left: on ? switchStyle?.width - switchStyle?.height : 0,
 
           height:
             typeof switchStyle?.height === "number"
-              ? switchStyle.height - 6
+              ? switchStyle.height
               : undefined,
           width:
             typeof switchStyle?.height === "number"
-              ? switchStyle.height - 6
+              ? switchStyle.height
               : undefined,
 
           borderRadius: "50%",
@@ -248,13 +248,17 @@ const LightSwitch = ({ style }) => {
 };
 const Switch = ({
   style,
-  on_icon_src = "circle",
-  off_icon_src = "subtract",
+  on_icon_src = "subtract",
+  off_icon_src = "circle",
   on = false,
   setOn = () => {},
 }) => {
   const { theme } = useContext(ConfigContext);
   const [switchStyle, setSwitchStyle] = useState({
+    width: 0,
+    height: 0,
+  });
+  const [thumbStyle, setThumbStyle] = useState({
     width: 0,
     height: 0,
   });
@@ -295,9 +299,25 @@ const Switch = ({
       return n;
     };
     if (typeof switchStyle?.height === "number") {
-      setThumbOffset(to_even_int(Math.max(2, switchStyle?.height / 16)));
+      setThumbOffset(to_even_int(Math.max(3, switchStyle?.height / 16)));
     } else {
       setThumbOffset(0);
+    }
+    if (
+      typeof switchStyle?.height === "number" &&
+      typeof switchStyle?.width === "number"
+    ) {
+      if (switchStyle.width < switchStyle.height * 2) {
+        setThumbStyle({
+          height: switchStyle.height - thumbOffset * 2,
+          width: switchStyle.width / 2 - thumbOffset * 2,
+        });
+      } else {
+        setThumbStyle({
+          height: switchStyle.height - thumbOffset * 2,
+          width: switchStyle.height - thumbOffset * 2,
+        });
+      }
     }
   }, [switchStyle]);
   const handle_switch_on_click = () => {
@@ -307,7 +327,7 @@ const Switch = ({
   return (
     <div
       className="mini-ui-switch-track"
-      style={switchStyle}
+      style={{ ...switchStyle }}
       onClick={handle_switch_on_click}
     >
       <div
@@ -317,17 +337,11 @@ const Switch = ({
           position: "absolute",
           top: "50%",
           left: on
-            ? switchStyle?.width - switchStyle?.height + thumbOffset + 1
-            : thumbOffset + 1,
+            ? switchStyle?.width - (thumbStyle?.width + thumbOffset)
+            : thumbOffset,
 
-          height:
-            typeof switchStyle?.height === "number"
-              ? switchStyle.height - thumbOffset * 3
-              : undefined,
-          width:
-            typeof switchStyle?.height === "number"
-              ? switchStyle.height - thumbOffset * 3
-              : undefined,
+          height: thumbStyle.height,
+          width: thumbStyle.width,
 
           borderRadius: Math.max(0, switchStyle?.borderRadius - 3) || "50%",
 
@@ -346,19 +360,13 @@ const Switch = ({
             typeof switchStyle?.height === "number" &&
             typeof switchStyle?.width === "number"
               ? on
-                ? 6
-                : switchStyle?.width - switchStyle?.height + 7 + 2
+                ? thumbOffset
+                : switchStyle?.width -  (thumbStyle?.width + thumbOffset)
               : undefined,
           transform: "translate(0%, -50%)",
 
-          height:
-            typeof switchStyle?.height === "number"
-              ? switchStyle.height - 14
-              : undefined,
-          width:
-            typeof switchStyle?.height === "number"
-              ? switchStyle.height - 14
-              : undefined,
+          height: thumbStyle.width,
+          width: thumbStyle.width,
         }}
       />
     </div>

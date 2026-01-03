@@ -20,6 +20,8 @@ const SwitchDemo = () => {
     notification: false,
     null: false,
     material: false,
+    square: false,
+    small: false,
   });
   const handle_switch_on_click = (switch_id) => {
     setSwitchStatus((prevStatus) => ({
@@ -99,6 +101,33 @@ const SwitchDemo = () => {
           }}
           on={switchStatus.material}
           setOn={() => handle_switch_on_click("material")}
+        />
+        <Switch
+          style={{
+            width: 140,
+            height: 70,
+            borderRadius: 20,
+          }}
+          on={switchStatus.square}
+          setOn={() => handle_switch_on_click("square")}
+        />
+        <Switch
+          style={{
+            width: 60,
+            height: 30,
+            borderRadius: 20,
+          }}
+          on={switchStatus.small}
+          setOn={() => handle_switch_on_click("small")}
+        />
+        <Switch
+          style={{
+            width: 100,
+            height: 80,
+            borderRadius: 20,
+          }}
+          on={switchStatus.square}
+          setOn={() => handle_switch_on_click("square")}
         />
       </div>
     </div>
