@@ -1,7 +1,7 @@
 import { useState, useEffect, useContext, useCallback } from "react";
 
 /* { Constants } ------------------------------------------------------------------------------------------------------------- */
-import { fileTypeSVGs, UISVGs } from "./icon_manifest";
+import { fileTypeSVGs, LogoSVGs, UISVGs } from "./icon_manifest";
 /* { Constants } ------------------------------------------------------------------------------------------------------------- */
 
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
@@ -12,7 +12,7 @@ const Icon = ({ src, color, ...props }) => {
   const { theme } = useContext(ConfigContext);
 
   const [component, setComponent] = useState(
-    <div className="mini-ui-img-icon placeholder" {...props} />
+    <div className="mini-ui-img-icon" {...props} />
   );
 
   const fetch_icon = useCallback(async () => {
@@ -20,6 +20,14 @@ const Icon = ({ src, color, ...props }) => {
       let svg = null;
       if (src in UISVGs) {
         const SVG = await UISVGs[src];
+        setComponent(
+          <SVG
+            className="mini-ui-svg-icon"
+            fill={color ? color : theme?.icon?.color}
+          ></SVG>
+        );
+      } else if (src in LogoSVGs) {
+        const SVG = await LogoSVGs[src];
         setComponent(
           <SVG
             className="mini-ui-svg-icon"

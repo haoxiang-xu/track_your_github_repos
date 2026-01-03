@@ -218,7 +218,8 @@ const LightSwitch = ({ style }) => {
     }),
     []
   );
-  const { onThemeMode, setOnThemeMode } = useContext(ConfigContext);
+  const { onThemeMode, setOnThemeMode, setSyncWithSystemTheme } =
+    useContext(ConfigContext);
 
   const preprocess_style = useCallback(() => {
     let reprocessed_style = { ...style };
@@ -232,11 +233,12 @@ const LightSwitch = ({ style }) => {
 
   return (
     <Switch
-      style={preprocess_style(style)}
+      style={{ ...preprocess_style(style) }}
       on_icon_src="sun"
       off_icon_src="moon"
       on={onThemeMode === "light_mode"}
       setOn={() => {
+        setSyncWithSystemTheme(false);
         setOnThemeMode(
           onThemeMode === "dark_mode" ? "light_mode" : "dark_mode"
         );
@@ -252,7 +254,10 @@ const Switch = ({
   setOn = () => {},
 }) => {
   const { theme } = useContext(ConfigContext);
-  const [switchStyle, setSwitchStyle] = useState({});
+  const [switchStyle, setSwitchStyle] = useState({
+    width: 0,
+    height: 0,
+  });
   const [thumbOffset, setThumbOffset] = useState(0);
   useEffect(() => {
     if (style) {
@@ -308,22 +313,20 @@ const Switch = ({
       <div
         className="mini-ui-switch-thumb"
         style={{
-          transition:
-            "left 0.2s cubic-bezier(0.72, -0.16, 0.2, 1.16), " +
-            "background-color 0.36s cubic-bezier(0.32, 1, 0.32, 1)",
+          transition: "left 0.2s ease, background-color 0.12s ease",
           position: "absolute",
           top: "50%",
           left: on
-            ? switchStyle?.width - switchStyle?.height + thumbOffset
-            : thumbOffset,
+            ? switchStyle?.width - switchStyle?.height + thumbOffset + 1
+            : thumbOffset + 1,
 
           height:
             typeof switchStyle?.height === "number"
-              ? switchStyle.height - thumbOffset * 2
+              ? switchStyle.height - thumbOffset * 3
               : undefined,
           width:
             typeof switchStyle?.height === "number"
-              ? switchStyle.height - thumbOffset * 2
+              ? switchStyle.height - thumbOffset * 3
               : undefined,
 
           borderRadius: Math.max(0, switchStyle?.borderRadius - 3) || "50%",
@@ -336,15 +339,15 @@ const Switch = ({
       <Icon
         src={on ? on_icon_src : off_icon_src}
         style={{
-          transition: "left 0.2s cubic-bezier(0.72, -0.16, 0.2, 1.16)",
+          transition: "left 0.2s ease",
           position: "absolute",
           top: "50%",
           left:
             typeof switchStyle?.height === "number" &&
             typeof switchStyle?.width === "number"
               ? on
-                ? 4
-                : switchStyle?.width - switchStyle?.height + 7 + 4
+                ? 6
+                : switchStyle?.width - switchStyle?.height + 7 + 2
               : undefined,
           transform: "translate(0%, -50%)",
 

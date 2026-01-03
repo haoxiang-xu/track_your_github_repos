@@ -16,7 +16,7 @@ const App = () => {
       <Router>
         <Routes>
           {/* { Demos ( remove during production ) } --------------------------------------------------------------------------- */}
-          <Route path="/mini" element={<DemoPage />} />q
+          <Route path="/mini" element={<DemoPage />} />
           <Route path="/mini/icon" element={<IconDemo />} />
           <Route path="/mini/switch" element={<SwitchDemo />} />
           {/* { Demos ( remove during production ) } --------------------------------------------------------------------------- */}
