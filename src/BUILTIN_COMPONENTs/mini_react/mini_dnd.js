@@ -131,7 +131,14 @@ const Draggable = ({
       {(() => {
         const rendered_component = render();
         if (isValidElement(rendered_component)) {
-          return cloneElement(rendered_component, { ref: tiltRef });
+          const merged_style = {
+            ...(rendered_component.props.style || {}),
+            boxSizing: "border-box",
+          };
+          return cloneElement(rendered_component, {
+            ref: tiltRef,
+            style: merged_style,
+          });
         }
         return <div ref={tiltRef}>{rendered_component}</div>;
       })()}
@@ -181,6 +188,7 @@ const Droppable = ({
           (draggable_style.gap || default_draggable_style.gap || 0) * 2 +
           "px)",
         margin: 0,
+        boxSizing: "border-box",
       };
       index += 1;
       setDraggableStyles((prev) => ({
@@ -191,7 +199,7 @@ const Droppable = ({
   }, [draggables, draggable_style]);
 
   return (
-    <div style={{ ...(style || {}) }} onMouseDown={capturePosition}>
+    <div style={{ ...(style || {}), ...{ boxSizing: "border-box" } }} onMouseDown={capturePosition}>
       {draggables && draggables.length > 0 && draggableStyles !== null
         ? draggables.map((item, index) => {
             return (
@@ -270,6 +278,7 @@ const DnDGhost = ({ debug = false }) => {
           transform: `translate(0%, 0%)`,
           width: draggableSize.width,
           height: draggableSize.height,
+          boxSizing: "border-box",
         };
         if (isValidElement(ghost_component)) {
           return cloneElement(ghost_component, {
@@ -381,8 +390,8 @@ const DnDGhost = ({ debug = false }) => {
               top: `${origin.y}%`,
               left: 0,
               width: "100%",
-              height: "2px",
-              border: "2px dashed rgba(255, 255, 255, 0.75)",
+              height: "0px",
+              borderTop: "3px dashed rgba(255, 255, 255, 0.75)",
               opacity: 0.5,
             }}
           ></div>
@@ -392,9 +401,9 @@ const DnDGhost = ({ debug = false }) => {
               position: "absolute",
               top: 0,
               left: `${origin.x}%`,
-              width: "2px",
+              width: "0px",
               height: "100%",
-              border: "2px dashed rgba(255, 255, 255, 0.75)",
+              borderLeft: "3px dashed rgba(255, 255, 255, 0.75)",
               opacity: 0.5,
             }}
           ></div>
