@@ -34,7 +34,7 @@
       "color": "#F4B6A6"
     },
     "backgroundColor": "#FFFFFF",
-    "foregroundColor": "#FFFFFF",
+    "foregroundColor": "#CCCCCC",
     "scrollingSpace": {
       "backgroundColor": {
         "default": "#CCCCCCA3",
@@ -78,7 +78,7 @@
       "color": "#F4B6A6"
     },
     "backgroundColor": "#121212",
-    "foregroundColor": "#181818",
+    "foregroundColor": "#1E1E1E",
     "scrollingSpace": {
       "backgroundColor": {
         "default": "#747880A3",
