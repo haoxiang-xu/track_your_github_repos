@@ -318,15 +318,16 @@ const Switch = ({
       }
     }
   }, [switchStyle, thumbOffset]);
-  const handle_switch_on_click = () => {
+  const handle_switch_on_click = (e) => {
+    e.stopPropagation();
     setOn(!on);
   };
 
   return (
     <div
       className="mini-ui-switch-track"
-      style={{ ...switchStyle }}
-      onClick={handle_switch_on_click}
+      style={{ ...switchStyle, position: "relative", cursor: "pointer" }}
+      onClick={(e) => handle_switch_on_click(e)}
     >
       <div
         className="mini-ui-switch-thumb"
@@ -361,6 +362,7 @@ const Switch = ({
                 ? thumbOffset
                 : switchStyle?.width - (thumbStyle?.width + thumbOffset)
               : undefined,
+          fontSize: 0,
           transform: "translate(0%, -50%)",
 
           height: thumbStyle.width,
