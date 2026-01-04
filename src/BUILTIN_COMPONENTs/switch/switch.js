@@ -328,6 +328,13 @@ const Switch = ({
       className="mini-ui-switch-track"
       style={{ ...switchStyle, position: "relative", cursor: "pointer" }}
       onClick={(e) => handle_switch_on_click(e)}
+      onMouseDown={(e) => {
+        e.stopPropagation();
+      }}
+      onMouseUp={(e) => {
+        e.stopPropagation();
+      }}
+      draggable={false}
     >
       <div
         className="mini-ui-switch-thumb"
