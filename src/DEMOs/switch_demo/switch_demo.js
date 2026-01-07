@@ -71,6 +71,7 @@ const SwitchDemo = () => {
             width: 200,
             height: 100,
             borderRadius: 50,
+            backgroundColor_on: "#ffa300",
           }}
         />
         <NotificationSwitch
@@ -99,6 +100,7 @@ const SwitchDemo = () => {
           style={{
             width: 200,
             height: 100,
+            backgroundColor_on: "#fc7aff",
           }}
           on={switchStatus.material}
           setOn={() => handle_switch_on_click("material")}
@@ -108,6 +110,7 @@ const SwitchDemo = () => {
             width: 140,
             height: 70,
             borderRadius: 20,
+            backgroundColor_on: "#1af337ff",
           }}
           on={switchStatus.square}
           setOn={() => handle_switch_on_click("square")}
@@ -117,6 +120,7 @@ const SwitchDemo = () => {
             width: 60,
             height: 30,
             borderRadius: 20,
+            backgroundColor_on: "#59a2cc",
           }}
           on={switchStatus.small}
           setOn={() => handle_switch_on_click("small")}
@@ -126,6 +130,7 @@ const SwitchDemo = () => {
             width: 100,
             height: 80,
             borderRadius: 20,
+            backgroundColor_on: "#95afc2ff",
           }}
           on={switchStatus.stick}
           setOn={() => handle_switch_on_click("stick")}
