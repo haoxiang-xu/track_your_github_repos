@@ -199,7 +199,10 @@ const Droppable = ({
   }, [draggables, draggable_style]);
 
   return (
-    <div style={{ ...(style || {}), ...{ boxSizing: "border-box" } }} onMouseDown={capturePosition}>
+    <div
+      style={{ ...(style || {}), ...{ boxSizing: "border-box" } }}
+      onMouseDown={capturePosition}
+    >
       {draggables && draggables.length > 0 && draggableStyles !== null
         ? draggables.map((item, index) => {
             return (
