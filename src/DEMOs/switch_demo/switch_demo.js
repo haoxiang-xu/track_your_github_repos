@@ -10,6 +10,7 @@ import {
   LightSwitch,
   NotificationSwitch,
   MaterialSwitch,
+  SemiSwitch,
 } from "../../BUILTIN_COMPONENTs/switch/switch";
 /* { Components } -------------------------------------------------------------------------------------------------------------- */
 
@@ -23,6 +24,7 @@ const SwitchDemo = () => {
     square: false,
     small: false,
     stick: false,
+    semistick: false,
   });
   const handle_switch_on_click = (switch_id) => {
     setSwitchStatus((prevStatus) => ({
@@ -83,7 +85,7 @@ const SwitchDemo = () => {
           on={switchStatus.notification}
           setOn={() => handle_switch_on_click("notification")}
         />
-        <Switch
+        <SemiSwitch
           style={{
             width: 300,
             height: 100,
@@ -134,6 +136,26 @@ const SwitchDemo = () => {
           }}
           on={switchStatus.stick}
           setOn={() => handle_switch_on_click("stick")}
+        />
+        <SemiSwitch
+          style={{
+            width: 140,
+            height: 70,
+            borderRadius: 50,
+            backgroundColor_on: "#ff8000",
+          }}
+          on={switchStatus.semi}
+          setOn={() => handle_switch_on_click("semi")}
+        />
+        <SemiSwitch
+          style={{
+            width: 70,
+            height: 100,
+            borderRadius: 12,
+            backgroundColor_on: "rgb(68, 85, 231)",
+          }}
+          on={switchStatus.semistick}
+          setOn={() => handle_switch_on_click("semistick")}
         />
       </div>
     </div>

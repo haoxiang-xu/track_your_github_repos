@@ -8,6 +8,161 @@ import { ConfigContext } from "../../CONTAINERs/config/context";
 import Icon from "../icon/icon";
 /* { Components } ------------------------------------------------------------------------------------------------------------ */
 
+const SemiSwitch = ({
+  style,
+  on_icon_src = "subtract",
+  off_icon_src = "circle",
+  on = false,
+  setOn = () => {},
+}) => {
+  const { theme } = useContext(ConfigContext);
+  const [switchStyle, setSwitchStyle] = useState({
+    width: 0,
+    height: 0,
+  });
+  const [thumbStyle, setThumbStyle] = useState({
+    width: 0,
+    height: 0,
+  });
+  const [iconStyle, setIconStyle] = useState({
+    width: 0,
+    height: 0,
+  });
+  const [thumbOffset, setThumbOffset] = useState(0);
+  useEffect(() => {
+    if (style) {
+      let reprocessed_style = { ...style };
+      for (const property in theme?.switch) {
+        if (reprocessed_style[property] === undefined) {
+          reprocessed_style[property] = theme.switch[property];
+        }
+      }
+      if (on) {
+        reprocessed_style.backgroundColor =
+          reprocessed_style.backgroundColor_on ||
+          theme?.switch?.backgroundColor_on ||
+          reprocessed_style.backgroundColor ||
+          theme?.switch?.backgroundColor;
+      }
+      setSwitchStyle(reprocessed_style);
+    } else if (theme?.switch) {
+      let reprocessed_style = { ...theme.switch };
+      if (on) {
+        reprocessed_style.backgroundColor =
+          theme?.switch?.backgroundColor_on || theme?.switch?.backgroundColor;
+      }
+      setSwitchStyle({
+        ...reprocessed_style,
+      });
+    }
+  }, [theme, style, on]);
+  useEffect(() => {
+    const to_even_int = (val) => {
+      let n = parseInt(val, 10);
+      if (n % 2 !== 0) {
+        n = n - 1;
+      }
+      return n;
+    };
+    if (typeof switchStyle?.height === "number") {
+      setThumbOffset(to_even_int(Math.max(3, switchStyle?.height / 16)));
+    } else {
+      setThumbOffset(0);
+    }
+    if (
+      typeof switchStyle?.height === "number" &&
+      typeof switchStyle?.width === "number"
+    ) {
+      if (switchStyle.width < switchStyle.height * 2) {
+        setThumbStyle({
+          height: switchStyle.height - thumbOffset * 2,
+          width: switchStyle.width / 2 - thumbOffset * 2,
+        });
+        setIconStyle({
+          height: switchStyle.height - thumbOffset * 2,
+          width: switchStyle.width / 2 - thumbOffset * 2,
+        });
+      } else {
+        setThumbStyle({
+          height: switchStyle.height - thumbOffset * 2,
+          width: switchStyle.height - thumbOffset * 2,
+        });
+        setIconStyle({
+          height: switchStyle.height - thumbOffset * 2,
+          width: switchStyle.height - thumbOffset * 2,
+        });
+      }
+    }
+  }, [switchStyle, thumbOffset]);
+  const handle_switch_on_click = (e) => {
+    e.stopPropagation();
+    setOn(!on);
+  };
+
+  return (
+    <div
+      className="mini-ui-switch-track"
+      style={{ ...switchStyle, position: "relative", cursor: "pointer" }}
+      onClick={(e) => handle_switch_on_click(e)}
+      onMouseDown={(e) => {
+        e.stopPropagation();
+        setThumbStyle((prevStyle) => ({
+          ...prevStyle,
+          width: switchStyle.width * 0.64,
+        }));
+      }}
+      onMouseUp={(e) => {
+        e.stopPropagation();
+        setThumbStyle((prevStyle) => ({
+          ...prevStyle,
+          width: iconStyle.width,
+        }));
+      }}
+      draggable={false}
+    >
+      <div
+        className="mini-ui-switch-thumb"
+        style={{
+          transition: theme?.switch?.transition || "none",
+          position: "absolute",
+          top: "50%",
+          left: on
+            ? switchStyle?.width - (thumbStyle?.width + thumbOffset)
+            : thumbOffset,
+
+          height: thumbStyle.height,
+          width: thumbStyle.width,
+
+          borderRadius: Math.max(0, switchStyle?.borderRadius - 3) || "50%",
+
+          transform: "translate(0%, -50%)",
+          backgroundColor: switchStyle.color,
+          boxShadow: "0 2px 4px rgba(0, 0, 0, 0.32)",
+        }}
+      ></div>
+      <Icon
+        src={on ? on_icon_src : off_icon_src}
+        style={{
+          transition: theme?.switch?.transition || "none",
+          position: "absolute",
+          top: "50%",
+          left:
+            typeof switchStyle?.height === "number" &&
+            typeof switchStyle?.width === "number"
+              ? on
+                ? thumbOffset
+                : switchStyle?.width - (iconStyle?.width + thumbOffset)
+              : undefined,
+          fontSize: 0,
+          transform: "translate(0%, -50%)",
+
+          height: iconStyle.width,
+          width: iconStyle.width,
+        }}
+      />
+    </div>
+  );
+};
 const MaterialSwitch = ({
   style,
   on_icon_src = "subtract",
@@ -185,7 +340,7 @@ const NotificationSwitch = ({ style, on = false, setOn = () => {} }) => {
       backgroundColor: "rgb(255, 68, 0)",
       backgroundColor_on: "#65C467",
     }),
-    []
+    [],
   );
 
   const preprocess_style = useCallback(() => {
@@ -214,7 +369,7 @@ const LightSwitch = ({ style }) => {
       backgroundColor: "rgb(114, 75, 177)",
       backgroundColor_on: "rgb(243, 190, 171)",
     }),
-    []
+    [],
   );
   const { onThemeMode, setOnThemeMode, setSyncWithSystemTheme } =
     useContext(ConfigContext);
@@ -238,7 +393,7 @@ const LightSwitch = ({ style }) => {
       setOn={() => {
         setSyncWithSystemTheme(false);
         setOnThemeMode(
-          onThemeMode === "dark_mode" ? "light_mode" : "dark_mode"
+          onThemeMode === "dark_mode" ? "light_mode" : "dark_mode",
         );
       }}
     />
@@ -386,4 +541,5 @@ export {
   LightSwitch,
   NotificationSwitch,
   MaterialSwitch,
+  SemiSwitch,
 };
