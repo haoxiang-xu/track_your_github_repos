@@ -37,7 +37,7 @@ const useWindowSize = () => {
   return windowSize;
 };
 const useMouse = () => {
-  const [mouse, setMouse] = useState({ x: -999, y: -999, vx: 0, vy: 0 });
+  const [mouse, setMouse] = useState({ x: -999, y: -999, vx: 0, vy: 0, leftKeyDown: false, rightKeyDown: false });
 
   const lastRef = useRef({
     x: 0,
@@ -59,17 +59,40 @@ const useMouse = () => {
 
       lastRef.current = { x: e.clientX, y: e.clientY, t: now };
 
-      setMouse({ x: e.clientX, y: e.clientY, vx, vy });
+      setMouse((m) => ({ ...m, x: e.clientX, y: e.clientY, vx, vy }));
 
       if (idleTimerRef.current) clearTimeout(idleTimerRef.current);
       idleTimerRef.current = setTimeout(() => {
         setMouse((m) => ({ ...m, vx: 0, vy: 0 }));
       }, 60);
     };
+    const onPointerDown = (e) => {
+      if (e.button === 0) {
+        setMouse((m) => ({ ...m, leftKeyDown: true }));
+      } else if (e.button === 2) {
+        setMouse((m) => ({ ...m, rightKeyDown: true }));
+      }
+    };
+    const onPointerUp = (e) => {
+      if (e.button === 0) {
+        setMouse((m) => ({ ...m, leftKeyDown: false }));
+      } else if (e.button === 2) {
+        setMouse((m) => ({ ...m, rightKeyDown: false }));
+      }
+    };
+    const onPointerCancel = () => {
+      setMouse((m) => ({ ...m, leftKeyDown: false, rightKeyDown: false }));
+    };
 
     window.addEventListener("pointermove", onMove);
+    window.addEventListener("pointerdown", onPointerDown);
+    window.addEventListener("pointerup", onPointerUp);
+    window.addEventListener("pointercancel", onPointerCancel);
     return () => {
       window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("pointerdown", onPointerDown);
+      window.removeEventListener("pointerup", onPointerUp);
+      window.removeEventListener("pointercancel", onPointerCancel);
       if (idleTimerRef.current) clearTimeout(idleTimerRef.current);
     };
   }, []);
