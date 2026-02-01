@@ -5,9 +5,7 @@ import ConfigContainer from "./CONTAINERs/config/container";
 /* { Containers } -------------------------------------------------------------------------------------------------------------- */
 
 /* { Demos ( remove during production ) } -------------------------------------------------------------------------------------- */
-import DemoPage from "./PAGEs/demo";
-import IconDemo from "./DEMOs/icon_demo/icon_demo";
-import SwitchDemo from "./DEMOs/switch_demo/switch_demo";
+import DemoPage from "./PAGEs/demo/demo";
 /* { Demos ( remove during production ) } -------------------------------------------------------------------------------------- */
 
 const App = () => {
@@ -17,8 +15,6 @@ const App = () => {
         <Routes>
           {/* { Demos ( remove during production ) } --------------------------------------------------------------------------- */}
           <Route path="/mini" element={<DemoPage />} />
-          <Route path="/mini/icon" element={<IconDemo />} />
-          <Route path="/mini/switch" element={<SwitchDemo />} />
           {/* { Demos ( remove during production ) } --------------------------------------------------------------------------- */}
         </Routes>
       </Router>

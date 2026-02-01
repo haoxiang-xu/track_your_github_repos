@@ -14,6 +14,7 @@
       "cursor": "pointer"
     },
     "font": {
+      "fontFamily": "Jost",
       "color": "#222222"
     },
     "spinner": {
@@ -28,6 +29,13 @@
         "active": "#CCCCCC"
       },
       "border": "1px solid #CCCCCC00"
+    },
+    "input": {
+      "fontSize": 16,
+      "borderRadius": 7,
+      "backgroundColor": "#CCCCCC",
+      "boxShadow": "inset 0 2px 3px rgba(0, 0, 0, 0.16)",
+      "outline": { "onBlur": "2px solid rgba(0, 0, 0, 0)", "onFocus": "2px solid rgba(10, 133, 255, 1)" }
     }
   },
   "dark_mode": {
@@ -45,6 +53,7 @@
       "cursor": "pointer"
     },
     "font": {
+      "fontFamily": "Jost",
       "color": "#FFFFFF"
     },
     "spinner": {
@@ -59,6 +68,13 @@
         "active": "#747880"
       },
       "border": "1px solid #89899600"
+    },
+    "input": {
+      "fontSize": 16,
+      "borderRadius": 7,
+      "backgroundColor": "#494949",
+      "boxShadow": "inset 0 2px 3px rgba(0, 0, 0, 0.16)",
+      "outline": { "onBlur": "2px solid rgba(0, 0, 0, 0)", "onFocus": "2px solid rgba(10, 133, 255, 1)" }
     }
   }
 }
