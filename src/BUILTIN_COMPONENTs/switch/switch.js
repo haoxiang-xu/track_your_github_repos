@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext, useCallback, useMemo, use } from "react";
+import { useState, useEffect, useContext, useCallback, useMemo } from "react";
 import { useMouse } from "../mini_react/mini_react";
 
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
@@ -103,7 +103,7 @@ const SemiSwitch = ({
         width: iconStyle.width,
       }));
     }
-  }, [mouse.leftKeyDown]);
+  }, [mouse.leftKeyDown, iconStyle.width]);
   const handle_switch_on_click = (e) => {
     e.stopPropagation();
     setOn(!on);
