@@ -59,6 +59,22 @@ const SwitchDemo = () => {
           padding: "10px",
         }}
       >
+        <span
+          style={{
+            width: "100%",
+            textAlign: "left",
+            fontSize: "48px",
+            fontFamily: "Jost",
+            color: theme?.color || "black",
+
+            userSelect: "none",
+            webkitUserSelect: "none",
+            mozUserSelect: "none",
+            msUserSelect: "none",
+          }}
+        >
+          Switches
+        </span>
         <Switch
           style={{
             width: 200,

@@ -1,4 +1,5 @@
-import { useState, useEffect, useContext, useCallback, useMemo } from "react";
+import { useState, useEffect, useContext, useCallback, useMemo, use } from "react";
+import { useMouse } from "../mini_react/mini_react";
 
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
 import { ConfigContext } from "../../CONTAINERs/config/context";
@@ -16,6 +17,7 @@ const SemiSwitch = ({
   setOn = () => {},
 }) => {
   const { theme } = useContext(ConfigContext);
+  const mouse = useMouse();
   const [switchStyle, setSwitchStyle] = useState({
     width: 0,
     height: 0,
@@ -94,6 +96,14 @@ const SemiSwitch = ({
       }
     }
   }, [switchStyle, thumbOffset]);
+  useEffect(() => {
+    if (!mouse.leftKeyDown) {
+      setThumbStyle((prevStyle) => ({
+        ...prevStyle,
+        width: iconStyle.width,
+      }));
+    }
+  }, [mouse.leftKeyDown]);
   const handle_switch_on_click = (e) => {
     e.stopPropagation();
     setOn(!on);
@@ -139,6 +149,7 @@ const SemiSwitch = ({
           backgroundColor: switchStyle.color,
           boxShadow: "0 2px 4px rgba(0, 0, 0, 0.32)",
         }}
+        draggable={false}
       ></div>
       <Icon
         src={on ? on_icon_src : off_icon_src}
