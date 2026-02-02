@@ -619,7 +619,10 @@ const Input = ({
               style?.fontFamily ||
               theme?.font.fontFamily ||
               "Arial, sans-serif",
-            fontSize: style?.fontSize || theme?.input.fontSize || 16,
+            fontSize:
+              onFocus || (value && value.length > 0)
+                ? (style?.fontSize || theme?.input.fontSize || 16) * 0.8
+                : style?.fontSize || theme?.input.fontSize || 16,
             color: style?.color || theme?.color || "black",
 
             userSelect: "none",
