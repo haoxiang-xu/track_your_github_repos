@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef, useState } from "react";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
 
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
 import { ConfigContext } from "../../CONTAINERs/config/context";
@@ -7,6 +7,12 @@ import { ConfigContext } from "../../CONTAINERs/config/context";
 /* { Components } ------------------------------------------------------------------------------------------------------------ */
 import Icon from "../icon/icon";
 /* { Components } ------------------------------------------------------------------------------------------------------------ */
+
+/* { Constants } ------------------------------------------------------------------------------------------------------------- */
+const default_gap_width = 8;
+const default_left_right_padding = 8;
+const default_top_bottom_padding = 6;
+/* { Constants } ------------------------------------------------------------------------------------------------------------- */
 
 const Separator = ({ style }) => {
   const { theme } = useContext(ConfigContext);
@@ -277,6 +283,7 @@ const Password = ({
 };
 const Input = ({
   /* content props -------------- */
+  label,
   prefix_component,
   prefix_icon,
   prefix_label,
@@ -301,15 +308,88 @@ const Input = ({
 }) => {
   const { theme } = useContext(ConfigContext);
   const default_input_ref = useRef(null);
+  const prefix_label_ref = useRef(null);
+  const prefix_component_ref = useRef(null);
+  const postfix_label_ref = useRef(null);
+  const postfix_component_ref = useRef(null);
   const [onFocus, setOnFocus] = useState(false);
+
+  const calculate_input_width = useCallback(() => {
+    let width = 0;
+    let gap_count = 0;
+    if (prefix_component !== undefined) {
+      if (prefix_component_ref.current) {
+        width += prefix_component_ref.current.offsetWidth;
+        gap_count += 1;
+      }
+    }
+    if (prefix_icon !== undefined) {
+      width += (style?.fontSize || theme?.input.fontSize || 16) + 12;
+      gap_count += 1;
+    }
+    if (prefix_label !== undefined) {
+      if (prefix_label_ref.current) {
+        width += prefix_label_ref.current.offsetWidth;
+        gap_count += 1;
+      }
+    }
+    if (postfix_component !== undefined) {
+      if (postfix_component_ref.current) {
+        width += postfix_component_ref.current.offsetWidth;
+        gap_count += 1;
+      }
+    }
+    if (postfix_icon !== undefined) {
+      width += (style?.fontSize || theme?.input.fontSize || 16) + 12;
+      gap_count += 1;
+    }
+    if (postfix_label !== undefined) {
+      if (postfix_label_ref.current) {
+        width += postfix_label_ref.current.offsetWidth;
+        gap_count += 1;
+      }
+    }
+    return `calc(100% - ${width + gap_count * default_gap_width + (no_separator ? 0 : default_gap_width * gap_count)}px)`;
+  }, [
+    prefix_component,
+    prefix_icon,
+    prefix_label,
+    postfix_component,
+    postfix_icon,
+    postfix_label,
+    style,
+    theme,
+    no_separator,
+  ]);
+  const calculate_label_left = useCallback(() => {
+    let left = default_left_right_padding;
+    if (prefix_component !== undefined) {
+      if (prefix_component_ref.current) {
+        left += prefix_component_ref.current.offsetWidth + default_gap_width;
+      }
+    }
+    if (prefix_icon !== undefined) {
+      left +=
+        (style?.fontSize || theme?.input.fontSize || 16) +
+        12 +
+        default_gap_width;
+    }
+    if (prefix_label !== undefined) {
+      if (prefix_label_ref.current) {
+        left += prefix_label_ref.current.offsetWidth + default_gap_width;
+      }
+    }
+    return left;
+  }, [prefix_component, prefix_icon, prefix_label, style, theme]);
 
   return (
     <div
       style={{
+        position: "relative",
         display: "flex",
         alignItems: "center",
-        gap: "8px",
-        padding: `6px 8px`,
+        gap: `${default_gap_width}px`,
+        padding: `${default_top_bottom_padding}px ${default_left_right_padding}px`,
         height:
           style?.height ||
           theme?.input.height ||
@@ -324,7 +404,6 @@ const Input = ({
           style?.outline || onFocus
             ? theme?.input.outline.onFocus
             : theme?.input.outline.onBlur || "1px solid #CCCCCC",
-        overflow: "hidden",
         ...style,
       }}
       onClick={() => {
@@ -337,7 +416,7 @@ const Input = ({
       }}
     >
       {prefix_component !== undefined ? (
-        <>
+        <div ref={prefix_component_ref}>
           {prefix_component}
           {!no_separator && (
             <Separator
@@ -346,7 +425,7 @@ const Input = ({
               }}
             />
           )}
-        </>
+        </div>
       ) : null}
       {prefix_icon === undefined ? null : (
         <>
@@ -370,6 +449,7 @@ const Input = ({
       {prefix_label === undefined ? null : (
         <>
           <span
+            ref={prefix_label_ref}
             style={{
               fontFamily:
                 style?.fontFamily ||
@@ -400,7 +480,7 @@ const Input = ({
         type={type}
         style={{
           fontFamily: style?.fontFamily || theme?.font.fontFamily || "Jost",
-          width: "100%",
+          width: calculate_input_width(),
           height: "90%",
           fontSize: style?.fontSize || theme?.input.fontSize || 16,
           border: "1px solid rgba(255, 255, 255, 0)",
@@ -423,7 +503,13 @@ const Input = ({
         maxLength={max_length}
         value={value}
         onChange={(e) => set_value(e.target.value, e)}
-        placeholder={placeholder !== undefined ? placeholder : "Placeholder"}
+        placeholder={
+          placeholder !== undefined
+            ? placeholder
+            : label === undefined
+              ? "Placeholder"
+              : undefined
+        }
       />
       {postfix_label === undefined ? null : (
         <>
@@ -435,6 +521,7 @@ const Input = ({
             />
           )}
           <span
+            ref={postfix_label_ref}
             style={{
               fontFamily:
                 style?.fontFamily ||
@@ -473,7 +560,7 @@ const Input = ({
         </>
       )}
       {postfix_component !== undefined ? (
-        <>
+        <div ref={postfix_component_ref}>
           {!no_separator && (
             <Separator
               style={{
@@ -482,11 +569,40 @@ const Input = ({
             />
           )}
           {postfix_component}
-        </>
+        </div>
       ) : null}
+      {label === undefined ? null : (
+        <span
+          style={{
+            position: "absolute",
+            transition: "all 0.12s cubic-bezier(0.4, 0, 0.2, 1)",
+            top:
+              onFocus || (value && value.length > 0)
+                ? `calc(0% - ${(style?.fontSize || theme?.input.fontSize || 16) / 2 + 4}px)`
+                : "50%",
+            left:
+              onFocus || (value && value.length > 0)
+                ? default_left_right_padding
+                : calculate_label_left(),
+            transform: "translateY(-50%)",
+            fontFamily:
+              style?.fontFamily ||
+              theme?.font.fontFamily ||
+              "Arial, sans-serif",
+            fontSize: style?.fontSize || theme?.input.fontSize || 16,
+            color: style?.color || theme?.color || "black",
+
+            userSelect: "none",
+            webkitUserSelect: "none",
+            mozUserSelect: "none",
+            msUserSelect: "none",
+          }}
+        >
+          {label}
+        </span>
+      )}
     </div>
   );
 };
 
-export { Password, ValidationCodeInput };
-export default Input;
+export { Input as default, Input, Password, ValidationCodeInput };
