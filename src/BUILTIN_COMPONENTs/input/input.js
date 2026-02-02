@@ -115,6 +115,36 @@ const ValidationCodeInput = ({ style }) => {
     </div>
   );
 };
+const InputWithDelete = ({ style, value, set_value = () => {}, ...props }) => {
+  const { theme } = useContext(ConfigContext);
+
+  return (
+    <Input
+      style={{ ...style }}
+      value={value}
+      set_value={set_value}
+      postfix_component={
+        <div
+          style={{
+            cursor: "pointer",
+          }}
+          onClick={(e) => {
+            e.stopPropagation();
+            set_value("");
+          }}
+        >
+          <Icon
+            src={"delete_input"}
+            style={{ width: 20, height: 20 }}
+            color={style?.color || theme?.color || "black"}
+          />
+        </div>
+      }
+      no_separator={true}
+      {...props}
+    />
+  );
+};
 const Password = ({
   style,
   value,
@@ -605,4 +635,10 @@ const Input = ({
   );
 };
 
-export { Input as default, Input, Password, ValidationCodeInput };
+export {
+  Input as default,
+  Input,
+  Password,
+  InputWithDelete,
+  ValidationCodeInput,
+};

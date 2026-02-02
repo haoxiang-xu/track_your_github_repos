@@ -6,6 +6,7 @@ import { ConfigContext } from "../../CONTAINERs/config/context";
 
 /* { Components } ------------------------------------------------------------------------------------------------------------ */
 import Input, {
+  InputWithDelete,
   Password,
   ValidationCodeInput,
 } from "../../BUILTIN_COMPONENTs/input/input";
@@ -14,6 +15,7 @@ import Input, {
 const InputDemo = () => {
   const { theme } = useContext(ConfigContext);
   const [value1, setValue1] = useState("");
+  const [value2, setValue2] = useState("");
 
   return (
     <div
@@ -64,6 +66,7 @@ const InputDemo = () => {
         prefix_label="G"
         no_separator
       />
+      <InputWithDelete label="Delete me" value={value2} set_value={setValue2} />
     </div>
   );
 };
