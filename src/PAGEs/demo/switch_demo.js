@@ -11,7 +11,7 @@ import {
   NotificationSwitch,
   MaterialSwitch,
   SemiSwitch,
-} from "../../BUILTIN_COMPONENTs/switch/switch";
+} from "../../BUILTIN_COMPONENTs/input/switch";
 /* { Components } -------------------------------------------------------------------------------------------------------------- */
 
 const SwitchDemo = () => {

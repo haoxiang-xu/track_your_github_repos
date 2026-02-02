@@ -5,7 +5,7 @@ import { ConfigContext } from "../../CONTAINERs/config/context";
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
 
 /* { Components } ------------------------------------------------------------------------------------------------------------ */
-import Input from "../../BUILTIN_COMPONENTs/input/input";
+import Input, { Password, ValidationCodeInput } from "../../BUILTIN_COMPONENTs/input/input";
 /* { Components } ------------------------------------------------------------------------------------------------------------ */
 
 const InputDemo = () => {
@@ -36,14 +36,12 @@ const InputDemo = () => {
       >
         Inputs
       </span>
-      <Input icon="link" />
-      <Input icon="edit" prefix="Prefix" />
-      <Input prefix="Prefix" />
-      <Input
-        style={{
-          fontSize: 64,
-        }}
-      />
+      <Input prefix_icon="link" />
+      <Input prefix_icon="edit" prefix_label="Prefix" />
+      <Input prefix_label="Prefix" />
+      <Input postfix_label="Postfix" />
+      <Password />
+      <ValidationCodeInput />
     </div>
   );
 };

@@ -33,8 +33,8 @@
     "input": {
       "fontSize": 16,
       "borderRadius": 7,
-      "backgroundColor": "#CCCCCC",
-      "boxShadow": "inset 0 2px 3px rgba(0, 0, 0, 0.16)",
+      "backgroundColor": "#E8E8E8",
+      "boxShadow": "inset 0 2px 3px rgba(0, 0, 0, 0.08)",
       "outline": { "onBlur": "2px solid rgba(0, 0, 0, 0)", "onFocus": "2px solid rgba(10, 133, 255, 1)" }
     }
   },
@@ -72,7 +72,7 @@
     "input": {
       "fontSize": 16,
       "borderRadius": 7,
-      "backgroundColor": "#494949",
+      "backgroundColor": "#2B2B2B",
       "boxShadow": "inset 0 2px 3px rgba(0, 0, 0, 0.16)",
       "outline": { "onBlur": "2px solid rgba(0, 0, 0, 0)", "onFocus": "2px solid rgba(10, 133, 255, 1)" }
     }

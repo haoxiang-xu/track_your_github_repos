@@ -36,7 +36,9 @@ const Demo = () => {
           display: "flex",
           flexDirection: "column",
           gap: "32px",
-          padding: "0px 128px",
+          paddingRight: "128px",
+          paddingLeft: "128px",
+          paddingBottom: "512px",
           overflowY: "scroll",
         }}
       >
