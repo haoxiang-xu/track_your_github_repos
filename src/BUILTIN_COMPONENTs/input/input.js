@@ -19,6 +19,8 @@ const Separator = ({ style }) => {
   return (
     <div
       style={{
+        position: "relative",
+        display: "inline",
         width: 1,
         backgroundColor: style?.color || theme?.color || "rgba(0, 0, 0, 0.12)",
         ...style,
@@ -402,9 +404,11 @@ const Input = ({
   ]);
   const calculate_label_left = useCallback(() => {
     let left = default_left_right_padding;
+    let gap_count = 0;
     if (prefix_component !== undefined) {
       if (prefix_component_ref.current) {
         left += prefix_component_ref.current.offsetWidth + default_gap_width;
+        gap_count += 1;
       }
     }
     if (prefix_icon !== undefined) {
@@ -412,13 +416,15 @@ const Input = ({
         (style?.fontSize || theme?.input.fontSize || 16) +
         12 +
         default_gap_width;
+      gap_count += 1;
     }
     if (prefix_label !== undefined) {
       if (prefix_label_ref.current) {
         left += prefix_label_ref.current.offsetWidth + default_gap_width;
+        gap_count += 1;
       }
     }
-    return left;
+    return left + (no_separator ? 0 : default_gap_width * gap_count);
   }, [prefix_component, prefix_icon, prefix_label, style, theme]);
 
   return (
@@ -622,11 +628,15 @@ const Input = ({
             position: "absolute",
             transition: "all 0.12s cubic-bezier(0.4, 0, 0.2, 1)",
             top:
-              onFocus || (value && value.length > 0) || (defaultValue && defaultValue.length > 0)
+              onFocus ||
+              (value && value.length > 0) ||
+              (defaultValue && defaultValue.length > 0)
                 ? `calc(0% - ${(style?.fontSize || theme?.input.fontSize || 16) / 2 + 4}px)`
                 : "50%",
             left:
-              onFocus || (value && value.length > 0) || (defaultValue && defaultValue.length > 0)
+              onFocus ||
+              (value && value.length > 0) ||
+              (defaultValue && defaultValue.length > 0)
                 ? default_left_right_padding
                 : calculate_label_left(),
             transform: "translateY(-50%)",
@@ -635,7 +645,9 @@ const Input = ({
               theme?.font.fontFamily ||
               "Arial, sans-serif",
             fontSize:
-              onFocus || (value && value.length > 0) || (defaultValue && defaultValue.length > 0)
+              onFocus ||
+              (value && value.length > 0) ||
+              (defaultValue && defaultValue.length > 0)
                 ? (style?.fontSize || theme?.input.fontSize || 16) * 0.8
                 : style?.fontSize || theme?.input.fontSize || 16,
             color: style?.color || theme?.color || "black",
