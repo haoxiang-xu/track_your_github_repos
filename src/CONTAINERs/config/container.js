@@ -4,7 +4,7 @@ import {
   useWindowSize,
   useWebBrowser,
   useDeviceType,
-} from "../../BUILTIN_COMPONENTs/mini_react/mini_react";
+} from "../../BUILTIN_COMPONENTs/mini_react/mini_use";
 
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
 import { ConfigContext } from "./context";
@@ -21,7 +21,7 @@ const ConfigContainer = ({ children }) => {
   const [syncWithSystemTheme, setSyncWithSystemTheme] = useState(true);
   const [theme, setTheme] = useState(null);
   const [onThemeMode, setOnThemeMode] = useState(
-    system_theme === "dark_mode" ? "dark_mode" : "light_mode"
+    system_theme === "dark_mode" ? "dark_mode" : "light_mode",
   );
   const [availableThemes, setAvailableThemes] = useState([]);
   const [selectedTheme, setSelectedTheme] = useState(null);

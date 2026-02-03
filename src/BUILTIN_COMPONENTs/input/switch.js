@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext, useCallback, useMemo } from "react";
-import { useMouse } from "../mini_react/mini_react";
+import { useMouse } from "../mini_react/mini_use";
 
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
 import { ConfigContext } from "../../CONTAINERs/config/context";
