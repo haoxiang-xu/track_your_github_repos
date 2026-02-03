@@ -1,4 +1,14 @@
-import { useState, useEffect, useRef } from "react";
+import {
+  useState,
+  useEffect,
+  useRef,
+  useLayoutEffect as reactUseLayoutEffect,
+} from "react";
+
+/* { BASIC HOOKs } ------------------------------------------------------------------------------------------------ */
+const useLayoutEffect =
+  typeof window !== "undefined" ? reactUseLayoutEffect : useEffect;
+/* { BASIC HOOKs } ------------------------------------------------------------------------------------------------ */
 
 /* { ENVIRONMENT LISTENERs } ------------------------------------------------------------------------------------ */
 const useSystemTheme = () => {
@@ -150,6 +160,7 @@ const useDeviceType = () => {
 /* { ENVIRONMENT LISTENERs } ------------------------------------------------------------------------------------ */
 
 export {
+  useLayoutEffect,
   useSystemTheme,
   useWindowSize,
   useMouse,

@@ -35,7 +35,15 @@
       "borderRadius": 7,
       "backgroundColor": "#E8E8E8",
       "boxShadow": "inset 0 2px 3px rgba(0, 0, 0, 0.08)",
-      "outline": { "onBlur": "2px solid rgba(0, 0, 0, 0)", "onFocus": "2px solid rgba(10, 133, 255, 1)" }
+      "outline": {
+        "onBlur": "2px solid rgba(0, 0, 0, 0)",
+        "onFocus": "2px solid rgba(10, 133, 255, 1)"
+      }
+    },
+    "tooltip": {
+      "color": "#FFFFFF",
+      "backgroundColor": "rgba(20, 20, 20, 0.92)",
+      "boxShadow": "0 6px 14px rgba(0, 0, 0, 0.28)"
     }
   },
   "dark_mode": {
@@ -74,7 +82,15 @@
       "borderRadius": 7,
       "backgroundColor": "#2B2B2B",
       "boxShadow": "inset 0 2px 3px rgba(0, 0, 0, 0.16)",
-      "outline": { "onBlur": "2px solid rgba(0, 0, 0, 0)", "onFocus": "2px solid rgba(10, 133, 255, 1)" }
+      "outline": {
+        "onBlur": "2px solid rgba(0, 0, 0, 0)",
+        "onFocus": "2px solid rgba(10, 133, 255, 1)"
+      }
+    },
+    "tooltip": {
+      "color": "#111111",
+      "backgroundColor": "rgba(200, 200, 200, 0.96)",
+      "boxShadow": "0 8px 18px rgba(0, 0, 0, 0.45)"
     }
   }
 }

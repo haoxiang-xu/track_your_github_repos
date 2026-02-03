@@ -425,7 +425,7 @@ const Input = ({
       }
     }
     return left + (no_separator ? 0 : default_gap_width * gap_count);
-  }, [prefix_component, prefix_icon, prefix_label, style, theme]);
+  }, [prefix_component, prefix_icon, prefix_label, style, theme, no_separator]);
 
   return (
     <div

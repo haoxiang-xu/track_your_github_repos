@@ -10,8 +10,8 @@ import Input, {
   Password,
   ValidationCodeInput,
 } from "../../BUILTIN_COMPONENTs/input/input";
-/* { Components } -------------------------------------------------------------------------------------------------------------- */
-import { Switch } from "../../BUILTIN_COMPONENTs/input/switch";
+import { SemiSwitch } from "../../BUILTIN_COMPONENTs/input/switch";
+import Tooltip from "../../BUILTIN_COMPONENTs/tooltip/tooltip";
 /* { Components } ------------------------------------------------------------------------------------------------------------ */
 
 const InputDemo = () => {
@@ -49,12 +49,22 @@ const InputDemo = () => {
       <Input postfix_label="Postfix" />
       <Password />
       <ValidationCodeInput />
-      <Input
-        prefix_icon="link"
-        prefix_label="https://"
-        postfix_label=".com"
-        no_separator
-      />
+      <Tooltip
+        position="bottom"
+        tooltip_component={
+          <div>
+            Custom <b>content</b>
+          </div>
+        }
+        trigger={["hover"]}
+      >
+        <Input
+          prefix_icon="link"
+          prefix_label="https://"
+          postfix_label=".com"
+          no_separator
+        />
+      </Tooltip>
       <Input
         label="search on Google"
         prefix_icon="search"
@@ -62,7 +72,7 @@ const InputDemo = () => {
         no_separator
       />
       <InputWithDelete label="Delete me" />
-      <Input label="with Switch" postfix_component={<Switch />} no_separator />
+      <Input label="with Switch" postfix_component={<SemiSwitch />} no_separator />
     </div>
   );
 };
