@@ -13,10 +13,11 @@ const SemiSwitch = ({
   style,
   on_icon_src = "subtract",
   off_icon_src = "circle",
-  on = false,
-  setOn = () => {},
+  on,
+  set_on,
 }) => {
   const { theme } = useContext(ConfigContext);
+  const [defaultOn, setDefaultOn] = useState(false);
   const mouse = useMouse();
   const [switchStyle, setSwitchStyle] = useState({
     width: 0,
@@ -39,7 +40,7 @@ const SemiSwitch = ({
           reprocessed_style[property] = theme.switch[property];
         }
       }
-      if (on) {
+      if (on || defaultOn) {
         reprocessed_style.backgroundColor =
           reprocessed_style.backgroundColor_on ||
           theme?.switch?.backgroundColor_on ||
@@ -49,7 +50,7 @@ const SemiSwitch = ({
       setSwitchStyle(reprocessed_style);
     } else if (theme?.switch) {
       let reprocessed_style = { ...theme.switch };
-      if (on) {
+      if (on || defaultOn) {
         reprocessed_style.backgroundColor =
           theme?.switch?.backgroundColor_on || theme?.switch?.backgroundColor;
       }
@@ -57,7 +58,7 @@ const SemiSwitch = ({
         ...reprocessed_style,
       });
     }
-  }, [theme, style, on]);
+  }, [theme, style, on, defaultOn]);
   useEffect(() => {
     const to_even_int = (val) => {
       let n = parseInt(val, 10);
@@ -106,7 +107,11 @@ const SemiSwitch = ({
   }, [mouse.leftKeyDown, iconStyle.width]);
   const handle_switch_on_click = (e) => {
     e.stopPropagation();
-    setOn(!on);
+    if (set_on !== undefined) {
+      set_on(!on);
+    } else {
+      setDefaultOn(!defaultOn);
+    }
   };
 
   return (
@@ -136,7 +141,7 @@ const SemiSwitch = ({
           transition: theme?.switch?.transition || "none",
           position: "absolute",
           top: "50%",
-          left: on
+          left: on || defaultOn
             ? switchStyle?.width - (thumbStyle?.width + thumbOffset)
             : thumbOffset,
 
@@ -152,7 +157,7 @@ const SemiSwitch = ({
         draggable={false}
       ></div>
       <Icon
-        src={on ? on_icon_src : off_icon_src}
+        src={on || defaultOn ? on_icon_src : off_icon_src}
         style={{
           transition: theme?.switch?.transition || "none",
           position: "absolute",
@@ -160,7 +165,7 @@ const SemiSwitch = ({
           left:
             typeof switchStyle?.height === "number" &&
             typeof switchStyle?.width === "number"
-              ? on
+              ? on || defaultOn
                 ? thumbOffset
                 : switchStyle?.width - (iconStyle?.width + thumbOffset)
               : undefined,
@@ -178,10 +183,11 @@ const MaterialSwitch = ({
   style,
   on_icon_src = "subtract",
   off_icon_src = "circle",
-  on = false,
-  setOn = () => {},
+  on,
+  set_on,
 }) => {
   const { theme } = useContext(ConfigContext);
+  const [defaultOn, setDefaultOn] = useState(false);
   const [switchStyle, setSwitchStyle] = useState({});
   const [highlighterOffset, setHighlighterOffset] = useState(0);
   const [onHover, setOnHover] = useState(false);
@@ -193,7 +199,7 @@ const MaterialSwitch = ({
           reprocessed_style[property] = theme.switch[property];
         }
       }
-      if (on) {
+      if (on || defaultOn) {
         reprocessed_style.backgroundColor =
           reprocessed_style.backgroundColor_on ||
           theme?.switch?.backgroundColor_on ||
@@ -203,7 +209,7 @@ const MaterialSwitch = ({
       setSwitchStyle(reprocessed_style);
     } else if (theme?.switch) {
       let reprocessed_style = { ...theme.switch };
-      if (on) {
+      if (on || defaultOn) {
         reprocessed_style.backgroundColor =
           theme?.switch?.backgroundColor_on || theme?.switch?.backgroundColor;
       }
@@ -211,7 +217,7 @@ const MaterialSwitch = ({
         ...reprocessed_style,
       });
     }
-  }, [theme, style, on]);
+  }, [theme, style, on, defaultOn]);
   useEffect(() => {
     const to_even_int = (val) => {
       let n = parseInt(val, 10);
@@ -227,7 +233,11 @@ const MaterialSwitch = ({
     }
   }, [switchStyle]);
   const handle_switch_on_click = () => {
-    setOn(!on);
+    if (set_on !== undefined) {
+      set_on(!on);
+    } else {
+      setDefaultOn(!defaultOn);
+    }
   };
 
   return (
@@ -276,7 +286,7 @@ const MaterialSwitch = ({
               typeof switchStyle?.width === "number" &&
               typeof switchStyle?.height === "number"
             ) {
-              return on
+              return on || defaultOn
                 ? switchStyle.width -
                     switchStyle.height -
                     highlighterOffset / 2 +
@@ -310,7 +320,7 @@ const MaterialSwitch = ({
           transition: switchStyle.transition || "none",
           position: "absolute",
           top: "50%",
-          left: on ? switchStyle?.width - switchStyle?.height : 0,
+          left: on || defaultOn ? switchStyle?.width - switchStyle?.height : 0,
 
           height:
             typeof switchStyle?.height === "number"
@@ -329,7 +339,7 @@ const MaterialSwitch = ({
         }}
       >
         <Icon
-          src={on ? on_icon_src : off_icon_src}
+          src={on || defaultOn ? on_icon_src : off_icon_src}
           color={switchStyle.backgroundColor}
           style={{
             position: "absolute",
@@ -345,7 +355,7 @@ const MaterialSwitch = ({
     </div>
   );
 };
-const NotificationSwitch = ({ style, on = false, setOn = () => {} }) => {
+const NotificationSwitch = ({ style, on, set_on }) => {
   const default_style = useMemo(
     () => ({
       backgroundColor: "rgb(255, 68, 0)",
@@ -369,16 +379,16 @@ const NotificationSwitch = ({ style, on = false, setOn = () => {} }) => {
       style={preprocess_style(style)}
       on_icon_src="notification_on"
       off_icon_src="notification_off"
-      on={on}
-      setOn={setOn}
+      on={on ? on : undefined}
+      set_on={set_on ? set_on : undefined}
     />
   );
 };
 const LightSwitch = ({ style }) => {
   const default_style = useMemo(
     () => ({
-      backgroundColor: "rgb(114, 75, 177)",
-      backgroundColor_on: "rgb(243, 190, 171)",
+      backgroundColor: "rgb(98, 86, 119)",
+      backgroundColor_on: "#ffa300",
     }),
     [],
   );
@@ -401,7 +411,7 @@ const LightSwitch = ({ style }) => {
       on_icon_src="sun"
       off_icon_src="moon"
       on={onThemeMode === "light_mode"}
-      setOn={() => {
+      set_on={() => {
         setSyncWithSystemTheme(false);
         setOnThemeMode(
           onThemeMode === "dark_mode" ? "light_mode" : "dark_mode",
@@ -414,10 +424,11 @@ const Switch = ({
   style,
   on_icon_src = "subtract",
   off_icon_src = "circle",
-  on = false,
-  setOn = () => {},
+  on,
+  set_on,
 }) => {
   const { theme } = useContext(ConfigContext);
+  const [defaultOn, setDefaultOn] = useState(false);
   const [switchStyle, setSwitchStyle] = useState({
     width: 0,
     height: 0,
@@ -435,7 +446,7 @@ const Switch = ({
           reprocessed_style[property] = theme.switch[property];
         }
       }
-      if (on) {
+      if (on || defaultOn) {
         reprocessed_style.backgroundColor =
           reprocessed_style.backgroundColor_on ||
           theme?.switch?.backgroundColor_on ||
@@ -445,7 +456,7 @@ const Switch = ({
       setSwitchStyle(reprocessed_style);
     } else if (theme?.switch) {
       let reprocessed_style = { ...theme.switch };
-      if (on) {
+      if (on || defaultOn) {
         reprocessed_style.backgroundColor =
           theme?.switch?.backgroundColor_on || theme?.switch?.backgroundColor;
       }
@@ -453,7 +464,7 @@ const Switch = ({
         ...reprocessed_style,
       });
     }
-  }, [theme, style, on]);
+  }, [theme, style, on, defaultOn]);
   useEffect(() => {
     const to_even_int = (val) => {
       let n = parseInt(val, 10);
@@ -486,7 +497,11 @@ const Switch = ({
   }, [switchStyle, thumbOffset]);
   const handle_switch_on_click = (e) => {
     e.stopPropagation();
-    setOn(!on);
+    if (set_on !== undefined) {
+      set_on(!on);
+    } else {
+      setDefaultOn(!defaultOn);
+    }
   };
 
   return (
@@ -508,9 +523,10 @@ const Switch = ({
           transition: theme?.switch?.transition || "none",
           position: "absolute",
           top: "50%",
-          left: on
-            ? switchStyle?.width - (thumbStyle?.width + thumbOffset)
-            : thumbOffset,
+          left:
+            on || defaultOn
+              ? switchStyle?.width - (thumbStyle?.width + thumbOffset)
+              : thumbOffset,
 
           height: thumbStyle.height,
           width: thumbStyle.width,
@@ -523,7 +539,7 @@ const Switch = ({
         }}
       ></div>
       <Icon
-        src={on ? on_icon_src : off_icon_src}
+        src={on || defaultOn ? on_icon_src : off_icon_src}
         style={{
           transition: theme?.switch?.transition || "none",
           position: "absolute",
@@ -531,7 +547,7 @@ const Switch = ({
           left:
             typeof switchStyle?.height === "number" &&
             typeof switchStyle?.width === "number"
-              ? on
+              ? on || defaultOn
                 ? thumbOffset
                 : switchStyle?.width - (thumbStyle?.width + thumbOffset)
               : undefined,

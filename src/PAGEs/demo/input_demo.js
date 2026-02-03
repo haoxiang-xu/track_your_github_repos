@@ -1,4 +1,4 @@
-import { useState, useContext } from "react";
+import { useContext } from "react";
 
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
 import { ConfigContext } from "../../CONTAINERs/config/context";
@@ -10,6 +10,8 @@ import Input, {
   Password,
   ValidationCodeInput,
 } from "../../BUILTIN_COMPONENTs/input/input";
+/* { Components } -------------------------------------------------------------------------------------------------------------- */
+import { Switch } from "../../BUILTIN_COMPONENTs/input/switch";
 /* { Components } ------------------------------------------------------------------------------------------------------------ */
 
 const InputDemo = () => {
@@ -60,6 +62,7 @@ const InputDemo = () => {
         no_separator
       />
       <InputWithDelete label="Delete me" />
+      <Input label="with Switch" postfix_component={<Switch />} no_separator />
     </div>
   );
 };
