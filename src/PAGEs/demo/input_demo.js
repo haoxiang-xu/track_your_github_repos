@@ -14,8 +14,6 @@ import Input, {
 
 const InputDemo = () => {
   const { theme } = useContext(ConfigContext);
-  const [value1, setValue1] = useState("");
-  const [value2, setValue2] = useState("");
 
   return (
     <div
@@ -43,12 +41,7 @@ const InputDemo = () => {
       >
         Inputs
       </span>
-      <Input
-        label="User name"
-        style={{ width: "200px" }}
-        value={value1}
-        set_value={setValue1}
-      />
+      <Input label="User name" style={{ width: "200px" }} />
       <Input prefix_icon="edit" prefix_label="Prefix" />
       <Input prefix_label="Prefix" />
       <Input postfix_label="Postfix" />
@@ -66,7 +59,7 @@ const InputDemo = () => {
         prefix_label="G"
         no_separator
       />
-      <InputWithDelete label="Delete me" value={value2} set_value={setValue2} />
+      <InputWithDelete label="Delete me" />
     </div>
   );
 };

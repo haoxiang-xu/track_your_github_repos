@@ -117,12 +117,19 @@ const ValidationCodeInput = ({ style }) => {
 };
 const InputWithDelete = ({ style, value, set_value = () => {}, ...props }) => {
   const { theme } = useContext(ConfigContext);
+  const [defaultValue, setDefaultValue] = useState("");
 
   return (
     <Input
       style={{ ...style }}
-      value={value}
-      set_value={set_value}
+      value={value !== undefined ? value : defaultValue}
+      set_value={(next) => {
+        if (value !== undefined) {
+          set_value(next);
+        } else {
+          setDefaultValue(next);
+        }
+      }}
       postfix_component={
         <div
           style={{
@@ -131,6 +138,7 @@ const InputWithDelete = ({ style, value, set_value = () => {}, ...props }) => {
           onClick={(e) => {
             e.stopPropagation();
             set_value("");
+            setDefaultValue("");
           }}
         >
           <Icon
@@ -337,6 +345,7 @@ const Input = ({
   no_separator = false,
 }) => {
   const { theme } = useContext(ConfigContext);
+  const [defaultValue, setDefaultValue] = useState("");
   const default_input_ref = useRef(null);
   const prefix_label_ref = useRef(null);
   const prefix_component_ref = useRef(null);
@@ -531,8 +540,14 @@ const Input = ({
           on_key_down(e);
         }}
         maxLength={max_length}
-        value={value}
-        onChange={(e) => set_value(e.target.value, e)}
+        value={value !== undefined ? value : defaultValue}
+        onChange={(e) => {
+          if (value !== undefined) {
+            set_value(e.target.value, e);
+          } else {
+            setDefaultValue(e.target.value);
+          }
+        }}
         placeholder={
           placeholder !== undefined
             ? placeholder
@@ -607,11 +622,11 @@ const Input = ({
             position: "absolute",
             transition: "all 0.12s cubic-bezier(0.4, 0, 0.2, 1)",
             top:
-              onFocus || (value && value.length > 0)
+              onFocus || (value && value.length > 0) || (defaultValue && defaultValue.length > 0)
                 ? `calc(0% - ${(style?.fontSize || theme?.input.fontSize || 16) / 2 + 4}px)`
                 : "50%",
             left:
-              onFocus || (value && value.length > 0)
+              onFocus || (value && value.length > 0) || (defaultValue && defaultValue.length > 0)
                 ? default_left_right_padding
                 : calculate_label_left(),
             transform: "translateY(-50%)",
@@ -620,7 +635,7 @@ const Input = ({
               theme?.font.fontFamily ||
               "Arial, sans-serif",
             fontSize:
-              onFocus || (value && value.length > 0)
+              onFocus || (value && value.length > 0) || (defaultValue && defaultValue.length > 0)
                 ? (style?.fontSize || theme?.input.fontSize || 16) * 0.8
                 : style?.fontSize || theme?.input.fontSize || 16,
             color: style?.color || theme?.color || "black",
