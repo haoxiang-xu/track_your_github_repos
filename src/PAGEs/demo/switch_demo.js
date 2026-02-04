@@ -12,8 +12,7 @@ import {
   MaterialSwitch,
   SemiSwitch,
 } from "../../BUILTIN_COMPONENTs/input/switch";
-import Tooltip from "../../BUILTIN_COMPONENTs/tooltip/tooltip";
-import Markdown from "../../BUILTIN_COMPONENTs/markdown/markdown";
+import { CustomizedTooltip } from "./demo";
 /* { Components } -------------------------------------------------------------------------------------------------------------- */
 
 const SwitchDemo = () => {
@@ -46,17 +45,8 @@ const SwitchDemo = () => {
       >
         Switches
       </span>
-      <Tooltip
-        position="bottom"
-        tooltip_component={
-          <Markdown
-            style={{
-              pre: {
-                margin: 0,
-                border: "1px solid #E0E0E0",
-              },
-            }}
-          >{` 
+      <CustomizedTooltip
+        code={` 
 \`\`\`js
 <Switch
   style={{
@@ -66,14 +56,7 @@ const SwitchDemo = () => {
   }}
 />
 \`\`\` 
-          `}</Markdown>
-        }
-        trigger={["hover"]}
-        style={{
-          padding: 4,
-          borderRadius: 10,
-        }}
-        close_delay={80}
+          `}
       >
         <Switch
           style={{
@@ -82,79 +65,214 @@ const SwitchDemo = () => {
             borderRadius: 50,
           }}
         />
-      </Tooltip>
-      <LightSwitch
-        style={{
-          width: 200,
-          height: 100,
-          borderRadius: 50,
-        }}
-      />
-      <NotificationSwitch
-        style={{
-          width: 200,
-          height: 100,
-          borderRadius: 50,
-        }}
-      />
-      <SemiSwitch
-        style={{
-          width: 300,
-          height: 100,
-          borderRadius: 50,
-          backgroundColor: "#59a2cc",
-          backgroundColor_on: "#ff9718",
-        }}
-        on_icon_src={"null"}
-        off_icon_src={"null"}
-      />
-      <MaterialSwitch
-        style={{
-          width: 200,
-          height: 100,
-          backgroundColor_on: "#fc7aff",
-        }}
-      />
-      <Switch
-        style={{
-          width: 140,
-          height: 70,
-          borderRadius: 20,
-          backgroundColor_on: "#1af337ff",
-        }}
-      />
-      <Switch
-        style={{
-          width: 60,
-          height: 30,
-          borderRadius: 20,
-          backgroundColor_on: "#59a2cc",
-        }}
-      />
-      <Switch
-        style={{
-          width: 100,
-          height: 80,
-          borderRadius: 20,
-          backgroundColor_on: "#95afc2ff",
-        }}
-      />
-      <SemiSwitch
-        style={{
-          width: 140,
-          height: 70,
-          borderRadius: 50,
-          backgroundColor_on: "#ff8000",
-        }}
-      />
-      <SemiSwitch
-        style={{
-          width: 70,
-          height: 100,
-          borderRadius: 12,
-          backgroundColor_on: "rgb(68, 85, 231)",
-        }}
-      />
+      </CustomizedTooltip>
+      <CustomizedTooltip
+        code={`
+\`\`\`js
+<LightSwitch
+  style={{
+    width: 200,
+    height: 100,
+    borderRadius: 50,
+  }}
+/>
+\`\`\`
+      `}
+      >
+        <LightSwitch
+          style={{
+            width: 200,
+            height: 100,
+            borderRadius: 50,
+          }}
+        />
+      </CustomizedTooltip>
+      <CustomizedTooltip
+        code={`
+\`\`\`js
+<NotificationSwitch
+  style={{
+    width: 200,
+    height: 100,
+    borderRadius: 50,
+  }}
+/>
+\`\`\`
+      `}
+      >
+        <NotificationSwitch
+          style={{
+            width: 200,
+            height: 100,
+            borderRadius: 50,
+          }}
+        />
+      </CustomizedTooltip>
+      <CustomizedTooltip
+        code={` 
+\`\`\`js
+<SemiSwitch
+  style={{
+    width: 300,
+    height: 100,
+    borderRadius: 50,
+    backgroundColor: "#59a2cc",
+    backgroundColor_on: "#ff9718",
+  }}
+  on_icon_src={"null"}
+  off_icon_src={"null"}
+/>
+\`\`\` 
+          `}
+      >
+        <SemiSwitch
+          style={{
+            width: 300,
+            height: 100,
+            borderRadius: 50,
+            backgroundColor: "#59a2cc",
+            backgroundColor_on: "#ff9718",
+          }}
+          on_icon_src={"null"}
+          off_icon_src={"null"}
+        />
+      </CustomizedTooltip>
+      <CustomizedTooltip
+        code={` 
+\`\`\`js
+<MaterialSwitch
+  style={{
+    width: 200,
+    height: 100,
+    backgroundColor_on: "#fc7aff",
+  }}
+/>
+\`\`\`
+          `}
+      >
+        <MaterialSwitch
+          style={{
+            width: 200,
+            height: 100,
+            backgroundColor_on: "#fc7aff",
+          }}
+        />
+      </CustomizedTooltip>
+      <CustomizedTooltip
+        code={` 
+\`\`\`js
+<Switch
+  style={{
+    width: 140,
+    height: 70,
+    borderRadius: 20,
+    backgroundColor_on: "#1af337ff",
+  }}
+/>
+\`\`\`
+          `}
+      >
+        <Switch
+          style={{
+            width: 140,
+            height: 70,
+            borderRadius: 20,
+            backgroundColor_on: "#1af337ff",
+          }}
+        />
+      </CustomizedTooltip>
+      <CustomizedTooltip
+        code={`
+\`\`\`js
+<Switch
+  style={{
+    width: 60,
+    height: 30,
+    borderRadius: 20,
+    backgroundColor_on: "#59a2cc",
+  }}
+/>
+\`\`\`
+`}
+      >
+        <Switch
+          style={{
+            width: 60,
+            height: 30,
+            borderRadius: 20,
+            backgroundColor_on: "#59a2cc",
+          }}
+        />
+      </CustomizedTooltip>
+      <CustomizedTooltip
+        code={`
+\`\`\`js
+<Switch
+  style={{
+    width: 100,
+    height: 80,
+    borderRadius: 20,
+    backgroundColor_on: "#95afc2ff",
+  }}
+/>
+\`\`\`
+`}
+      >
+        <Switch
+          style={{
+            width: 100,
+            height: 80,
+            borderRadius: 20,
+            backgroundColor_on: "#95afc2ff",
+          }}
+        />
+      </CustomizedTooltip>
+      <CustomizedTooltip
+        code={`
+\`\`\`js
+<SemiSwitch
+  style={{
+    width: 140,
+    height: 70,
+    borderRadius: 50,
+    backgroundColor_on: "#ff8000",
+  }}
+/>
+\`\`\`
+`}
+      >
+        <SemiSwitch
+          style={{
+            width: 140,
+            height: 70,
+            borderRadius: 50,
+            backgroundColor_on: "#ff8000",
+          }}
+        />
+      </CustomizedTooltip>
+      <CustomizedTooltip
+        code={`
+\`\`\`js
+<SemiSwitch
+  style={{
+    width: 70,
+    height: 100,
+    borderRadius: 12,
+    backgroundColor_on: "rgb(68, 85, 231)",
+  }}
+/>
+\`\`\`
+`}
+      >
+        <SemiSwitch
+          style={{
+            width: 70,
+            height: 100,
+            borderRadius: 12,
+            backgroundColor_on: "rgb(68, 85, 231)",
+          }}
+        />
+      </CustomizedTooltip>
     </div>
   );
 };
