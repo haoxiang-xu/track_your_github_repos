@@ -66,6 +66,7 @@ const Demo = () => {
           left: 0,
           right: 0,
           bottom: 0,
+          minWidth: 512,
           display: "flex",
           flexDirection: "column",
           gap: "32px",

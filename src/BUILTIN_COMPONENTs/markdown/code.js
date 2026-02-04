@@ -10,7 +10,6 @@ const toPx = (value, fallback) => {
   if (typeof value === "number") return `${value}px`;
   return value;
 };
-
 const toText = (node) => {
   if (node === undefined || node === null) return "";
   if (typeof node === "string" || typeof node === "number") return String(node);
@@ -20,7 +19,6 @@ const toText = (node) => {
   }
   return "";
 };
-
 const getLanguage = (className) => {
   if (!className) return "";
   const match =
@@ -28,8 +26,10 @@ const getLanguage = (className) => {
     className.match(/lang-([a-z0-9_-]+)/i);
   return match ? match[1] : "";
 };
-
-const MarkdownCodeBlock = ({ children, markdownTheme: markdownThemeOverride }) => {
+const MarkdownCodeBlock = ({
+  children,
+  markdownTheme: markdownThemeOverride,
+}) => {
   const { theme } = useContext(ConfigContext);
   const markdownTheme = markdownThemeOverride || theme?.markdown || {};
   const codeBlock = markdownTheme.codeBlock || {};
@@ -78,6 +78,18 @@ const MarkdownCodeBlock = ({ children, markdownTheme: markdownThemeOverride }) =
   const background = preTheme.backgroundColor || "#F6F6F6";
   const borderRadius = toPx(preTheme.borderRadius, "6px");
   const padding = toPx(preTheme.padding, "12px");
+  const overflowX = preTheme.overflowX ?? preTheme.overflow ?? "scroll";
+  const overflowY = preTheme.overflowY ?? preTheme.overflow ?? "scroll";
+  const height =
+    preTheme.height !== undefined ? toPx(preTheme.height, preTheme.height) : undefined;
+  const minHeight =
+    preTheme.minHeight !== undefined
+      ? toPx(preTheme.minHeight, preTheme.minHeight)
+      : undefined;
+  const maxHeight =
+    preTheme.maxHeight !== undefined
+      ? toPx(preTheme.maxHeight, preTheme.maxHeight)
+      : undefined;
   const headerBackground = codeBlock.headerBackground || background;
   const headerBorderColor = codeBlock.headerBorderColor || "transparent";
   const labelColor =
@@ -106,9 +118,7 @@ const MarkdownCodeBlock = ({ children, markdownTheme: markdownThemeOverride }) =
             color: labelColor,
           }}
         >
-          <span style={{ textTransform: "uppercase" }}>
-            {language || ""}
-          </span>
+          <span style={{ textTransform: "uppercase" }}>{language || ""}</span>
           {canCopy && (
             <button
               type="button"
@@ -129,10 +139,16 @@ const MarkdownCodeBlock = ({ children, markdownTheme: markdownThemeOverride }) =
         </div>
       )}
       <pre
+        className="scrolling-space-v"
         style={{
-          margin: 0,
+          margin: "0",
           padding: padding,
-          overflow: preTheme.overflow || "auto",
+          overflowX,
+          overflowY,
+          height,
+          minHeight,
+          maxHeight,
+          scrollbarGutter: preTheme.scrollbarGutter || "stable both-edges",
           background: "transparent",
         }}
       >

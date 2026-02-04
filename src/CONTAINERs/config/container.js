@@ -5,6 +5,7 @@ import {
   useWebBrowser,
   useDeviceType,
 } from "../../BUILTIN_COMPONENTs/mini_react/mini_use";
+import ScrollingSpace from "../../BUILTIN_COMPONENTs/class/scrolling_sapce";
 
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
 import { ConfigContext } from "./context";
@@ -69,6 +70,7 @@ const ConfigContainer = ({ children }) => {
       }}
     >
       {children}
+      <ScrollingSpace />
     </ConfigContext.Provider>
   );
 };

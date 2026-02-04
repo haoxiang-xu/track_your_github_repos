@@ -18,7 +18,6 @@ const toLineHeight = (value, fallback) => {
   if (value === undefined || value === null) return fallback;
   return value;
 };
-
 const MARKDOWN_STYLE_KEYS = new Set([
   "fontFamily",
   "fontSize",
@@ -38,7 +37,6 @@ const MARKDOWN_STYLE_KEYS = new Set([
   "image",
   "codeBlock",
 ]);
-
 const splitStyleProps = (style) => {
   if (!style || typeof style !== "object") {
     return { containerStyle: style, markdownStyle: undefined };
@@ -54,7 +52,6 @@ const splitStyleProps = (style) => {
     markdownStyle: hasMarkdownKeys ? rest : undefined,
   };
 };
-
 const mergeMarkdownTheme = (baseTheme, overrideTheme) => {
   if (!overrideTheme) return baseTheme || {};
 
@@ -80,7 +77,6 @@ const mergeMarkdownTheme = (baseTheme, overrideTheme) => {
 
   return merged;
 };
-
 const Markdown = ({
   children = "",
   markdown,
@@ -105,7 +101,6 @@ const Markdown = ({
         : Array.isArray(children)
           ? children.join("")
           : "";
-
   const { containerStyle, markdownStyle } = useMemo(
     () => splitStyleProps(style),
     [style]
@@ -114,7 +109,6 @@ const Markdown = ({
     () => mergeMarkdownTheme(theme?.markdown, markdownStyle),
     [theme, markdownStyle]
   );
-
   useEffect(() => {
     let cancelled = false;
     const themeKey = onThemeMode === "dark_mode" ? "dark" : "light";
@@ -166,7 +160,6 @@ const Markdown = ({
       cancelled = true;
     };
   }, [onThemeMode]);
-
   const css = useMemo(() => {
     const id = idRef.current;
     const markdownTheme = mergedMarkdownTheme;
@@ -246,6 +239,7 @@ const Markdown = ({
         padding: ${toPx(pre.padding, "12px")};
         border-radius: ${toPx(pre.borderRadius, "6px")};
         overflow: ${pre.overflow || "auto"};
+        height: ${toPx(pre.height, "auto")};
         margin: ${pre.margin || "0 0 0.85em 0"};
       }
       [data-markdown-id="${id}"] pre code {
@@ -298,7 +292,6 @@ const Markdown = ({
       }
     `;
   }, [mergedMarkdownTheme, theme]);
-
   const mergedOptions = useMemo(
     () => ({
       tables: true,
@@ -310,7 +303,6 @@ const Markdown = ({
     }),
     [options]
   );
-
   const mergedComponents = useMemo(
     () => ({
       pre: (props) => (
