@@ -7,6 +7,7 @@ import { ConfigContext } from "../../CONTAINERs/config/context";
 /* { Components } ------------------------------------------------------------------------------------------------------------ */
 import SwitchDemo from "./switch_demo";
 import InputDemo from "./input_demo";
+import MarkdownDemo from "./markdown_demo";
 /* { Components } ------------------------------------------------------------------------------------------------------------ */
 
 const Demo = () => {
@@ -44,6 +45,7 @@ const Demo = () => {
       >
         <SwitchDemo />
         <InputDemo />
+        <MarkdownDemo />
       </div>
     </div>
   );

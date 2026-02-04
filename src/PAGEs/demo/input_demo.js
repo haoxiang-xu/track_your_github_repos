@@ -12,6 +12,7 @@ import Input, {
 } from "../../BUILTIN_COMPONENTs/input/input";
 import { SemiSwitch } from "../../BUILTIN_COMPONENTs/input/switch";
 import Tooltip from "../../BUILTIN_COMPONENTs/tooltip/tooltip";
+import Markdown from "../../BUILTIN_COMPONENTs/markdown/markdown";
 /* { Components } ------------------------------------------------------------------------------------------------------------ */
 
 const InputDemo = () => {
@@ -52,9 +53,16 @@ const InputDemo = () => {
       <Tooltip
         position="bottom"
         tooltip_component={
-          <div>
-            Custom <b>content</b>
-          </div>
+          <Markdown>{` 
+\`\`\`js
+<Input
+  prefix_icon="link"
+  prefix_label="https://"
+  postfix_label=".com"
+  no_separator
+/>
+\`\`\` 
+          `}</Markdown>
         }
         trigger={["hover"]}
       >
@@ -72,7 +80,11 @@ const InputDemo = () => {
         no_separator
       />
       <InputWithDelete label="Delete me" />
-      <Input label="with Switch" postfix_component={<SemiSwitch />} no_separator />
+      <Input
+        label="with Switch"
+        postfix_component={<SemiSwitch />}
+        no_separator
+      />
     </div>
   );
 };
