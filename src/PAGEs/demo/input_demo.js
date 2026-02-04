@@ -53,7 +53,14 @@ const InputDemo = () => {
       <Tooltip
         position="bottom"
         tooltip_component={
-          <Markdown>{` 
+          <Markdown
+            style={{
+              pre: {
+                margin: 0,
+                border: "1px solid #E0E0E0",
+              },
+            }}
+          >{` 
 \`\`\`js
 <Input
   prefix_icon="link"
@@ -65,6 +72,11 @@ const InputDemo = () => {
           `}</Markdown>
         }
         trigger={["hover"]}
+        style={{
+          padding: 4,
+          borderRadius: 10,
+        }}
+        close_delay={80}
       >
         <Input
           prefix_icon="link"

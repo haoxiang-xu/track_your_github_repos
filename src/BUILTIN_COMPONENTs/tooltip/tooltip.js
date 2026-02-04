@@ -730,7 +730,7 @@ const Tooltip = ({
     styleTextColor ?? theme?.tooltip?.color ?? defaultTooltipStyle.color;
   const shadowValue =
     styleBoxShadow ?? theme?.tooltip?.boxShadow ?? defaultTooltipStyle.boxShadow;
-  const contentPadding = stylePadding ?? "6px 10px";
+  const contentPadding = stylePadding ?? "6px";
   const contentMaxWidth = styleMaxWidth ?? 260;
   const contentFontSize = styleFontSize ?? 12;
   const contentLineHeight = styleLineHeight ?? 1.4;

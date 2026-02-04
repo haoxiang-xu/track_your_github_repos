@@ -28,9 +28,9 @@ const getLanguage = (className) => {
   return match ? match[1] : "";
 };
 
-const MarkdownCodeBlock = ({ children }) => {
+const MarkdownCodeBlock = ({ children, markdownTheme: markdownThemeOverride }) => {
   const { theme } = useContext(ConfigContext);
-  const markdownTheme = theme?.markdown || {};
+  const markdownTheme = markdownThemeOverride || theme?.markdown || {};
   const codeBlock = markdownTheme.codeBlock || {};
   const codeTheme = markdownTheme.code || {};
   const preTheme = markdownTheme.pre || {};
@@ -75,7 +75,7 @@ const MarkdownCodeBlock = ({ children }) => {
         borderRadius: borderRadius,
         overflow: "hidden",
         background: background,
-        margin: preTheme.margin || "0 0 0.85em 0",
+        margin: preTheme.margin || "0 0 0 0",
       }}
     >
       {(language || canCopy) && (

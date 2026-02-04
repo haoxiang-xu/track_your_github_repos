@@ -19,6 +19,68 @@ const toLineHeight = (value, fallback) => {
   return value;
 };
 
+const MARKDOWN_STYLE_KEYS = new Set([
+  "fontFamily",
+  "fontSize",
+  "lineHeight",
+  "color",
+  "backgroundColor",
+  "paragraphMargin",
+  "blockGap",
+  "heading",
+  "list",
+  "blockquote",
+  "code",
+  "pre",
+  "link",
+  "hr",
+  "table",
+  "image",
+  "codeBlock",
+]);
+
+const splitStyleProps = (style) => {
+  if (!style || typeof style !== "object") {
+    return { containerStyle: style, markdownStyle: undefined };
+  }
+
+  const { container, ...rest } = style;
+  const hasMarkdownKeys = Object.keys(rest).some((key) =>
+    MARKDOWN_STYLE_KEYS.has(key)
+  );
+
+  return {
+    containerStyle: container || (!hasMarkdownKeys ? style : undefined),
+    markdownStyle: hasMarkdownKeys ? rest : undefined,
+  };
+};
+
+const mergeMarkdownTheme = (baseTheme, overrideTheme) => {
+  if (!overrideTheme) return baseTheme || {};
+
+  const merged = { ...(baseTheme || {}), ...overrideTheme };
+  const nestedKeys = [
+    "heading",
+    "list",
+    "blockquote",
+    "code",
+    "pre",
+    "link",
+    "hr",
+    "table",
+    "image",
+    "codeBlock",
+  ];
+
+  nestedKeys.forEach((key) => {
+    if (baseTheme?.[key] && overrideTheme?.[key]) {
+      merged[key] = { ...baseTheme[key], ...overrideTheme[key] };
+    }
+  });
+
+  return merged;
+};
+
 const Markdown = ({
   children = "",
   markdown,
@@ -43,9 +105,18 @@ const Markdown = ({
           ? children.join("")
           : "";
 
+  const { containerStyle, markdownStyle } = useMemo(
+    () => splitStyleProps(style),
+    [style]
+  );
+  const mergedMarkdownTheme = useMemo(
+    () => mergeMarkdownTheme(theme?.markdown, markdownStyle),
+    [theme, markdownStyle]
+  );
+
   const css = useMemo(() => {
     const id = idRef.current;
-    const markdownTheme = theme?.markdown || {};
+    const markdownTheme = mergedMarkdownTheme;
     const baseFontFamily =
       markdownTheme.fontFamily || theme?.font?.fontFamily || "Jost";
     const baseFontSize = toPx(markdownTheme.fontSize, "16px");
@@ -62,6 +133,8 @@ const Markdown = ({
     const table = markdownTheme.table || {};
     const image = markdownTheme.image || {};
     const paragraphMargin = markdownTheme.paragraphMargin;
+    const blockGap = markdownTheme.blockGap;
+    const hasBlockGap = blockGap !== undefined && blockGap !== null;
 
     return `
       [data-markdown-id="${id}"] {
@@ -157,8 +230,21 @@ const Markdown = ({
         max-width: ${image.maxWidth || "100%"};
         border-radius: ${toPx(image.borderRadius, "6px")};
       }
+      ${
+        hasBlockGap
+          ? `
+      [data-markdown-id="${id}"] > * {
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
+      }
+      [data-markdown-id="${id}"] > * + * {
+        margin-top: ${toPx(blockGap, "12px")};
+      }
+      `
+          : ""
+      }
     `;
-  }, [theme]);
+  }, [mergedMarkdownTheme, theme]);
 
   const mergedOptions = useMemo(
     () => ({
@@ -174,17 +260,19 @@ const Markdown = ({
 
   const mergedComponents = useMemo(
     () => ({
-      pre: MarkdownCodeBlock,
+      pre: (props) => (
+        <MarkdownCodeBlock {...props} markdownTheme={mergedMarkdownTheme} />
+      ),
       ...components,
     }),
-    [components]
+    [components, mergedMarkdownTheme]
   );
 
   return (
     <div
       data-markdown-id={idRef.current}
       className={className}
-      style={style}
+      style={containerStyle}
     >
       <style>{css}</style>
       <ReactShowdown
