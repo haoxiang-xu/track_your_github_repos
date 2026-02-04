@@ -1,4 +1,5 @@
 import { useContext, useMemo, useState } from "react";
+import hljs from "highlight.js/lib/common";
 
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
 import { ConfigContext } from "../../CONTAINERs/config/context";
@@ -47,6 +48,20 @@ const MarkdownCodeBlock = ({ children, markdownTheme: markdownThemeOverride }) =
   const codeText = toText(codeElement?.props?.children ?? children);
   const canCopy =
     typeof navigator !== "undefined" && !!navigator.clipboard?.writeText;
+  const highlightedHtml = useMemo(() => {
+    if (!codeText) return "";
+
+    try {
+      if (language && hljs.getLanguage(language)) {
+        return hljs.highlight(codeText, { language }).value;
+      }
+      return hljs.highlightAuto(codeText).value;
+    } catch (error) {
+      console.error("[Markdown code highlight failed]:", error);
+      return "";
+    }
+  }, [codeText, language]);
+  const codeClassName = [className, "hljs"].filter(Boolean).join(" ");
 
   const [copied, setCopied] = useState(false);
   const handleCopy = async () => {
@@ -122,7 +137,7 @@ const MarkdownCodeBlock = ({ children, markdownTheme: markdownThemeOverride }) =
         }}
       >
         <code
-          className={className}
+          className={codeClassName}
           style={{
             fontFamily:
               codeTheme.fontFamily || "Menlo, Monaco, Consolas, monospace",
@@ -131,8 +146,11 @@ const MarkdownCodeBlock = ({ children, markdownTheme: markdownThemeOverride }) =
             color: codeTheme.color || "inherit",
             background: "transparent",
           }}
+          dangerouslySetInnerHTML={
+            highlightedHtml ? { __html: highlightedHtml } : undefined
+          }
         >
-          {codeText}
+          {!highlightedHtml ? codeText : null}
         </code>
       </pre>
     </div>

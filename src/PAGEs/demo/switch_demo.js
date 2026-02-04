@@ -12,6 +12,8 @@ import {
   MaterialSwitch,
   SemiSwitch,
 } from "../../BUILTIN_COMPONENTs/input/switch";
+import Tooltip from "../../BUILTIN_COMPONENTs/tooltip/tooltip";
+import Markdown from "../../BUILTIN_COMPONENTs/markdown/markdown";
 /* { Components } -------------------------------------------------------------------------------------------------------------- */
 
 const SwitchDemo = () => {
@@ -44,13 +46,43 @@ const SwitchDemo = () => {
       >
         Switches
       </span>
-      <Switch
+      <Tooltip
+        position="bottom"
+        tooltip_component={
+          <Markdown
+            style={{
+              pre: {
+                margin: 0,
+                border: "1px solid #E0E0E0",
+              },
+            }}
+          >{` 
+\`\`\`js
+<Switch
+  style={{
+    width: 200,
+    height: 100,
+    borderRadius: 50,
+  }}
+/>
+\`\`\` 
+          `}</Markdown>
+        }
+        trigger={["hover"]}
         style={{
-          width: 200,
-          height: 100,
-          borderRadius: 50,
+          padding: 4,
+          borderRadius: 10,
         }}
-      />
+        close_delay={80}
+      >
+        <Switch
+          style={{
+            width: 200,
+            height: 100,
+            borderRadius: 50,
+          }}
+        />
+      </Tooltip>
       <LightSwitch
         style={{
           width: 200,
