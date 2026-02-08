@@ -79,17 +79,6 @@ const SpinnerDemo = () => {
           <CellSplitSpinner size={60} />
         </div>
       </CustomizedTooltip>
-      <CustomizedTooltip
-        code={` 
-\`\`\`js
-<CellSplitSpinner size={72} speed={0.8} color="#ffffff" />
-\`\`\` 
-          `}
-      >
-        <div style={cardStyle}>
-          <CellSplitSpinner size={72} speed={0.8} color="#ffffff" />
-        </div>
-      </CustomizedTooltip>
     </div>
   );
 };

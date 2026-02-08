@@ -12,12 +12,18 @@ const SelectDemo = () => {
   const { theme } = useContext(ConfigContext);
   const [house, setHouse] = useState("club");
   const [city, setCity] = useState(null);
+  const [simple, setSimple] = useState("low");
 
   const houseOptions = [
     { label: "Heart", value: "heart", icon: "poker_hearts" },
     { label: "Diamond", value: "diamond", icon: "poker_diamonds" },
     { label: "Spade", value: "spade", icon: "poker_spades", disabled: true },
     { label: "Club", value: "club", icon: "poker_clubs" },
+  ];
+  const simpleOptions = [
+    { label: "Low", value: "low" },
+    { label: "Medium", value: "medium" },
+    { label: "High", value: "high" },
   ];
 
   const cityOptions = [
@@ -72,7 +78,7 @@ const SelectDemo = () => {
         value={house}
         set_value={setHouse}
         filter_mode="trigger"
-        placeholder="Select club"
+        placeholder="Select suit"
         style={{ width: 240 }}
       />
       <Select
@@ -84,6 +90,23 @@ const SelectDemo = () => {
         search_placeholder="Filter cities..."
         style={{ width: 280 }}
         dropdown_style={{ maxWidth: 320, maxHeight: 240 }}
+      />
+      <Select
+        options={simpleOptions}
+        value={simple}
+        set_value={setSimple}
+        filterable={false}
+        filter_mode="panel"
+        placeholder="Priority (no filter)"
+        style={{ width: 240 }}
+      />
+      <Select
+        options={cityOptions}
+        filter_mode="panel"
+        placeholder="Compact list"
+        style={{ width: 220, fontSize: 14, height: 32 }}
+        dropdown_style={{ maxWidth: 260, maxHeight: 180 }}
+        option_style={{ height: 28, padding: "4px 8px" }}
       />
       <Select
         options={cityOptions}
