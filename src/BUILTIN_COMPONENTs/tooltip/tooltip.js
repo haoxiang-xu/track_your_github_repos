@@ -282,6 +282,7 @@ const Tooltip = ({
   open_delay = 80,
   close_delay = 0,
   show_arrow = true,
+  align = "center",
   arrow_size = 8,
   arrow_width,
   arrow_radius = 4,
@@ -289,6 +290,8 @@ const Tooltip = ({
   corner_radius = 6,
   style,
   wrapper_style,
+  open,
+  on_open_change,
 }) => {
   const { theme, onThemeMode } = useContext(ConfigContext);
   const trigger_ref = useRef(null);
@@ -297,6 +300,8 @@ const Tooltip = ({
   const [portal_element, setPortalElement] = useState(null);
   const open_timer_ref = useRef(null);
   const close_timer_ref = useRef(null);
+  const open_ref = useRef(open);
+  const has_open_sync_ref = useRef(false);
 
   const [isHoveringTrigger, setIsHoveringTrigger] = useState(false);
   const [isHoveringTooltip, setIsHoveringTooltip] = useState(false);
@@ -326,11 +331,13 @@ const Tooltip = ({
   const isHoverEnabled = has_trigger("hover");
   const isFocusEnabled = has_trigger("focus");
   const isClickEnabled = has_trigger("click");
+  const isControlled = open !== undefined;
 
-  const isOpen =
+  const derivedOpen =
     (isHoverEnabled && (isHoveringTrigger || isHoveringTooltip)) ||
     (isFocusEnabled && isFocused) ||
     (isClickEnabled && isClickOpen);
+  const isOpen = isControlled ? open : derivedOpen;
 
   const content =
     tooltip_component !== undefined ? tooltip_component : label;
@@ -416,6 +423,32 @@ const Tooltip = ({
   useEffect(() => {
     if (!isClickEnabled) setIsClickOpen(false);
   }, [isClickEnabled]);
+  useEffect(() => {
+    open_ref.current = open;
+  }, [open]);
+  useEffect(() => {
+    if (!isControlled) return;
+    if (!isClickEnabled) return;
+    setIsClickOpen(!!open);
+  }, [open, isControlled, isClickEnabled]);
+  useEffect(() => {
+    if (!isControlled || !on_open_change) return;
+    if (isClickEnabled) return;
+    if (!isHoverEnabled && !isFocusEnabled) return;
+    if (!has_open_sync_ref.current) {
+      has_open_sync_ref.current = true;
+      return;
+    }
+    if (derivedOpen === open_ref.current) return;
+    on_open_change(derivedOpen);
+  }, [
+    derivedOpen,
+    isControlled,
+    on_open_change,
+    isClickEnabled,
+    isHoverEnabled,
+    isFocusEnabled,
+  ]);
 
   const measure_bubble = useCallback(() => {
     if (!content_ref.current) return null;
@@ -441,13 +474,26 @@ const Tooltip = ({
       const viewportWidth = window.innerWidth || 0;
       const viewportHeight = window.innerHeight || 0;
       const arrowExtent = show_arrow ? arrowHeight : 0;
+      const resolvedAlign =
+        align === "start" || align === "end" ? align : "center";
 
       const get_anchor = (pos) => {
         if (pos === "bottom") {
+          const anchorX =
+            resolvedAlign === "start"
+              ? rect.left
+              : resolvedAlign === "end"
+                ? rect.right
+                : rect.left + rect.width / 2;
           return {
-            x: rect.left + rect.width / 2,
+            x: anchorX,
             y: rect.bottom + offset,
-            transform: "translate(-50%, 0%)",
+            transform:
+              resolvedAlign === "start"
+                ? "translate(0%, 0%)"
+                : resolvedAlign === "end"
+                  ? "translate(-100%, 0%)"
+                  : "translate(-50%, 0%)",
           };
         }
         if (pos === "left") {
@@ -464,10 +510,21 @@ const Tooltip = ({
             transform: "translate(0%, -50%)",
           };
         }
+        const anchorX =
+          resolvedAlign === "start"
+            ? rect.left
+            : resolvedAlign === "end"
+              ? rect.right
+              : rect.left + rect.width / 2;
         return {
-          x: rect.left + rect.width / 2,
+          x: anchorX,
           y: rect.top - offset,
-          transform: "translate(-50%, -100%)",
+          transform:
+            resolvedAlign === "start"
+              ? "translate(0%, -100%)"
+              : resolvedAlign === "end"
+                ? "translate(-100%, -100%)"
+                : "translate(-50%, -100%)",
         };
       };
 
@@ -483,6 +540,12 @@ const Tooltip = ({
       const get_top_left = (pos, anchor, totalSize) => {
         if (!totalSize) return { left: anchor.x, top: anchor.y };
         if (pos === "bottom") {
+          if (resolvedAlign === "start") {
+            return { left: anchor.x, top: anchor.y };
+          }
+          if (resolvedAlign === "end") {
+            return { left: anchor.x - totalSize.width, top: anchor.y };
+          }
           return { left: anchor.x - totalSize.width / 2, top: anchor.y };
         }
         if (pos === "left") {
@@ -493,6 +556,15 @@ const Tooltip = ({
         }
         if (pos === "right") {
           return { left: anchor.x, top: anchor.y - totalSize.height / 2 };
+        }
+        if (resolvedAlign === "start") {
+          return { left: anchor.x, top: anchor.y - totalSize.height };
+        }
+        if (resolvedAlign === "end") {
+          return {
+            left: anchor.x - totalSize.width,
+            top: anchor.y - totalSize.height,
+          };
         }
         return {
           left: anchor.x - totalSize.width / 2,
@@ -543,9 +615,19 @@ const Tooltip = ({
       const adjustedSize = get_size_for_pos(nextPosition, size);
       if (adjustedSize) {
         if (nextPosition === "top" || nextPosition === "bottom") {
-          const minX = adjustedSize.width / 2;
-          const maxX = viewportWidth - adjustedSize.width / 2;
-          anchorX = Math.min(Math.max(anchorX, minX), maxX);
+          if (resolvedAlign === "start") {
+            const minX = 0;
+            const maxX = viewportWidth - adjustedSize.width;
+            anchorX = Math.min(Math.max(anchorX, minX), maxX);
+          } else if (resolvedAlign === "end") {
+            const minX = adjustedSize.width;
+            const maxX = viewportWidth;
+            anchorX = Math.min(Math.max(anchorX, minX), maxX);
+          } else {
+            const minX = adjustedSize.width / 2;
+            const maxX = viewportWidth - adjustedSize.width / 2;
+            anchorX = Math.min(Math.max(anchorX, minX), maxX);
+          }
         } else {
           const minY = adjustedSize.height / 2;
           const maxY = viewportHeight - adjustedSize.height / 2;
@@ -589,14 +671,23 @@ const Tooltip = ({
   }, [isOpen, update_position]);
 
   useEffect(() => {
-    if (!isClickEnabled || !isClickOpen) return undefined;
+    const isClickActive = isControlled ? open : isClickOpen;
+    if (!isClickEnabled || !isClickActive) return undefined;
     const handleMouseDown = (e) => {
       if (trigger_ref.current?.contains(e.target)) return;
       if (tooltip_ref.current?.contains(e.target)) return;
+      if (isControlled) {
+        if (on_open_change) on_open_change(false);
+      }
       setIsClickOpen(false);
     };
     const handleKeyDown = (e) => {
-      if (e.key === "Escape") setIsClickOpen(false);
+      if (e.key === "Escape") {
+        if (isControlled) {
+          if (on_open_change) on_open_change(false);
+        }
+        setIsClickOpen(false);
+      }
     };
     document.addEventListener("mousedown", handleMouseDown);
     document.addEventListener("keydown", handleKeyDown);
@@ -604,7 +695,7 @@ const Tooltip = ({
       document.removeEventListener("mousedown", handleMouseDown);
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [isClickEnabled, isClickOpen]);
+  }, [isClickEnabled, isClickOpen, isControlled, on_open_change, open]);
 
   const handle_trigger_mouse_enter = () => {
     if (!isHoverEnabled) return;
@@ -628,6 +719,10 @@ const Tooltip = ({
     if (!isClickEnabled) return;
     clear_open_timer();
     setIsHoverPending(false);
+    if (isControlled) {
+      if (on_open_change) on_open_change(!open_ref.current);
+      return;
+    }
     setIsClickOpen((prev) => !prev);
   };
 

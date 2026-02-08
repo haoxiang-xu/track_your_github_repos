@@ -11,8 +11,10 @@ import Markdown from "../../BUILTIN_COMPONENTs/markdown/markdown";
 
 /* { Sections } -------------------------------------------------------------------------------------------------------------- */
 import SwitchDemo from "./switch_demo";
+import SpinnerDemo from "./spinner_demo";
 import InputDemo from "./input_demo";
 import MarkdownDemo from "./markdown_demo";
+import SelectDemo from "./select_demo";
 /* { Sections } -------------------------------------------------------------------------------------------------------------- */
 
 const CustomizedTooltip = ({ children, code }) => {
@@ -78,7 +80,9 @@ const Demo = () => {
         }}
       >
         <SwitchDemo />
+        <SpinnerDemo />
         <InputDemo />
+        <SelectDemo />
         <MarkdownDemo />
       </div>
     </div>

@@ -40,6 +40,37 @@
         "onFocus": "2px solid rgba(10, 133, 255, 1)"
       }
     },
+    "select": {
+      "fontSize": 16,
+      "borderRadius": 7,
+      "backgroundColor": "#E8E8E8",
+      "boxShadow": "inset 0 2px 3px rgba(0, 0, 0, 0.08)",
+      "outline": {
+        "onBlur": "2px solid rgba(0, 0, 0, 0)",
+        "onFocus": "2px solid rgba(10, 133, 255, 1)"
+      },
+      "placeholderColor": "rgba(0, 0, 0, 0.45)",
+      "dropdown": {
+        "backgroundColor": "#FFFFFF",
+        "boxShadow": "0 12px 20px rgba(0, 0, 0, 0.12)",
+        "borderRadius": 10,
+        "padding": 6,
+        "maxHeight": "auto"
+      },
+      "option": {
+        "height": 36,
+        "padding": "6px 10px",
+        "gap": 8,
+        "hoverBackgroundColor": "rgba(0, 0, 0, 0.06)",
+        "selectedBackgroundColor": "rgba(10, 133, 255, 0.14)",
+        "disabledColor": "rgba(0, 0, 0, 0.35)"
+      },
+      "search": {
+        "backgroundColor": "rgba(0, 0, 0, 0.05)",
+        "borderRadius": 7,
+        "padding": "6px 10px"
+      }
+    },
     "tooltip": {
       "color": "#FFFFFF",
       "backgroundColor": "rgba(20, 20, 20, 0.92)",
@@ -156,6 +187,37 @@
       "outline": {
         "onBlur": "2px solid rgba(0, 0, 0, 0)",
         "onFocus": "2px solid rgba(10, 133, 255, 1)"
+      }
+    },
+    "select": {
+      "fontSize": 16,
+      "borderRadius": 7,
+      "backgroundColor": "#2B2B2B",
+      "boxShadow": "inset 0 2px 3px rgba(0, 0, 0, 0.16)",
+      "outline": {
+        "onBlur": "2px solid rgba(0, 0, 0, 0)",
+        "onFocus": "2px solid rgba(10, 133, 255, 1)"
+      },
+      "placeholderColor": "rgba(255, 255, 255, 0.4)",
+      "dropdown": {
+        "backgroundColor": "#1E1E1E",
+        "boxShadow": "0 14px 24px rgba(0, 0, 0, 0.45)",
+        "borderRadius": 10,
+        "padding": 6,
+        "maxHeight": "auto"
+      },
+      "option": {
+        "height": 36,
+        "padding": "6px 10px",
+        "gap": 8,
+        "hoverBackgroundColor": "rgba(255, 255, 255, 0.08)",
+        "selectedBackgroundColor": "rgba(106, 168, 255, 0.22)",
+        "disabledColor": "rgba(255, 255, 255, 0.35)"
+      },
+      "search": {
+        "backgroundColor": "rgba(255, 255, 255, 0.08)",
+        "borderRadius": 7,
+        "padding": "6px 10px"
       }
     },
     "tooltip": {

@@ -13,6 +13,7 @@ import Input, {
 import { SemiSwitch } from "../../BUILTIN_COMPONENTs/input/switch";
 import Tooltip from "../../BUILTIN_COMPONENTs/tooltip/tooltip";
 import Markdown from "../../BUILTIN_COMPONENTs/markdown/markdown";
+import { CustomizedTooltip } from "./demo";
 /* { Components } ------------------------------------------------------------------------------------------------------------ */
 
 const InputDemo = () => {
@@ -44,12 +45,60 @@ const InputDemo = () => {
       >
         Inputs
       </span>
-      <Input label="User name" style={{ width: "200px" }} />
-      <Input prefix_icon="edit" prefix_label="Prefix" />
-      <Input prefix_label="Prefix" />
-      <Input postfix_label="Postfix" />
-      <Password />
-      <ValidationCodeInput />
+      <CustomizedTooltip
+        code={` 
+\`\`\`js
+<Input label="User name" style={{ width: "200px" }} />
+\`\`\` 
+          `}
+      >
+        <Input label="User name" style={{ width: "200px" }} />
+      </CustomizedTooltip>
+      <CustomizedTooltip
+        code={` 
+\`\`\`js
+<Input prefix_icon="edit" prefix_label="Prefix" />
+\`\`\` 
+          `}
+      >
+        <Input prefix_icon="edit" prefix_label="Prefix" />
+      </CustomizedTooltip>
+      <CustomizedTooltip
+        code={` 
+\`\`\`js
+<Input prefix_label="Prefix" />
+\`\`\` 
+          `}
+      >
+        <Input prefix_label="Prefix" />
+      </CustomizedTooltip>
+      <CustomizedTooltip
+        code={` 
+\`\`\`js
+<Input postfix_label="Postfix" />
+\`\`\` 
+          `}
+      >
+        <Input postfix_label="Postfix" />
+      </CustomizedTooltip>
+      <CustomizedTooltip
+        code={` 
+\`\`\`js
+<Password />
+\`\`\` 
+          `}
+      >
+        <Password />
+      </CustomizedTooltip>
+      <CustomizedTooltip
+        code={` 
+\`\`\`js
+<ValidationCodeInput />
+\`\`\` 
+          `}
+      >
+        <ValidationCodeInput />
+      </CustomizedTooltip>
       <Tooltip
         position="bottom"
         tooltip_component={
@@ -85,18 +134,51 @@ const InputDemo = () => {
           no_separator
         />
       </Tooltip>
-      <Input
-        label="search on Google"
-        prefix_icon="search"
-        prefix_label="G"
-        no_separator
-      />
-      <InputWithDelete label="Delete me" />
-      <Input
-        label="with Switch"
-        postfix_component={<SemiSwitch />}
-        no_separator
-      />
+      <CustomizedTooltip
+        code={` 
+\`\`\`js
+<Input
+  label="search on Google"
+  prefix_icon="search"
+  prefix_label="G"
+  no_separator
+/>
+\`\`\` 
+          `}
+      >
+        <Input
+          label="search on Google"
+          prefix_icon="search"
+          prefix_label="G"
+          no_separator
+        />
+      </CustomizedTooltip>
+      <CustomizedTooltip
+        code={` 
+\`\`\`js
+<InputWithDelete label="Delete me" />
+\`\`\` 
+          `}
+      >
+        <InputWithDelete label="Delete me" />
+      </CustomizedTooltip>
+      <CustomizedTooltip
+        code={` 
+\`\`\`js
+<Input
+  label="with Switch"
+  postfix_component={<SemiSwitch />}
+  no_separator
+/>
+\`\`\` 
+          `}
+      >
+        <Input
+          label="with Switch"
+          postfix_component={<SemiSwitch />}
+          no_separator
+        />
+      </CustomizedTooltip>
     </div>
   );
 };
