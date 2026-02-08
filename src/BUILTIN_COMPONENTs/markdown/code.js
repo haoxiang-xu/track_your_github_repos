@@ -139,9 +139,9 @@ const MarkdownCodeBlock = ({
         </div>
       )}
       <pre
-        className="scrolling-space-v"
+        className="scrolling-bar"
         style={{
-          margin: "0",
+          margin: 6,
           padding: padding,
           overflowX,
           overflowY,
@@ -155,6 +155,7 @@ const MarkdownCodeBlock = ({
         <code
           className={codeClassName}
           style={{
+            width: "fit-content",
             fontFamily:
               codeTheme.fontFamily || "Menlo, Monaco, Consolas, monospace",
             fontSize: toPx(codeTheme.fontSize, "13px"),

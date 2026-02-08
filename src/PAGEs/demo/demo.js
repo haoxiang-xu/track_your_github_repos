@@ -60,11 +60,12 @@ const Demo = () => {
     >
       <div
         id="component_scroll_container"
+        className="scrolling-bar"
         style={{
           position: "absolute",
           top: 0,
-          left: 0,
-          right: 0,
+          left: 4,
+          right: 4,
           bottom: 0,
           minWidth: 512,
           display: "flex",

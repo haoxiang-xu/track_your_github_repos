@@ -6,7 +6,6 @@ import { ConfigContext } from "../../CONTAINERs/config/context";
 
 /* { Components } -------------------------------------------------------------------------------------------------------------- */
 import Markdown from "../../BUILTIN_COMPONENTs/markdown/markdown";
-import Code from "../../BUILTIN_COMPONENTs/markdown/code";
 /* { Components } -------------------------------------------------------------------------------------------------------------- */
 
 const MarkdownDemo = () => {
