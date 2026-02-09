@@ -108,7 +108,11 @@
         "backgroundColor": "#F6F6F6",
         "padding": "2px 4px",
         "boxShadow": "inset 0 2px 6px rgba(0, 0, 0, 0.08)",
-        "borderRadius": 7
+        "borderRadius": 7,
+        "header": {
+           "fontSize": 14,
+           "boxShadow": "0 2px 6px rgba(0, 0, 0, 0.08)"
+        }
       },
       "pre": {
         "backgroundColor": "#F6F6F6",
@@ -259,7 +263,11 @@
         "backgroundColor": "#1E1E1E",
         "padding": "2px 4px",
         "boxShadow": "inset 0 2px 6px rgba(0, 0, 0, 0.16)",
-        "borderRadius": 7
+        "borderRadius": 7,
+        "header": {
+           "fontSize": 14,
+           "boxShadow": "0 2px 6px rgba(0, 0, 0, 0.16)"
+        }
       },
       "pre": {
         "backgroundColor": "#1E1E1E",

@@ -118,13 +118,14 @@ const MarkdownCodeBlock = ({
             background: "transparent",
             fontSize: toPx(codeBlock.headerFontSize, "12px"),
             color: labelColor,
+            boxShadow: theme?.markdown?.code?.header?.boxShadow || "none",
           }}
         >
           <span
             style={{
               textTransform: "uppercase",
               color: theme?.color || "none",
-              fontSize: theme?.fontSize || "inherit",
+              fontSize: theme?.markdown?.code?.header?.fontSize || "inherit",
               fontFamily: theme?.fontFamily || "inherit",
             }}
           >
@@ -139,8 +140,7 @@ const MarkdownCodeBlock = ({
                 color: theme?.color || "none",
                 border: "none",
                 borderRadius: "none",
-                padding: codeBlock.buttonPadding || "2px 6px",
-                fontSize: theme?.fontSize || "inherit",
+                fontSize: theme?.markdown?.code?.header?.fontSize || "inherit",
                 fontFamily: theme?.fontFamily || "inherit",
                 cursor: "pointer",
               }}
