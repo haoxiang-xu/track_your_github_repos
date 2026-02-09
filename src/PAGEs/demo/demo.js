@@ -15,6 +15,7 @@ import SpinnerDemo from "./spinner_demo";
 import InputDemo from "./input_demo";
 import MarkdownDemo from "./markdown_demo";
 import SelectDemo from "./select_demo";
+import GroupDemo from "./group_demo";
 /* { Sections } -------------------------------------------------------------------------------------------------------------- */
 
 const CustomizedTooltip = ({ children, code }) => {
@@ -84,6 +85,7 @@ const Demo = () => {
         <SpinnerDemo />
         <InputDemo />
         <SelectDemo />
+        <GroupDemo />
         <MarkdownDemo />
       </div>
     </div>

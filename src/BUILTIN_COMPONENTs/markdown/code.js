@@ -115,7 +115,7 @@ const MarkdownCodeBlock = ({
             alignItems: "center",
             justifyContent: "space-between",
             padding: codeBlock.headerPadding || "6px 10px",
-            background: "transparent",
+            background: theme?.markdown?.code?.header?.backgroundColor || "transparent",
             fontSize: toPx(codeBlock.headerFontSize, "12px"),
             color: labelColor,
             boxShadow: theme?.markdown?.code?.header?.boxShadow || "none",

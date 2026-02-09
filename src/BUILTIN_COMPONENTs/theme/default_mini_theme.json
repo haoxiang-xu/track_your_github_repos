@@ -111,6 +111,7 @@
         "borderRadius": 7,
         "header": {
            "fontSize": 14,
+           "backgroundColor": "#F7F7F7",
            "boxShadow": "0 2px 6px rgba(0, 0, 0, 0.08)"
         }
       },
@@ -266,6 +267,7 @@
         "borderRadius": 7,
         "header": {
            "fontSize": 14,
+           "backgroundColor": "#2B2B2B",
            "boxShadow": "0 2px 6px rgba(0, 0, 0, 0.16)"
         }
       },
