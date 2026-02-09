@@ -76,12 +76,13 @@ const MarkdownCodeBlock = ({
   };
 
   const background = preTheme.backgroundColor || "#F6F6F6";
-  const borderRadius = toPx(preTheme.borderRadius, "6px");
   const padding = toPx(preTheme.padding, "12px");
   const overflowX = preTheme.overflowX ?? preTheme.overflow ?? "scroll";
   const overflowY = preTheme.overflowY ?? preTheme.overflow ?? "scroll";
   const height =
-    preTheme.height !== undefined ? toPx(preTheme.height, preTheme.height) : undefined;
+    preTheme.height !== undefined
+      ? toPx(preTheme.height, preTheme.height)
+      : undefined;
   const minHeight =
     preTheme.minHeight !== undefined
       ? toPx(preTheme.minHeight, preTheme.minHeight)
@@ -90,7 +91,7 @@ const MarkdownCodeBlock = ({
     preTheme.maxHeight !== undefined
       ? toPx(preTheme.maxHeight, preTheme.maxHeight)
       : undefined;
-  const headerBackground = codeBlock.headerBackground || background;
+  const headerBackground = codeTheme.headerBackground || background;
   const headerBorderColor = codeBlock.headerBorderColor || "transparent";
   const labelColor =
     codeBlock.labelColor || markdownTheme.color || theme?.color || "#222222";
@@ -99,10 +100,12 @@ const MarkdownCodeBlock = ({
   return (
     <div
       style={{
-        borderRadius: borderRadius,
+        borderRadius: theme?.markdown?.code?.borderRadius,
         overflow: "hidden",
-        background: background,
+        background: theme?.markdown?.code?.backgroundColor || "transparent",
         margin: preTheme.margin || "0 0 0 0",
+        borderRadius: codeTheme.borderRadius || "7px",
+        boxShadow: theme?.markdown?.code?.boxShadow || null,
       }}
     >
       {(language || canCopy) && (
@@ -112,24 +115,33 @@ const MarkdownCodeBlock = ({
             alignItems: "center",
             justifyContent: "space-between",
             padding: codeBlock.headerPadding || "6px 10px",
-            background: headerBackground,
-            borderBottom: `1px solid ${headerBorderColor}`,
+            background: "transparent",
             fontSize: toPx(codeBlock.headerFontSize, "12px"),
             color: labelColor,
           }}
         >
-          <span style={{ textTransform: "uppercase" }}>{language || ""}</span>
+          <span
+            style={{
+              textTransform: "uppercase",
+              color: theme?.color || "none",
+              fontSize: theme?.fontSize || "inherit",
+              fontFamily: theme?.fontFamily || "inherit",
+            }}
+          >
+            {language || ""}
+          </span>
           {canCopy && (
             <button
               type="button"
               onClick={handleCopy}
               style={{
-                background: codeBlock.buttonBackground || "transparent",
-                color: buttonColor,
-                border: codeBlock.buttonBorder || "1px solid transparent",
-                borderRadius: toPx(codeBlock.buttonBorderRadius, "4px"),
+                background: "transparent",
+                color: theme?.color || "none",
+                border: "none",
+                borderRadius: "none",
                 padding: codeBlock.buttonPadding || "2px 6px",
-                fontSize: toPx(codeBlock.buttonFontSize, "12px"),
+                fontSize: theme?.fontSize || "inherit",
+                fontFamily: theme?.fontFamily || "inherit",
                 cursor: "pointer",
               }}
             >

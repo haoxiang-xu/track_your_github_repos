@@ -38,6 +38,7 @@ const CustomizedTooltip = ({ children, code }) => {
         padding: 4,
         borderRadius: 10,
       }}
+      open_delay={600}
       close_delay={80}
     >
       {children}

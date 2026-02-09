@@ -15,6 +15,7 @@
     },
     "font": {
       "fontFamily": "Jost",
+      "fontSize": 14,
       "color": "#222222"
     },
     "spinner": {
@@ -103,9 +104,10 @@
       },
       "code": {
         "fontFamily": "Menlo, Monaco, Consolas, monospace",
-        "fontSize": 13,
-        "backgroundColor": "#F2F2F2",
+        "fontSize": 14,
+        "backgroundColor": "#F6F6F6",
         "padding": "2px 4px",
+        "boxShadow": "inset 0 2px 6px rgba(0, 0, 0, 0.08)",
         "borderRadius": 7
       },
       "pre": {
@@ -126,7 +128,7 @@
         "buttonBorder": "1px solid transparent",
         "buttonBorderRadius": 7,
         "buttonPadding": "2px 6px",
-        "buttonFontSize": 12
+        "buttonFontSize": 14
       },
       "link": {
         "color": "#0B5FFF",
@@ -164,6 +166,7 @@
     },
     "font": {
       "fontFamily": "Jost",
+      "fontSize": 14,
       "color": "#FFFFFF"
     },
     "spinner": {
@@ -252,9 +255,10 @@
       },
       "code": {
         "fontFamily": "Menlo, Monaco, Consolas, monospace",
-        "fontSize": 13,
-        "backgroundColor": "#2A2A2A",
+        "fontSize": 14,
+        "backgroundColor": "#1E1E1E",
         "padding": "2px 4px",
+        "boxShadow": "inset 0 2px 6px rgba(0, 0, 0, 0.16)",
         "borderRadius": 7
       },
       "pre": {
@@ -275,7 +279,7 @@
         "buttonBorder": "1px solid transparent",
         "buttonBorderRadius": 7,
         "buttonPadding": "2px 6px",
-        "buttonFontSize": 12
+        "buttonFontSize": 14
       },
       "link": {
         "color": "#6AA8FF",
