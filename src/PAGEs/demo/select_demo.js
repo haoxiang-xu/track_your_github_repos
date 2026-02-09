@@ -6,6 +6,8 @@ import { ConfigContext } from "../../CONTAINERs/config/context";
 
 /* { Components } -------------------------------------------------------------------------------------------------------------- */
 import Select from "../../BUILTIN_COMPONENTs/select/select";
+import Input from "../../BUILTIN_COMPONENTs/input/input";
+import countries from "../../BUILTIN_COMPONENTs/consts/countries";
 /* { Components } -------------------------------------------------------------------------------------------------------------- */
 
 const SelectDemo = () => {
@@ -13,6 +15,18 @@ const SelectDemo = () => {
   const [house, setHouse] = useState("club");
   const [city, setCity] = useState(null);
   const [simple, setSimple] = useState("low");
+  const [dialCode, setDialCode] = useState("US");
+  const [phone, setPhone] = useState("");
+  const [country, setCountry] = useState("US");
+
+  const code_to_flag = (code) => {
+    if (!code || typeof code !== "string") return "";
+    return code
+      .toUpperCase()
+      .split("")
+      .map((char) => String.fromCodePoint(127397 + char.charCodeAt(0)))
+      .join("");
+  };
 
   const houseOptions = [
     { label: "Heart", value: "heart", icon: "poker_hearts" },
@@ -25,6 +39,48 @@ const SelectDemo = () => {
     { label: "Medium", value: "medium" },
     { label: "High", value: "high" },
   ];
+  const dialCodeOptions = countries.map((country) => ({
+    label: `${country.label} +${country.phone}`,
+    value: country.code,
+    trigger_label: `+${country.phone}`,
+    search: `${country.code} ${country.phone} ${country.label}`,
+    icon: (
+      <span style={{ fontSize: 16, lineHeight: 1 }}>
+        {code_to_flag(country.code)}
+      </span>
+    ),
+  }));
+  const countryOptions = [
+    { label: "United States", value: "US" },
+    { label: "China", value: "CN" },
+    { label: "Japan", value: "JP" },
+    { label: "South Korea", value: "KR" },
+    { label: "United Kingdom", value: "GB" },
+    { label: "France", value: "FR" },
+    { label: "Germany", value: "DE" },
+    { label: "Spain", value: "ES" },
+    { label: "Italy", value: "IT" },
+    { label: "Canada", value: "CA" },
+    { label: "Australia", value: "AU" },
+    { label: "Brazil", value: "BR" },
+    { label: "India", value: "IN" },
+    { label: "Mexico", value: "MX" },
+    { label: "Netherlands", value: "NL" },
+    { label: "Sweden", value: "SE" },
+    { label: "Norway", value: "NO" },
+    { label: "Singapore", value: "SG" },
+    { label: "Thailand", value: "TH" },
+    { label: "Vietnam", value: "VN" },
+  ];
+  const countryOptionsWithFlags = countryOptions.map((option) => ({
+    ...option,
+    search: `${option.label} ${option.value}`,
+    icon: (
+      <span style={{ fontSize: 16, lineHeight: 1 }}>
+        {code_to_flag(option.value)}
+      </span>
+    ),
+  }));
 
   const cityOptions = [
     { label: "New York", value: "nyc", icon: "map" },
@@ -89,6 +145,42 @@ const SelectDemo = () => {
         placeholder="Select city"
         search_placeholder="Filter cities..."
         style={{ width: 280 }}
+        dropdown_style={{ maxWidth: 320, maxHeight: 240 }}
+      />
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 4,
+          flexWrap: "wrap",
+        }}
+      >
+        <Select
+          options={dialCodeOptions}
+          value={dialCode}
+          set_value={setDialCode}
+          filter_mode="panel"
+          placeholder="country code"
+          search_placeholder="Search country / code"
+          style={{ width: 100, borderRadius: "7px 0px 0px 7px" }}
+          dropdown_style={{ maxWidth: 700, maxHeight: 240 }}
+          show_trigger_icon={false}
+        />
+        <Input
+          label="Phone number"
+          value={phone}
+          set_value={setPhone}
+          style={{ width: 200, borderRadius: "0px 7px 7px 0px" }}
+        />
+      </div>
+      <Select
+        options={countryOptionsWithFlags}
+        value={country}
+        set_value={setCountry}
+        filter_mode="panel"
+        placeholder="Select country"
+        search_placeholder="Filter countries..."
+        style={{ width: 260 }}
         dropdown_style={{ maxWidth: 320, maxHeight: 240 }}
       />
       <Select

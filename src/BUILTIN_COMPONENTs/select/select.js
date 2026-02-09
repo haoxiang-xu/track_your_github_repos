@@ -28,6 +28,7 @@ const Select = ({
   dropdown_style,
   option_style,
   disabled = false,
+  show_trigger_icon = true,
   open,
   on_open_change = () => {},
 }) => {
@@ -66,6 +67,17 @@ const Select = ({
     }
     return "";
   }, []);
+  const get_trigger_text = useCallback(
+    (option) => {
+      if (!option) return "";
+      const triggerLabel = option.trigger_label;
+      if (typeof triggerLabel === "string" || typeof triggerLabel === "number") {
+        return String(triggerLabel);
+      }
+      return get_option_text(option);
+    },
+    [get_option_text]
+  );
 
   const selectedOption = useMemo(() => {
     if (!Array.isArray(options)) return null;
@@ -75,6 +87,10 @@ const Select = ({
   const selectedLabelText = useMemo(
     () => get_option_text(selectedOption),
     [get_option_text, selectedOption]
+  );
+  const selectedTriggerText = useMemo(
+    () => get_trigger_text(selectedOption),
+    [get_trigger_text, selectedOption]
   );
 
   const normalizedQuery = useMemo(
@@ -293,7 +309,7 @@ const Select = ({
     ? query
       ? baseColor
       : placeholderColor
-    : selectedLabelText
+    : selectedTriggerText
       ? baseColor
       : placeholderColor;
 
@@ -307,7 +323,9 @@ const Select = ({
 
   const selectedIcon = selectedOption?.icon;
   const showSelectedIcon =
-    selectedIcon && (typeof selectedIcon === "string" || isValidElement(selectedIcon));
+    show_trigger_icon &&
+    selectedIcon &&
+    (typeof selectedIcon === "string" || isValidElement(selectedIcon));
 
   const render_icon = (icon, size, color) => {
     if (!icon) return null;
@@ -378,7 +396,7 @@ const Select = ({
           type="text"
           disabled={disabled}
           readOnly={!filterable}
-          value={mergedOpen ? query : selectedLabelText}
+          value={mergedOpen ? query : selectedTriggerText}
           placeholder={placeholder}
           style={{
             flex: 1,
@@ -417,7 +435,7 @@ const Select = ({
             whiteSpace: "nowrap",
           }}
         >
-          {selectedOption?.label ?? (selectedLabelText || placeholder)}
+          {selectedTriggerText || placeholder}
         </div>
       )}
       <Icon
