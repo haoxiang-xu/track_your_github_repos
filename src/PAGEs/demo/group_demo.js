@@ -1,4 +1,5 @@
-import { useContext, useState } from "react";
+import { useContext, useState, useRef, useEffect, useCallback } from "react";
+import { useSpring, animated } from "react-spring";
 
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
 import { ConfigContext } from "../../CONTAINERs/config/context";
@@ -6,16 +7,12 @@ import { ConfigContext } from "../../CONTAINERs/config/context";
 
 /* { Components } ------------------------------------------------------------------------------------------------------------ */
 import Group from "../../BUILTIN_COMPONENTs/group/group";
-import Input from "../../BUILTIN_COMPONENTs/input/input";
-import { SemiSwitch } from "../../BUILTIN_COMPONENTs/input/switch";
+import Icon from "../../BUILTIN_COMPONENTs/icon/icon";
 import { CustomizedTooltip } from "./demo";
 /* { Components } ------------------------------------------------------------------------------------------------------------ */
 
 const GroupDemo = () => {
   const { theme } = useContext(ConfigContext);
-  const [merged1, setMerged1] = useState(true);
-  const [merged2, setMerged2] = useState(true);
-  const [merged3, setMerged3] = useState(true);
 
   const cardStyle = {
     display: "flex",
@@ -58,90 +55,201 @@ const GroupDemo = () => {
         Group
       </span>
 
-      {/* ---- Two inputs ---- */}
-      <div style={cardStyle}>
-        <span style={labelStyle}>Two Inputs</span>
-        <SemiSwitch on={merged1} set_on={setMerged1} />
-        <Group
-          merged={merged1}
-          direction="horizontal"
-          gap={10}
-          borderRadius={8}
-        >
-          <Input
-            style={{
-              width: 140,
-              backgroundColor: "transparent",
-              boxShadow: "none",
-            }}
-            placeholder="First name"
-          />
-          <Input
-            style={{
-              width: 140,
-              backgroundColor: "transparent",
-              boxShadow: "none",
-            }}
-            placeholder="Last name"
-          />
-        </Group>
+      {/* ---- Navigation Bar ---- */}
+      <div
+        style={{
+          ...cardStyle,
+          width: "100%",
+          alignItems: "center",
+        }}
+      >
+        <span style={labelStyle}>Navigation Bar</span>
+        <NavBarDemo />
       </div>
+    </div>
+  );
+};
 
-      {/* ---- Input + Switch ---- */}
-      <div style={cardStyle}>
-        <span style={labelStyle}>Input + Switch</span>
-        <SemiSwitch on={merged2} set_on={setMerged2} />
-        <Group
-          merged={merged2}
-          direction="horizontal"
-          gap={12}
-          borderRadius={8}
-        >
-          <Input
-            style={{
-              width: 180,
-              backgroundColor: "transparent",
-              boxShadow: "none",
-            }}
-            placeholder="Search..."
+/* ============================================================================================================================ */
+/*  NavBar Demo — self-contained gooey pill animation                                                                           */
+/* ============================================================================================================================ */
+const NAV_ICONS = ["home", "notification_on", "email", "settings"];
+const BTN = 40;
+const GAP = 8;
+const SEARCH_W = 240;
+const BR = 999;
+
+const NavBarDemo = () => {
+  const { theme } = useContext(ConfigContext);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const inputRef = useRef(null);
+
+  const bgColor = theme?.backgroundColor || "#FFFFFF";
+  const iconColor = theme?.icon?.color || "#222";
+
+  /* ---- springs ---- */
+  const navSpring = useSpring({
+    width: searchOpen ? BTN : NAV_ICONS.length * BTN,
+    config: { tension: 190, friction: 22 },
+  });
+  const searchSpring = useSpring({
+    width: searchOpen ? SEARCH_W : BTN,
+    config: { tension: 190, friction: 22 },
+  });
+
+  /* ---- focus input when opened ---- */
+  useEffect(() => {
+    if (searchOpen) {
+      const t = setTimeout(() => inputRef.current?.focus?.(), 200);
+      return () => clearTimeout(t);
+    }
+  }, [searchOpen]);
+
+  return (
+    <div
+      style={{
+        position: "relative",
+        display: "inline-flex",
+        alignItems: "center",
+        gap: GAP,
+        height: BTN,
+        filter: "url(#mini-ui-group-goo)",
+      }}
+    >
+      {/* ---- Nav pill / + circle ---- */}
+      <animated.div
+        style={{
+          width: navSpring.width,
+          height: BTN,
+          borderRadius: BR,
+          backgroundColor: bgColor,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          overflow: "hidden",
+          cursor: searchOpen ? "pointer" : "default",
+          flexShrink: 0,
+        }}
+        onClick={() => searchOpen && setSearchOpen(false)}
+      >
+        {searchOpen ? (
+          <Icon
+            src="add"
+            style={{ width: 20, height: 20, flexShrink: 0 }}
+            color={iconColor}
           />
+        ) : (
+          NAV_ICONS.map((icon) => (
+            <div
+              key={icon}
+              style={{
+                width: BTN,
+                height: BTN,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                flexShrink: 0,
+                cursor: "pointer",
+              }}
+            >
+              <Icon
+                src={icon}
+                style={{ width: 20, height: 20 }}
+                color={iconColor}
+              />
+            </div>
+          ))
+        )}
+      </animated.div>
+
+      {/* ---- Search circle / pill ---- */}
+      <animated.div
+        style={{
+          width: searchSpring.width,
+          height: BTN,
+          borderRadius: BR,
+          backgroundColor: bgColor,
+          display: "flex",
+          alignItems: "center",
+          overflow: "hidden",
+          cursor: searchOpen ? "default" : "pointer",
+          flexShrink: 0,
+        }}
+        onClick={() => !searchOpen && setSearchOpen(true)}
+      >
+        {searchOpen ? (
           <div
             style={{
               display: "flex",
               alignItems: "center",
-              justifyContent: "center",
+              width: "100%",
               height: "100%",
-              padding: "0 6px",
+              gap: 4,
+              paddingLeft: 12,
+              paddingRight: 4,
             }}
           >
-            <SemiSwitch />
+            <Icon
+              src="search"
+              style={{ width: 18, height: 18, flexShrink: 0 }}
+              color={iconColor}
+            />
+            <input
+              ref={inputRef}
+              placeholder="Search..."
+              style={{
+                flex: 1,
+                border: "none",
+                outline: "none",
+                backgroundColor: "transparent",
+                fontSize: 14,
+                fontFamily: theme?.font?.fontFamily || "Jost",
+                color: theme?.color || "#222",
+                padding: "0 6px",
+              }}
+            />
+            <div
+              style={{
+                width: 30,
+                height: 30,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                flexShrink: 0,
+                cursor: "pointer",
+                borderRadius: "50%",
+              }}
+              onClick={(e) => {
+                e.stopPropagation();
+                setSearchOpen(false);
+              }}
+            >
+              <Icon
+                src="close"
+                style={{ width: 16, height: 16 }}
+                color={iconColor}
+              />
+            </div>
           </div>
-        </Group>
-      </div>
-
-      {/* ---- Vertical ---- */}
-      <div style={cardStyle}>
-        <span style={labelStyle}>Vertical</span>
-        <SemiSwitch on={merged3} set_on={setMerged3} />
-        <Group merged={merged3} direction="vertical" gap={10} borderRadius={8}>
-          <Input
+        ) : (
+          <div
             style={{
-              width: 200,
-              backgroundColor: "transparent",
-              boxShadow: "none",
+              width: BTN,
+              height: BTN,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              flexShrink: 0,
             }}
-            placeholder="Email"
-          />
-          <Input
-            style={{
-              width: 200,
-              backgroundColor: "transparent",
-              boxShadow: "none",
-            }}
-            placeholder="Password"
-          />
-        </Group>
-      </div>
+          >
+            <Icon
+              src="search"
+              style={{ width: 20, height: 20 }}
+              color={iconColor}
+            />
+          </div>
+        )}
+      </animated.div>
     </div>
   );
 };
