@@ -68,7 +68,7 @@
       },
       "search": {
         "backgroundColor": "rgba(0, 0, 0, 0.05)",
-        "borderRadius": 7,
+        "borderRadius": 5,
         "padding": "6px 10px"
       }
     },
@@ -224,7 +224,7 @@
       },
       "search": {
         "backgroundColor": "rgba(255, 255, 255, 0.08)",
-        "borderRadius": 7,
+        "borderRadius": 5,
         "padding": "6px 10px"
       }
     },

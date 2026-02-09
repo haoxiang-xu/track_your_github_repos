@@ -458,8 +458,8 @@ const Select = ({
         display: "flex",
         flexDirection: "column",
         gap: 6,
-        minWidth: dropdownMinWidth,
-        maxWidth: dropdownMaxWidth,
+        minWidth: dropdownMinWidth - 12,
+        maxWidth: dropdownMaxWidth - 12,
         padding: dropdown_theme?.padding ?? 6,
         backgroundColor:
           dropdown_style?.backgroundColor ??
@@ -488,8 +488,8 @@ const Select = ({
             fontFamily: style?.fontFamily || theme?.font?.fontFamily || "Jost",
             fontSize: baseFontSize,
             padding: search_theme?.padding ?? "6px 10px",
-            borderRadius: search_theme?.borderRadius ?? 7,
-            border: "1px solid rgba(0,0,0,0)",
+            borderRadius: search_theme?.borderRadius ?? 5,
+            border: "1px solid rgba(255, 255, 255, 0)",
             outline: "none",
             backgroundColor:
               search_theme?.backgroundColor ?? "rgba(0, 0, 0, 0.05)",

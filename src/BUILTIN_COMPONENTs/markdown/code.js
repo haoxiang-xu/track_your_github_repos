@@ -115,7 +115,8 @@ const MarkdownCodeBlock = ({
             alignItems: "center",
             justifyContent: "space-between",
             padding: codeBlock.headerPadding || "6px 10px",
-            background: theme?.markdown?.code?.header?.backgroundColor || "transparent",
+            background:
+              theme?.markdown?.code?.header?.backgroundColor || "transparent",
             fontSize: toPx(codeBlock.headerFontSize, "12px"),
             color: labelColor,
             boxShadow: theme?.markdown?.code?.header?.boxShadow || "none",
@@ -127,6 +128,11 @@ const MarkdownCodeBlock = ({
               color: theme?.color || "none",
               fontSize: theme?.markdown?.code?.header?.fontSize || "inherit",
               fontFamily: theme?.fontFamily || "inherit",
+
+              userSelect: "none",
+              webkitUserSelect: "none",
+              mozUserSelect: "none",
+              msUserSelect: "none",
             }}
           >
             {language || ""}
@@ -143,6 +149,11 @@ const MarkdownCodeBlock = ({
                 fontSize: theme?.markdown?.code?.header?.fontSize || "inherit",
                 fontFamily: theme?.fontFamily || "inherit",
                 cursor: "pointer",
+
+                userSelect: "none",
+                webkitUserSelect: "none",
+                mozUserSelect: "none",
+                msUserSelect: "none",
               }}
             >
               {copied ? "Copied" : "Copy"}
