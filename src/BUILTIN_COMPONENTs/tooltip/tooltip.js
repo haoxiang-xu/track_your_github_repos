@@ -642,7 +642,7 @@ const Tooltip = ({
         transform: anchor.transform,
       });
     },
-    [position, offset, show_arrow, arrowHeight, bubbleSize]
+    [position, offset, show_arrow, arrowHeight, bubbleSize, align]
   );
 
   useLayoutEffect(() => {

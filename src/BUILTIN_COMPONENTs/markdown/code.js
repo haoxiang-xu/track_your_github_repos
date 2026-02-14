@@ -91,7 +91,10 @@ const MarkdownCodeBlock = ({
     preTheme.maxHeight !== undefined
       ? toPx(preTheme.maxHeight, preTheme.maxHeight)
       : undefined;
-  const headerBackground = codeTheme.headerBackground || background;
+  const headerBackground =
+    codeTheme.headerBackground ||
+    theme?.markdown?.code?.header?.backgroundColor ||
+    background;
   const headerBorderColor = codeBlock.headerBorderColor || "transparent";
   const labelColor =
     codeBlock.labelColor || markdownTheme.color || theme?.color || "#222222";
@@ -100,12 +103,16 @@ const MarkdownCodeBlock = ({
   return (
     <div
       style={{
-        borderRadius: theme?.markdown?.code?.borderRadius,
         overflow: "hidden",
-        background: theme?.markdown?.code?.backgroundColor || "transparent",
+        background:
+          codeTheme.backgroundColor ||
+          theme?.markdown?.code?.backgroundColor ||
+          "transparent",
         margin: preTheme.margin || "0 0 0 0",
-        borderRadius: codeTheme.borderRadius || "7px",
-        boxShadow: theme?.markdown?.code?.boxShadow || null,
+        borderRadius:
+          codeTheme.borderRadius || theme?.markdown?.code?.borderRadius || "7px",
+        boxShadow:
+          codeTheme.boxShadow ?? theme?.markdown?.code?.boxShadow ?? null,
       }}
     >
       {(language || canCopy) && (
@@ -115,17 +122,20 @@ const MarkdownCodeBlock = ({
             alignItems: "center",
             justifyContent: "space-between",
             padding: codeBlock.headerPadding || "6px 10px",
-            background:
-              theme?.markdown?.code?.header?.backgroundColor || "transparent",
+            background: headerBackground,
             fontSize: toPx(codeBlock.headerFontSize, "12px"),
             color: labelColor,
+            borderBottom:
+              headerBorderColor && headerBorderColor !== "transparent"
+                ? `1px solid ${headerBorderColor}`
+                : "none",
             boxShadow: theme?.markdown?.code?.header?.boxShadow || "none",
           }}
         >
           <span
             style={{
               textTransform: "uppercase",
-              color: theme?.color || "none",
+              color: labelColor,
               fontSize: theme?.markdown?.code?.header?.fontSize || "inherit",
               fontFamily: theme?.fontFamily || "inherit",
 
@@ -143,9 +153,9 @@ const MarkdownCodeBlock = ({
               onClick={handleCopy}
               style={{
                 background: "transparent",
-                color: theme?.color || "none",
+                color: buttonColor,
                 border: "none",
-                borderRadius: "none",
+                borderRadius: 0,
                 fontSize: theme?.markdown?.code?.header?.fontSize || "inherit",
                 fontFamily: theme?.fontFamily || "inherit",
                 cursor: "pointer",

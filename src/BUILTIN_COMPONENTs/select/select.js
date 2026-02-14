@@ -52,6 +52,9 @@ const Select = ({
   const triggerInputRef = useRef(null);
   const searchInputRef = useRef(null);
   const optionRefs = useRef([]);
+  const listboxIdRef = useRef(
+    `mini-ui-select-listbox-${Math.random().toString(36).slice(2, 10)}`
+  );
 
   const is_open_controlled = open !== undefined;
   const mergedOpen = is_open_controlled ? open : isOpen;
@@ -84,10 +87,6 @@ const Select = ({
     return options.find((option) => option?.value === selectedValue) || null;
   }, [options, selectedValue]);
 
-  const selectedLabelText = useMemo(
-    () => get_option_text(selectedOption),
-    [get_option_text, selectedOption]
-  );
   const selectedTriggerText = useMemo(
     () => get_trigger_text(selectedOption),
     [get_trigger_text, selectedOption]
@@ -349,6 +348,7 @@ const Select = ({
     <div
       ref={triggerRef}
       role="combobox"
+      aria-controls={listboxIdRef.current}
       aria-expanded={mergedOpen}
       aria-disabled={disabled}
       tabIndex={filter_mode === "panel" ? (disabled ? -1 : 0) : undefined}
@@ -498,6 +498,8 @@ const Select = ({
         />
       ) : null}
       <div
+        id={listboxIdRef.current}
+        role="listbox"
         className="scrolling-bar"
         style={{
           display: "flex",

@@ -1,4 +1,4 @@
-import { useContext, useState, useRef, useEffect, useCallback } from "react";
+import { useContext, useState, useRef, useEffect } from "react";
 import { useSpring, animated } from "react-spring";
 
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
@@ -6,9 +6,7 @@ import { ConfigContext } from "../../CONTAINERs/config/context";
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
 
 /* { Components } ------------------------------------------------------------------------------------------------------------ */
-import Group from "../../BUILTIN_COMPONENTs/group/group";
 import Icon from "../../BUILTIN_COMPONENTs/icon/icon";
-import { CustomizedTooltip } from "./demo";
 /* { Components } ------------------------------------------------------------------------------------------------------------ */
 
 const GroupDemo = () => {
