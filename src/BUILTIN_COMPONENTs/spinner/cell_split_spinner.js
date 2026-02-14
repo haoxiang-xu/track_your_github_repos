@@ -133,6 +133,7 @@ const ensureGooFilter = (blur) => {
  * @param {string}  color     – dot colour or "default" for theme      (default "default")
  * @param {number}  speed     – animation speed multiplier 0.2 – 5     (default 1)
  * @param {number}  cells     – number of dots, 2 – 8                  (default 2)
+ * @param {number}  spread    – how far dots travel from center, 0 – 1 (default 0.5)
  * @param {number}  stagger   – wave delay between successive dots ms  (default 0)
  * @param {boolean} spin      – slowly rotate the whole spinner        (default false)
  * @param {number}  spinSpeed – spin speed multiplier                   (default 1)
@@ -142,6 +143,7 @@ const CellSplitSpinner = ({
   color = "default",
   speed = 1,
   cells = 2,
+  spread = 0.5,
   stagger = 0,
   spin = false,
   spinSpeed = 1,
@@ -173,11 +175,18 @@ const CellSplitSpinner = ({
     return Math.min(Math.max(next, 0.2), 5);
   }, [speed]);
 
+  const safeSpread = useMemo(() => {
+    const s = Number(spread);
+    if (!Number.isFinite(s)) return 0.5;
+    return Math.min(Math.max(s, 0), 1);
+  }, [spread]);
+
   /* ── derived sizes ── */
   // slightly shrink dots as cell count grows so they don't crowd
   const dotScale = Math.max(0.6, 1 - (safeCells - 2) * 0.055);
   const dotSize = Math.max(8, Math.round(size * 0.42 * dotScale));
-  const travel = Math.max(8, Math.round(size * 0.34));
+  // spread 0→ dots barely move, 1→ dots reach container edge
+  const travel = Math.max(4, Math.round(size * 0.5 * safeSpread));
   const blur = Math.max(3, Math.round(dotSize * 0.25));
   const duration = Math.round(1800 / safeSpeed);
   const spinDur = Math.round(6000 / (Number(spinSpeed) || 1));

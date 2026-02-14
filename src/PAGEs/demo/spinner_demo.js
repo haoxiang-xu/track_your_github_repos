@@ -82,56 +82,29 @@ const SpinnerDemo = () => {
       <CustomizedTooltip
         code={` 
 \`\`\`js
-<CellSplitSpinner size={60} cells={3} />
+<CellSplitSpinner size={60} cells={4} stagger={80}/>
 \`\`\` 
           `}
       >
         <div style={cardStyle}>
-          <CellSplitSpinner size={60} cells={3} />
+          <CellSplitSpinner size={60} cells={4} stagger={80} />
         </div>
       </CustomizedTooltip>
       <CustomizedTooltip
         code={` 
 \`\`\`js
-<CellSplitSpinner size={60} cells={4} />
+<CellSplitSpinner size={60} cells={5} stagger={80} spread={0.9} spin />
 \`\`\` 
           `}
       >
         <div style={cardStyle}>
-          <CellSplitSpinner size={60} cells={4} />
-        </div>
-      </CustomizedTooltip>
-      <CustomizedTooltip
-        code={` 
-\`\`\`js
-<CellSplitSpinner size={60} cells={6} />
-\`\`\` 
-          `}
-      >
-        <div style={cardStyle}>
-          <CellSplitSpinner size={60} cells={6} />
-        </div>
-      </CustomizedTooltip>
-      <CustomizedTooltip
-        code={` 
-\`\`\`js
-<CellSplitSpinner size={60} cells={8} />
-\`\`\` 
-          `}
-      >
-        <div style={cardStyle}>
-          <CellSplitSpinner size={60} cells={8} />
-        </div>
-      </CustomizedTooltip>
-      <CustomizedTooltip
-        code={` 
-\`\`\`js
-<CellSplitSpinner size={60} cells={5} stagger={80} spin />
-\`\`\` 
-          `}
-      >
-        <div style={cardStyle}>
-          <CellSplitSpinner size={60} cells={5} stagger={80} spin />
+          <CellSplitSpinner
+            size={60}
+            cells={5}
+            stagger={80}
+            spread={0.9}
+            spin
+          />
         </div>
       </CustomizedTooltip>
     </div>
