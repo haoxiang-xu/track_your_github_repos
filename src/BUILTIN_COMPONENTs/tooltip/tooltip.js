@@ -18,18 +18,26 @@ import {
 
 let _tooltipIdCounter = 0;
 
-/* Track whether mouse actually moved (vs scroll-induced mouseenter) */
-let _lastMouseClientX = -1;
-let _lastMouseClientY = -1;
-let _scrollingSince = 0;
+/* Track whether mouse actually moved (vs scroll-induced mouseenter).
+   `_mouseMovedSinceScroll` is set to false on every scroll event and
+   back to true only when a real mousemove fires.  During scrolling the
+   cursor stays still so _mouseMovedSinceScroll remains false, which
+   lets us suppress all scroll-induced mouseenter events. */
+let _mouseMovedSinceScroll = true;
+let _scrollEndTimer = null;
 
-const _trackGlobalMouse = (e) => {
-  _lastMouseClientX = e.clientX;
-  _lastMouseClientY = e.clientY;
-  _scrollingSince = 0;
+const _trackGlobalMouse = () => {
+  _mouseMovedSinceScroll = true;
 };
 const _trackGlobalScroll = () => {
-  _scrollingSince = Date.now();
+  _mouseMovedSinceScroll = false;
+  /* Keep suppression active for a short window after scrolling stops,
+     because the last scroll event may precede a final mouseenter. */
+  clearTimeout(_scrollEndTimer);
+  _scrollEndTimer = setTimeout(() => {
+    /* If the mouse still hasn't moved 120ms after scrolling stopped,
+       keep suppression.  It will clear on the next real mousemove. */
+  }, 120);
 };
 if (typeof window !== "undefined") {
   window.addEventListener("mousemove", _trackGlobalMouse, true);
@@ -787,22 +795,10 @@ const Tooltip = ({
 
   const handle_trigger_mouse_enter = () => {
     if (!isHoverEnabled) return;
-    /* Ignore scroll-induced mouseenter: if a scroll happened recently and the
-       mouse hasn't moved since, this mouseenter was triggered by the DOM
-       scrolling under a stationary cursor, not by actual mouse movement. */
-    if (_scrollingSince && Date.now() - _scrollingSince < 150) {
-      const rect = trigger_ref.current?.getBoundingClientRect();
-      if (rect) {
-        const mx = _lastMouseClientX;
-        const my = _lastMouseClientY;
-        const inTrigger =
-          mx >= rect.left &&
-          mx <= rect.right &&
-          my >= rect.top &&
-          my <= rect.bottom;
-        if (!inTrigger) return;
-      }
-    }
+    /* Ignore scroll-induced mouseenter: if the page is scrolling and the
+       mouse hasn't physically moved, this mouseenter was caused by DOM
+       content scrolling under a stationary cursor, not real user intent. */
+    if (!_mouseMovedSinceScroll) return;
     clear_close_timer();
     setIsHoverPending(true);
     schedule_open(() => {

@@ -17,6 +17,7 @@ import InputDemo from "./input_demo";
 import MarkdownDemo from "./markdown_demo";
 import SelectDemo from "./select_demo";
 import CardDemo from "./card_demo";
+import BackgroundDemo from "./background_demo";
 import OthersDemo from "./others_demo";
 /* { Sections } -------------------------------------------------------------------------------------------------------------- */
 
@@ -51,14 +52,14 @@ const Landing = () => {
         style={{
           fontSize: 72,
           fontWeight: 400,
-          fontFamily: "Jost, sans-serif",
+          fontFamily: "NunitoSans",
           color: theme?.color || "black",
           margin: 0,
           letterSpacing: "-1.5px",
           lineHeight: 1.1,
         }}
       >
-        Mini UI
+        mini UI
       </h1>
       <p
         style={{
@@ -103,7 +104,7 @@ const Landing = () => {
           flexDirection: "column",
           alignItems: "center",
           gap: 6,
-          opacity: 0.2,
+          opacity: 0.36,
           color: theme?.color || "black",
         }}
       >
@@ -216,6 +217,7 @@ const Demo = () => {
           <SelectDemo />
           <CardDemo />
           <MarkdownDemo />
+          <BackgroundDemo />
           <OthersDemo />
         </div>
       </div>

@@ -122,19 +122,6 @@
         "overflow": "auto",
         "margin": "0.85em"
       },
-      "codeBlock": {
-        "headerBackground": "#ECECED",
-        "headerBorderColor": "#E0E0E0",
-        "headerPadding": "6px 10px",
-        "headerFontSize": 12,
-        "labelColor": "#666666",
-        "buttonColor": "#666666",
-        "buttonBackground": "transparent",
-        "buttonBorder": "1px solid transparent",
-        "buttonBorderRadius": 7,
-        "buttonPadding": "2px 6px",
-        "buttonFontSize": 14
-      },
       "link": {
         "color": "#0B5FFF",
         "underline": "none"
@@ -277,19 +264,6 @@
         "borderRadius": 7,
         "overflow": "auto",
         "margin": "0.85em"
-      },
-      "codeBlock": {
-        "headerBackground": "#242424",
-        "headerBorderColor": "#333333",
-        "headerPadding": "6px 10px",
-        "headerFontSize": 12,
-        "labelColor": "#B5B5B5",
-        "buttonColor": "#B5B5B5",
-        "buttonBackground": "transparent",
-        "buttonBorder": "1px solid transparent",
-        "buttonBorderRadius": 7,
-        "buttonPadding": "2px 6px",
-        "buttonFontSize": 14
       },
       "link": {
         "color": "#6AA8FF",
