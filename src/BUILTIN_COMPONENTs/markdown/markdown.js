@@ -43,13 +43,27 @@ const splitStyleProps = (style) => {
   }
 
   const { container, ...rest } = style;
-  const hasMarkdownKeys = Object.keys(rest).some((key) =>
-    MARKDOWN_STYLE_KEYS.has(key),
-  );
+  const containerKeys = {};
+  const markdownKeys = {};
+
+  Object.keys(rest).forEach((key) => {
+    if (MARKDOWN_STYLE_KEYS.has(key)) {
+      markdownKeys[key] = rest[key];
+    } else {
+      containerKeys[key] = rest[key];
+    }
+  });
+
+  const hasContainerKeys = Object.keys(containerKeys).length > 0;
+  const hasMarkdownKeys = Object.keys(markdownKeys).length > 0;
 
   return {
-    containerStyle: container || (!hasMarkdownKeys ? style : undefined),
-    markdownStyle: hasMarkdownKeys ? rest : undefined,
+    containerStyle: container
+      ? { ...containerKeys, ...container }
+      : hasContainerKeys
+        ? containerKeys
+        : undefined,
+    markdownStyle: hasMarkdownKeys ? markdownKeys : undefined,
   };
 };
 const mergeMarkdownTheme = (baseTheme, overrideTheme) => {
@@ -130,6 +144,8 @@ const Markdown = ({
     const blockGap = markdownTheme.blockGap;
     const hasBlockGap = blockGap !== undefined && blockGap !== null;
 
+    const codeTheme = theme?.code || {};
+
     return `
       [data-markdown-id="${id}"] {
         font-family: ${baseFontFamily};
@@ -176,11 +192,12 @@ const Markdown = ({
         color: ${blockquote.color || "#555555"};
       }
       [data-markdown-id="${id}"] code {
-        font-family: ${code.fontFamily || "Menlo, Monaco, Consolas, monospace"};
-        font-size: ${toPx(code.fontSize, "13px")};
-        background: ${code.backgroundColor || "#F2F2F2"};
+        font-family: ${code.fontFamily || codeTheme.fontFamily || "Menlo, Monaco, Consolas, monospace"};
+        font-size: ${toPx(code.fontSize || codeTheme.fontSize, "13px")};
+        background: ${code.backgroundColor || codeTheme.backgroundColor || "#F2F2F2"};
         padding: ${code.padding || "2px 4px"};
-        border-radius: ${toPx(code.borderRadius, "4px")};
+        border-radius: ${toPx(code.borderRadius || codeTheme.borderRadius, "4px")};
+        color: ${code.color || codeTheme.color || "inherit"};
       }
       [data-markdown-id="${id}"] pre {
         background: transparent;
@@ -259,11 +276,18 @@ const Markdown = ({
     [components, mergedMarkdownTheme],
   );
 
+  const hasHeight =
+    containerStyle?.height !== undefined ||
+    containerStyle?.maxHeight !== undefined;
+
   return (
     <div
       data-markdown-id={idRef.current}
       className={className}
-      style={containerStyle}
+      style={{
+        ...(hasHeight ? { display: "flex", flexDirection: "column" } : {}),
+        ...containerStyle,
+      }}
     >
       <style>{css}</style>
       <ReactShowdown

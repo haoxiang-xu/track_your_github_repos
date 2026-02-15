@@ -42,6 +42,12 @@ const MarkdownCodeBlock = ({
   const codeStyle = {
     ...codeOverride,
   };
+  /* When height is 100%, use flex: 1 to fill parent instead of percentage */
+  if (codeStyle.height === "100%") {
+    codeStyle.flex = 1;
+    codeStyle.minHeight = 0;
+    delete codeStyle.height;
+  }
   if (pre.minHeight !== undefined) codeStyle.minHeight = pre.minHeight;
   if (pre.maxHeight !== undefined) codeStyle.maxHeight = pre.maxHeight;
 

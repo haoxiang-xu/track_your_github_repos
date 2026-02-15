@@ -147,7 +147,8 @@ const Code = ({
   const hasHeightConstraint =
     height !== undefined ||
     style?.height !== undefined ||
-    style?.maxHeight !== undefined;
+    style?.maxHeight !== undefined ||
+    style?.flex !== undefined;
 
   return (
     <div

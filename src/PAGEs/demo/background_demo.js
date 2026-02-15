@@ -14,7 +14,7 @@ import Markdown from "../../BUILTIN_COMPONENTs/markdown/markdown";
 /* ---- helper: aurora card with inline code panel ---- */
 const AuroraCard = ({ children, code, isDark, height = 200 }) => {
   const [hovered, setHovered] = useState(false);
-  const codeHeight = height - 64; /* top 32 + bottom 32 */
+  const codeHeight = height - 48; /* top 32 + bottom 32 */
 
   return (
     <Card
@@ -46,7 +46,7 @@ const AuroraCard = ({ children, code, isDark, height = 200 }) => {
         >
           <Card
             width="100%"
-            height="100%"
+            maxHeight={"100%"}
             style={{
               padding: 0,
               overflow: "hidden",
@@ -58,11 +58,11 @@ const AuroraCard = ({ children, code, isDark, height = 200 }) => {
           >
             <Markdown
               style={{
-                pre: { margin: 0, height: codeHeight - 57 },
                 code: {
                   padding: 0,
                   borderRadius: 7,
                   fontSize: 12,
+                  maxHeight: codeHeight,
                 },
               }}
             >
