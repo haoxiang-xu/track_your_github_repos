@@ -15,6 +15,7 @@ import SpinnerDemo from "./spinner_demo";
 import InputDemo from "./input_demo";
 import MarkdownDemo from "./markdown_demo";
 import SelectDemo from "./select_demo";
+import CardDemo from "./card_demo";
 import OthersDemo from "./others_demo";
 /* { Sections } -------------------------------------------------------------------------------------------------------------- */
 
@@ -71,22 +72,34 @@ const Demo = () => {
           left: 4,
           right: 4,
           bottom: 0,
-          minWidth: 512,
           display: "flex",
           flexDirection: "column",
           gap: "32px",
-          paddingRight: "128px",
-          paddingLeft: "128px",
           paddingBottom: "512px",
           overflowY: "scroll",
+          border: "1px solid #cccccc",
         }}
       >
+        <div
+          style={{
+            position: "absolute",
+            top: 0,
+            left: "50%",
+            transform: "translateX(-50%)",
+            maxWidth: 1200,
+            paddingTop: "512px",
+            paddingBottom: "512px",
+            border: "1px solid #cccccc",
+          }}
+        >
         <SwitchDemo />
         <SpinnerDemo />
         <InputDemo />
         <SelectDemo />
+        <CardDemo />
         <MarkdownDemo />
         <OthersDemo />
+        </div>
       </div>
     </div>
   );

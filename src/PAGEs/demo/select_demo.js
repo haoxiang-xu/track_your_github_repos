@@ -5,7 +5,7 @@ import { ConfigContext } from "../../CONTAINERs/config/context";
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
 
 /* { Components } -------------------------------------------------------------------------------------------------------------- */
-import Select from "../../BUILTIN_COMPONENTs/select/select";
+import Select, { FlowingSelect } from "../../BUILTIN_COMPONENTs/select/select";
 import Input from "../../BUILTIN_COMPONENTs/input/input";
 import countries from "../../BUILTIN_COMPONENTs/consts/countries";
 /* { Components } -------------------------------------------------------------------------------------------------------------- */
@@ -206,6 +206,35 @@ const SelectDemo = () => {
         placeholder="Disabled select"
         style={{ width: 240 }}
         disabled
+      />
+      <FlowingSelect
+        options={simpleOptions}
+        value={simple}
+        set_value={setSimple}
+        label="Priority"
+        filterable={false}
+        filter_mode="panel"
+        style={{ width: 200 }}
+      />
+      <FlowingSelect
+        options={cityOptions}
+        value={city}
+        set_value={setCity}
+        label="City"
+        filter_mode="trigger"
+        placeholder="Search city..."
+        style={{ width: 240 }}
+        dropdown_style={{ maxHeight: 220 }}
+      />
+      <FlowingSelect
+        options={countryOptionsWithFlags}
+        value={country}
+        set_value={setCountry}
+        label="Country"
+        filter_mode="panel"
+        search_placeholder="Filter..."
+        style={{ width: 240 }}
+        dropdown_style={{ maxHeight: 220 }}
       />
     </div>
   );

@@ -26,7 +26,6 @@ const SwitchDemo = () => {
         flexWrap: "wrap",
         gap: "24px",
         padding: "10px",
-        marginTop: "512px",
       }}
     >
       <span

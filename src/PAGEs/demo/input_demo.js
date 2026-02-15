@@ -9,6 +9,7 @@ import Input, {
   InputWithDelete,
   Password,
   ValidationCodeInput,
+  FlowingInput,
 } from "../../BUILTIN_COMPONENTs/input/input";
 import { SemiSwitch } from "../../BUILTIN_COMPONENTs/input/switch";
 import Tooltip from "../../BUILTIN_COMPONENTs/tooltip/tooltip";
@@ -177,6 +178,89 @@ const InputDemo = () => {
           label="with Switch"
           postfix_component={<SemiSwitch />}
           no_separator
+        />
+      </CustomizedTooltip>
+      <CustomizedTooltip
+        code={`
+\`\`\`js
+<FlowingInput label="Username" />
+\`\`\`
+`}
+      >
+        <FlowingInput label="Username" style={{ width: 200 }} />
+      </CustomizedTooltip>
+      <CustomizedTooltip
+        code={`
+\`\`\`js
+<FlowingInput label="Email" placeholder="you@example.com" />
+\`\`\`
+`}
+      >
+        <FlowingInput
+          label="Email"
+          placeholder="you@example.com"
+          style={{ width: 240 }}
+        />
+      </CustomizedTooltip>
+      <CustomizedTooltip
+        code={`
+\`\`\`js
+<FlowingInput placeholder="No label" />
+\`\`\`
+`}
+      >
+        <FlowingInput placeholder="No label" style={{ width: 180 }} />
+      </CustomizedTooltip>
+      <CustomizedTooltip
+        code={`
+\`\`\`js
+<FlowingInput
+  label="Website"
+  prefix_icon="link"
+  prefix_label="https://"
+  postfix_label=".com"
+/>
+\`\`\`
+`}
+      >
+        <FlowingInput
+          label="Website"
+          prefix_icon="link"
+          prefix_label="https://"
+          postfix_label=".com"
+          style={{ width: 320 }}
+        />
+      </CustomizedTooltip>
+      <CustomizedTooltip
+        code={`
+\`\`\`js
+<FlowingInput
+  label="Search"
+  prefix_icon="search"
+/>
+\`\`\`
+`}
+      >
+        <FlowingInput
+          label="Search"
+          prefix_icon="search"
+          style={{ width: 220 }}
+        />
+      </CustomizedTooltip>
+      <CustomizedTooltip
+        code={`
+\`\`\`js
+<FlowingInput
+  label="with Switch"
+  postfix_component={<SemiSwitch />}
+/>
+\`\`\`
+`}
+      >
+        <FlowingInput
+          label="with Switch"
+          postfix_component={<SemiSwitch />}
+          style={{ width: 220 }}
         />
       </CustomizedTooltip>
     </div>

@@ -44,7 +44,7 @@ const splitStyleProps = (style) => {
 
   const { container, ...rest } = style;
   const hasMarkdownKeys = Object.keys(rest).some((key) =>
-    MARKDOWN_STYLE_KEYS.has(key)
+    MARKDOWN_STYLE_KEYS.has(key),
   );
 
   return {
@@ -90,7 +90,7 @@ const Markdown = ({
 }) => {
   const { theme, onThemeMode } = useContext(ConfigContext);
   const idRef = useRef(
-    `mini-ui-markdown-${Math.random().toString(36).slice(2, 10)}`
+    `mini-ui-markdown-${Math.random().toString(36).slice(2, 10)}`,
   );
   const highlightNodesRef = useRef({ light: [], dark: [] });
   const markdownText =
@@ -103,11 +103,11 @@ const Markdown = ({
           : "";
   const { containerStyle, markdownStyle } = useMemo(
     () => splitStyleProps(style),
-    [style]
+    [style],
   );
   const mergedMarkdownTheme = useMemo(
     () => mergeMarkdownTheme(theme?.markdown, markdownStyle),
-    [theme, markdownStyle]
+    [theme, markdownStyle],
   );
   useEffect(() => {
     let cancelled = false;
@@ -118,14 +118,14 @@ const Markdown = ({
 
       if (!highlightNodesRef.current[themeKey]?.length) {
         const before = Array.from(
-          document.head.querySelectorAll("style,link[rel='stylesheet']")
+          document.head.querySelectorAll("style,link[rel='stylesheet']"),
         );
 
         try {
           if (themeKey === "dark") {
             await import("highlight.js/styles/vs2015.css");
           } else {
-            await import("highlight.js/styles/vs.css");
+            await import("highlight.js/styles/atom-one-light.css");
           }
         } catch (error) {
           console.error("[Markdown highlight theme load failed]:", error);
@@ -135,13 +135,13 @@ const Markdown = ({
         if (cancelled) return;
 
         const after = Array.from(
-          document.head.querySelectorAll("style,link[rel='stylesheet']")
+          document.head.querySelectorAll("style,link[rel='stylesheet']"),
         );
         const newNodes = after.filter((node) => !before.includes(node));
 
         highlightNodesRef.current[themeKey] = newNodes;
         newNodes.forEach((node) =>
-          node.setAttribute("data-hljs-theme", themeKey)
+          node.setAttribute("data-hljs-theme", themeKey),
         );
       }
 
@@ -301,7 +301,7 @@ const Markdown = ({
       simplifiedAutoLink: true,
       ...options,
     }),
-    [options]
+    [options],
   );
   const mergedComponents = useMemo(
     () => ({
@@ -310,7 +310,7 @@ const Markdown = ({
       ),
       ...components,
     }),
-    [components, mergedMarkdownTheme]
+    [components, mergedMarkdownTheme],
   );
 
   return (

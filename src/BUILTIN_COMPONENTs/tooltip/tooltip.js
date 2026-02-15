@@ -18,6 +18,45 @@ import {
 
 let _tooltipIdCounter = 0;
 
+/* Track whether mouse actually moved (vs scroll-induced mouseenter) */
+let _lastMouseClientX = -1;
+let _lastMouseClientY = -1;
+let _scrollingSince = 0;
+
+const _trackGlobalMouse = (e) => {
+  _lastMouseClientX = e.clientX;
+  _lastMouseClientY = e.clientY;
+  _scrollingSince = 0;
+};
+const _trackGlobalScroll = () => {
+  _scrollingSince = Date.now();
+};
+if (typeof window !== "undefined") {
+  window.addEventListener("mousemove", _trackGlobalMouse, true);
+  window.addEventListener("scroll", _trackGlobalScroll, true);
+}
+
+/* Shared portal root — all tooltips render into the same container */
+let _sharedPortalRoot = null;
+let _sharedPortalRefCount = 0;
+const _acquirePortal = () => {
+  if (!_sharedPortalRoot) {
+    _sharedPortalRoot = document.createElement("div");
+    _sharedPortalRoot.setAttribute("data-mini-ui-tooltip-root", "true");
+    document.body.appendChild(_sharedPortalRoot);
+  }
+  _sharedPortalRefCount++;
+  return _sharedPortalRoot;
+};
+const _releasePortal = () => {
+  _sharedPortalRefCount--;
+  if (_sharedPortalRefCount <= 0 && _sharedPortalRoot) {
+    document.body.removeChild(_sharedPortalRoot);
+    _sharedPortalRoot = null;
+    _sharedPortalRefCount = 0;
+  }
+};
+
 const default_trigger = ["hover", "focus", "click"];
 
 const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
@@ -291,7 +330,7 @@ const Tooltip = ({
   offset = 8,
   trigger = default_trigger,
   open_delay = 80,
-  close_delay = 0,
+  close_delay = 80,
   show_arrow = true,
   align = "center",
   arrow_size = 8,
@@ -324,6 +363,7 @@ const Tooltip = ({
   const [isClickOpen, setIsClickOpen] = useState(false);
   const [activePosition, setActivePosition] = useState(position);
   const [bubbleSize, setBubbleSize] = useState({ width: 0, height: 0 });
+  const bubbleSizeRef = useRef({ width: 0, height: 0 });
   const [positionStyle, setPositionStyle] = useState({
     top: 0,
     left: 0,
@@ -430,7 +470,10 @@ const Tooltip = ({
   useEffect(() => {
     const id = ttl_id_ref.current;
     ttl_register(id, force_close);
-    return () => ttl_unregister(id);
+    return () => {
+      ttl_notifyClose(id);
+      ttl_unregister(id);
+    };
   }, [force_close]);
 
   useEffect(() => {
@@ -443,12 +486,10 @@ const Tooltip = ({
 
   useEffect(() => {
     if (typeof document === "undefined") return undefined;
-    const el = document.createElement("div");
-    el.setAttribute("data-mini-ui-tooltip-root", "true");
-    document.body.appendChild(el);
+    const el = _acquirePortal();
     setPortalElement(el);
     return () => {
-      document.body.removeChild(el);
+      _releasePortal();
     };
   }, []);
   useEffect(() => {
@@ -494,6 +535,7 @@ const Tooltip = ({
     const height = content_ref.current.offsetHeight;
     if (!width && !height) return null;
     const size = { width, height };
+    bubbleSizeRef.current = size;
     setBubbleSize((prev) =>
       prev.width === size.width && prev.height === size.height ? prev : size,
     );
@@ -506,7 +548,7 @@ const Tooltip = ({
       const rect = trigger_ref.current.getBoundingClientRect();
       if (!rect) return;
 
-      const size = sizeOverride || bubbleSize;
+      const size = sizeOverride || bubbleSizeRef.current;
       if (!size || (!size.width && !size.height)) return;
 
       const viewportWidth = window.innerWidth || 0;
@@ -680,7 +722,7 @@ const Tooltip = ({
         transform: anchor.transform,
       });
     },
-    [position, offset, show_arrow, arrowHeight, bubbleSize, align],
+    [position, offset, show_arrow, arrowHeight, align],
   );
 
   useLayoutEffect(() => {
@@ -699,10 +741,18 @@ const Tooltip = ({
 
   useEffect(() => {
     if (!isOpen) return undefined;
-    const handleMove = () => update_position();
+    let rafId = 0;
+    const handleMove = () => {
+      if (rafId) return;
+      rafId = requestAnimationFrame(() => {
+        rafId = 0;
+        update_position();
+      });
+    };
     window.addEventListener("scroll", handleMove, true);
     window.addEventListener("resize", handleMove);
     return () => {
+      if (rafId) cancelAnimationFrame(rafId);
       window.removeEventListener("scroll", handleMove, true);
       window.removeEventListener("resize", handleMove);
     };
@@ -733,10 +783,26 @@ const Tooltip = ({
       document.removeEventListener("mousedown", handleMouseDown);
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [isClickEnabled, isClickOpen, isControlled, on_open_change, open]);
+  }, [isClickEnabled, isClickOpen, isControlled, on_open_change]);
 
   const handle_trigger_mouse_enter = () => {
     if (!isHoverEnabled) return;
+    /* Ignore scroll-induced mouseenter: if a scroll happened recently and the
+       mouse hasn't moved since, this mouseenter was triggered by the DOM
+       scrolling under a stationary cursor, not by actual mouse movement. */
+    if (_scrollingSince && Date.now() - _scrollingSince < 150) {
+      const rect = trigger_ref.current?.getBoundingClientRect();
+      if (rect) {
+        const mx = _lastMouseClientX;
+        const my = _lastMouseClientY;
+        const inTrigger =
+          mx >= rect.left &&
+          mx <= rect.right &&
+          my >= rect.top &&
+          my <= rect.bottom;
+        if (!inTrigger) return;
+      }
+    }
     clear_close_timer();
     setIsHoverPending(true);
     schedule_open(() => {
@@ -824,7 +890,7 @@ const Tooltip = ({
     if (!isHoverPending && !isHoveringTrigger && !isHoveringTooltip) {
       return undefined;
     }
-    window.addEventListener("mousemove", handle_mouse_move);
+    window.addEventListener("mousemove", handle_mouse_move, { passive: true });
     return () => window.removeEventListener("mousemove", handle_mouse_move);
   }, [
     handle_mouse_move,

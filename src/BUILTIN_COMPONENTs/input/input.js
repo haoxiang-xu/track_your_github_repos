@@ -626,12 +626,12 @@ const Input = ({
         <span
           style={{
             position: "absolute",
-            transition: "all 0.12s cubic-bezier(0.4, 0, 0.2, 1)",
+            transition: "all 0.18s cubic-bezier(0.4, 0, 0.2, 1)",
             top:
               onFocus ||
               (value && value.length > 0) ||
               (defaultValue && defaultValue.length > 0)
-                ? `calc(0% - ${(style?.fontSize || theme?.input.fontSize || 16) / 2 + 4}px)`
+                ? `calc(0% - ${((style?.fontSize || theme?.input.fontSize || 16) * 0.75) / 2 + 6}px)`
                 : "50%",
             left:
               onFocus ||
@@ -648,9 +648,17 @@ const Input = ({
               onFocus ||
               (value && value.length > 0) ||
               (defaultValue && defaultValue.length > 0)
-                ? (style?.fontSize || theme?.input.fontSize || 16) * 0.8
+                ? (style?.fontSize || theme?.input.fontSize || 16) * 0.75
                 : style?.fontSize || theme?.input.fontSize || 16,
-            color: style?.color || theme?.color || "black",
+            color: onFocus
+              ? style?.color || theme?.color || "black"
+              : style?.color || theme?.color || "#666666",
+            opacity:
+              onFocus ||
+              (value && value.length > 0) ||
+              (defaultValue && defaultValue.length > 0)
+                ? 0.6
+                : 0.45,
 
             userSelect: "none",
             webkitUserSelect: "none",
@@ -665,10 +673,276 @@ const Input = ({
   );
 };
 
+/* ── FlowingInput ────────────────────────────────────────────────────────────── */
+const FlowingInput = ({
+  label,
+  placeholder,
+  value,
+  set_value = () => {},
+  on_focus = () => {},
+  on_blur = () => {},
+  on_key_down = () => {},
+  input_ref,
+  type = "text",
+  style,
+  max_length,
+  disabled = false,
+  prefix_icon,
+  prefix_label,
+  prefix_component,
+  postfix_icon,
+  postfix_label,
+  postfix_component,
+}) => {
+  const { theme, onThemeMode } = useContext(ConfigContext);
+  const [defaultValue, setDefaultValue] = useState("");
+  const default_input_ref = useRef(null);
+  const [focused, setFocused] = useState(false);
+  const [hovered, setHovered] = useState(false);
+  const prefixRef = useRef(null);
+
+  const isControlled = value !== undefined;
+  const currentValue = isControlled ? value : defaultValue;
+  const hasValue =
+    currentValue !== undefined &&
+    currentValue !== null &&
+    String(currentValue).length > 0;
+  const isActive = focused || hasValue;
+
+  const isDark = onThemeMode === "dark_mode";
+  const baseColor = style?.color || theme?.color || (isDark ? "#CCC" : "#222");
+  const mutedColor = isDark ? "rgba(255,255,255,0.4)" : "rgba(0,0,0,0.4)";
+  const fontSize = style?.fontSize || theme?.input?.fontSize || 16;
+  const fontFamily = style?.fontFamily || theme?.font?.fontFamily || "Jost";
+  const borderRadius = style?.borderRadius || theme?.input?.borderRadius || 7;
+  const bg =
+    style?.backgroundColor ??
+    (isDark ? "rgba(30, 30, 30, 0.95)" : "rgba(255, 255, 255, 0.95)");
+  const border = isDark
+    ? "1px solid rgba(255, 255, 255, 0.08)"
+    : "1px solid rgba(0, 0, 0, 0.06)";
+  const shadow = isDark
+    ? "0 4px 24px rgba(0, 0, 0, 0.5), 0 1px 3px rgba(0, 0, 0, 0.3)"
+    : "0 4px 24px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.06)";
+  const shadowHover = isDark
+    ? "0 12px 36px rgba(0, 0, 0, 0.55), 0 3px 8px rgba(0, 0, 0, 0.35)"
+    : "0 12px 36px rgba(0, 0, 0, 0.10), 0 3px 8px rgba(0, 0, 0, 0.06)";
+  const labelColor = focused
+    ? baseColor
+    : isDark
+      ? "rgba(255,255,255,0.4)"
+      : "rgba(0,0,0,0.4)";
+  const padding = Math.round(fontSize * 0.75);
+
+  const hasPrefix =
+    prefix_icon !== undefined ||
+    prefix_label !== undefined ||
+    prefix_component !== undefined;
+  const hasPostfix =
+    postfix_icon !== undefined ||
+    postfix_label !== undefined ||
+    postfix_component !== undefined;
+
+  /* Calculate label left offset to account for prefix width */
+  const [prefixWidth, setPrefixWidth] = useState(0);
+  useEffect(() => {
+    if (prefixRef.current) {
+      setPrefixWidth(prefixRef.current.offsetWidth);
+    }
+  }, [prefix_icon, prefix_label, prefix_component, fontSize]);
+  const labelLeft = hasPrefix ? padding + prefixWidth + 12 : padding;
+
+  return (
+    <div
+      style={{
+        position: "relative",
+        width: style?.width || "auto",
+        opacity: disabled ? 0.5 : 1,
+        cursor: disabled ? "not-allowed" : "text",
+      }}
+      onClick={() => {
+        if (disabled) return;
+        const ref = input_ref || default_input_ref;
+        if (ref?.current) ref.current.focus();
+      }}
+    >
+      <div
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+        style={{
+          position: "relative",
+          display: "flex",
+          alignItems: "center",
+          gap: 6,
+          boxSizing: "content-box",
+          height:
+            style?.height ||
+            theme?.input?.height ||
+            (fontSize ? fontSize + 16 : undefined) ||
+            32,
+          backgroundColor: bg,
+          border,
+          borderRadius,
+          boxShadow: hovered || focused ? shadowHover : shadow,
+          transition: "box-shadow 0.3s ease",
+          padding: `${default_top_bottom_padding}px ${padding}px`,
+        }}
+      >
+        {/* prefix */}
+        {hasPrefix && (
+          <div
+            ref={prefixRef}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 4,
+              flexShrink: 0,
+            }}
+          >
+            {prefix_component}
+            {prefix_icon && (
+              <Icon
+                src={prefix_icon}
+                color={baseColor}
+                style={{
+                  width: fontSize + 4,
+                  height: fontSize + 4,
+                }}
+              />
+            )}
+            {prefix_label && (
+              <span
+                style={{
+                  fontFamily,
+                  fontSize,
+                  color: mutedColor,
+                  userSelect: "none",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                {prefix_label}
+              </span>
+            )}
+          </div>
+        )}
+        <input
+          ref={input_ref || default_input_ref}
+          type={type}
+          disabled={disabled}
+          maxLength={max_length}
+          value={currentValue}
+          placeholder={!label || isActive ? placeholder : undefined}
+          onChange={(e) => {
+            if (isControlled) {
+              set_value(e.target.value, e);
+            } else {
+              setDefaultValue(e.target.value);
+            }
+          }}
+          onFocus={() => {
+            setFocused(true);
+            on_focus();
+          }}
+          onBlur={() => {
+            setFocused(false);
+            on_blur();
+          }}
+          onKeyDown={on_key_down}
+          style={{
+            flex: 1,
+            boxSizing: "border-box",
+            fontFamily,
+            fontSize,
+            color: baseColor,
+            caretColor: baseColor,
+            background: "transparent",
+            border: "none",
+            borderRadius,
+            outline: "none",
+            padding: 0,
+            minWidth: 0,
+          }}
+        />
+        {/* postfix */}
+        {hasPostfix && (
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 4,
+              flexShrink: 0,
+            }}
+          >
+            {postfix_label && (
+              <span
+                style={{
+                  fontFamily,
+                  fontSize,
+                  color: mutedColor,
+                  userSelect: "none",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                {postfix_label}
+              </span>
+            )}
+            {postfix_icon && (
+              <Icon
+                src={postfix_icon}
+                color={baseColor}
+                style={{
+                  width: fontSize + 4,
+                  height: fontSize + 4,
+                }}
+              />
+            )}
+            {postfix_component && (
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  transform: "scale(0.85)",
+                  transformOrigin: "center",
+                }}
+              >
+                {postfix_component}
+              </div>
+            )}
+          </div>
+        )}
+        {/* floating label */}
+        {label && (
+          <span
+            style={{
+              position: "absolute",
+              left: isActive ? padding : labelLeft,
+              top: isActive
+                ? `calc(0% - ${(fontSize * 0.75) / 2 + 6}px)`
+                : "50%",
+              transform: "translateY(-50%)",
+              fontSize: isActive ? fontSize * 0.75 : fontSize,
+              fontFamily,
+              color: labelColor,
+              opacity: isActive ? 0.6 : 0.45,
+              transition: "all 0.18s cubic-bezier(0.4, 0, 0.2, 1)",
+              pointerEvents: "none",
+              userSelect: "none",
+              zIndex: 1,
+            }}
+          >
+            {label}
+          </span>
+        )}
+      </div>
+    </div>
+  );
+};
+
 export {
   Input as default,
   Input,
   Password,
   InputWithDelete,
   ValidationCodeInput,
+  FlowingInput,
 };
