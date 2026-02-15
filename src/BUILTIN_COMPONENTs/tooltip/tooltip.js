@@ -899,6 +899,44 @@ const Tooltip = ({
     isHoveringTrigger,
     isHoveringTooltip,
   ]);
+  /* Forward wheel events through the portal boundary.
+     When tooltip inner content is at its scroll boundary, propagate
+     the wheel to the trigger's nearest scrollable ancestor so the
+     page continues scrolling naturally. */
+  const handle_tooltip_wheel = useCallback((e) => {
+    /* Walk from the event target up to the tooltip root and check if
+         any scrollable element can still consume the delta. */
+    let node = e.target;
+    const bubble = tooltip_ref.current;
+    while (node && node !== bubble) {
+      const cs = getComputedStyle(node);
+      const scrollable = cs.overflowY === "auto" || cs.overflowY === "scroll";
+      if (scrollable && node.scrollHeight > node.clientHeight) {
+        const atTop = node.scrollTop <= 0 && e.deltaY < 0;
+        const atBottom =
+          node.scrollTop + node.clientHeight >= node.scrollHeight - 1 &&
+          e.deltaY > 0;
+        if (!atTop && !atBottom) return; // inner element still scrollable
+      }
+      node = node.parentElement;
+    }
+
+    /* Nothing inside the tooltip consumed the scroll —
+         forward to the trigger's scroll parent. */
+    const triggerEl = trigger_ref.current;
+    if (!triggerEl) return;
+    let parent = triggerEl.parentElement;
+    while (parent) {
+      const ps = getComputedStyle(parent);
+      const isScrollable = ps.overflowY === "auto" || ps.overflowY === "scroll";
+      if (isScrollable && parent.scrollHeight > parent.clientHeight) {
+        parent.scrollBy({ top: e.deltaY });
+        return;
+      }
+      parent = parent.parentElement;
+    }
+  }, []);
+
   const handle_tooltip_focus = () => {
     if (!isFocusEnabled) return;
     setIsFocused(true);
@@ -1033,6 +1071,7 @@ const Tooltip = ({
               onMouseEnter={handle_tooltip_mouse_enter}
               onFocus={handle_tooltip_focus}
               onBlur={handle_tooltip_blur}
+              onWheel={handle_tooltip_wheel}
             >
               <div
                 style={{

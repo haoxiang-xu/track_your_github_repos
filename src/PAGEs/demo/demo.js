@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useEffect, useRef } from "react";
 
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
 import { ConfigContext } from "../../CONTAINERs/config/context";
@@ -7,6 +7,7 @@ import { ConfigContext } from "../../CONTAINERs/config/context";
 /* { Components } ------------------------------------------------------------------------------------------------------------ */
 import Tooltip from "../../BUILTIN_COMPONENTs/tooltip/tooltip";
 import Markdown from "../../BUILTIN_COMPONENTs/markdown/markdown";
+import Icon from "../../BUILTIN_COMPONENTs/icon/icon";
 /* { Components } ------------------------------------------------------------------------------------------------------------ */
 
 /* { Sections } -------------------------------------------------------------------------------------------------------------- */
@@ -18,6 +19,120 @@ import SelectDemo from "./select_demo";
 import CardDemo from "./card_demo";
 import OthersDemo from "./others_demo";
 /* { Sections } -------------------------------------------------------------------------------------------------------------- */
+
+const Landing = () => {
+  const { theme } = useContext(ConfigContext);
+  return (
+    <div
+      style={{
+        position: "relative",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        minHeight: "100vh",
+        padding: "64px 24px 0",
+        textAlign: "center",
+        userSelect: "none",
+        WebkitUserSelect: "none",
+      }}
+    >
+      <div
+        style={{
+          width: 128,
+          height: 128,
+          marginBottom: 32,
+          color: theme?.color || "black",
+        }}
+      >
+        <Icon src="mini_ui" />
+      </div>
+      <h1
+        style={{
+          fontSize: 72,
+          fontWeight: 400,
+          fontFamily: "Jost, sans-serif",
+          color: theme?.color || "black",
+          margin: 0,
+          letterSpacing: "-1.5px",
+          lineHeight: 1.1,
+        }}
+      >
+        Mini UI
+      </h1>
+      <p
+        style={{
+          fontSize: 18,
+          fontFamily: "Jost, sans-serif",
+          color: theme?.color || "black",
+          opacity: 0.4,
+          margin: "16px 0 0",
+          maxWidth: 480,
+          lineHeight: 1.6,
+        }}
+      >
+        A starting point for your React Project.
+      </p>
+      <div
+        style={{
+          marginTop: 48,
+          display: "flex",
+          gap: 16,
+          alignItems: "center",
+        }}
+      >
+        <span
+          style={{
+            fontSize: 13,
+            fontFamily: "Menlo, Monaco, Consolas, monospace",
+            color: theme?.color || "black",
+            opacity: 0.25,
+          }}
+        >
+          v0.1.0
+        </span>
+      </div>
+      {/* scroll hint */}
+      <div
+        style={{
+          position: "absolute",
+          bottom: 36,
+          left: "50%",
+          transform: "translateX(-50%)",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          gap: 6,
+          opacity: 0.2,
+          color: theme?.color || "black",
+        }}
+      >
+        <span
+          style={{
+            fontSize: 12,
+            fontFamily: "Jost, sans-serif",
+            letterSpacing: "2px",
+            textTransform: "uppercase",
+          }}
+        >
+          Scroll
+        </span>
+        <svg
+          width="16"
+          height="24"
+          viewBox="0 0 16 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="M8 4 L8 18 M3 14 L8 20 L13 14" />
+        </svg>
+      </div>
+    </div>
+  );
+};
 
 const CustomizedTooltip = ({ children, code }) => {
   return (
@@ -49,6 +164,10 @@ const CustomizedTooltip = ({ children, code }) => {
 };
 const Demo = () => {
   const { theme } = useContext(ConfigContext);
+  const scrollRef = useRef(null);
+  useEffect(() => {
+    if (scrollRef.current) scrollRef.current.scrollTop = 0;
+  }, []);
   return (
     <div
       id="demo"
@@ -64,6 +183,7 @@ const Demo = () => {
       }}
     >
       <div
+        ref={scrollRef}
         id="component_scroll_container"
         className="scrolling-bar"
         style={{
@@ -77,28 +197,26 @@ const Demo = () => {
           gap: "32px",
           paddingBottom: "512px",
           overflowY: "scroll",
-          border: "1px solid #cccccc",
         }}
       >
+        <Landing />
         <div
           style={{
-            position: "absolute",
-            top: 0,
-            left: "50%",
-            transform: "translateX(-50%)",
-            maxWidth: 1200,
-            paddingTop: "512px",
+            position: "relative",
+            margin: "0 auto",
+            width: "75%",
+            minWidth: 700,
+            maxWidth: 1000,
             paddingBottom: "512px",
-            border: "1px solid #cccccc",
           }}
         >
-        <SwitchDemo />
-        <SpinnerDemo />
-        <InputDemo />
-        <SelectDemo />
-        <CardDemo />
-        <MarkdownDemo />
-        <OthersDemo />
+          <SwitchDemo />
+          <SpinnerDemo />
+          <InputDemo />
+          <SelectDemo />
+          <CardDemo />
+          <MarkdownDemo />
+          <OthersDemo />
         </div>
       </div>
     </div>

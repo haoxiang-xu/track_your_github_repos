@@ -316,10 +316,8 @@ const MaterialUI = (props) => (
 );
 const MiniUI = (props) => (
   <svg
-    width="17"
-    height="17"
-    viewBox="0 0 17 17"
     xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 17 17"
     fill="currentColor"
   >
     <path
