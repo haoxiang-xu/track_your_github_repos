@@ -17,7 +17,6 @@ import InputDemo from "./input_demo";
 import MarkdownDemo from "./markdown_demo";
 import SelectDemo from "./select_demo";
 import CardDemo from "./card_demo";
-import BackgroundDemo from "./background_demo";
 import OthersDemo from "./others_demo";
 /* { Sections } -------------------------------------------------------------------------------------------------------------- */
 
@@ -220,7 +219,6 @@ const Demo = () => {
           <SelectDemo />
           <CardDemo />
           <MarkdownDemo />
-          <BackgroundDemo />
           <OthersDemo />
         </div>
       </div>
