@@ -9,6 +9,14 @@ import {
 import { createPortal } from "react-dom";
 import { useLayoutEffect } from "../mini_react/mini_use";
 import { ConfigContext } from "../../CONTAINERs/config/context";
+import {
+  register as ttl_register,
+  unregister as ttl_unregister,
+  requestOpen as ttl_requestOpen,
+  notifyClose as ttl_notifyClose,
+} from "./tooltip_trigger_listener";
+
+let _tooltipIdCounter = 0;
 
 const default_trigger = ["hover", "focus", "click"];
 
@@ -171,7 +179,10 @@ const buildHorizontalArrowPath = ({
   const bottomUy = -uy;
 
   const topJoin = { x: baseX + ux * jr, y: baseTop + uy * jr };
-  const bottomJoin = { x: baseX + bottomUx * jr, y: baseBottom + bottomUy * jr };
+  const bottomJoin = {
+    x: baseX + bottomUx * jr,
+    y: baseBottom + bottomUy * jr,
+  };
   const topTip = { x: tipX - ux * ar, y: cy - uy * ar };
   const bottomTip = { x: tipX - bottomUx * ar, y: cy - bottomUy * ar };
 
@@ -303,6 +314,9 @@ const Tooltip = ({
   const open_ref = useRef(open);
   const has_open_sync_ref = useRef(false);
 
+  /* --- tooltip trigger listener (global singleton) --- */
+  const ttl_id_ref = useRef(`__ttl_${++_tooltipIdCounter}`);
+
   const [isHoveringTrigger, setIsHoveringTrigger] = useState(false);
   const [isHoveringTooltip, setIsHoveringTooltip] = useState(false);
   const [isHoverPending, setIsHoverPending] = useState(false);
@@ -325,7 +339,7 @@ const Tooltip = ({
 
   const has_trigger = useCallback(
     (name) => triggerList.includes(name),
-    [triggerList]
+    [triggerList],
   );
 
   const isHoverEnabled = has_trigger("hover");
@@ -339,8 +353,7 @@ const Tooltip = ({
     (isClickEnabled && isClickOpen);
   const isOpen = isControlled ? open : derivedOpen;
 
-  const content =
-    tooltip_component !== undefined ? tooltip_component : label;
+  const content = tooltip_component !== undefined ? tooltip_component : label;
 
   const {
     backgroundColor: styleBackgroundColor,
@@ -355,10 +368,7 @@ const Tooltip = ({
     ...contentStyleOverrides
   } = style || {};
   const arrowHeight = Math.max(0, toNumber(arrow_size, 8));
-  const arrowWidthValue = Math.max(
-    0,
-    toNumber(arrow_width, arrowHeight * 2)
-  );
+  const arrowWidthValue = Math.max(0, toNumber(arrow_width, arrowHeight * 2));
   const cornerRadiusValue = toNumber(styleBorderRadius, corner_radius);
   const arrowJoinRadiusValue = toNumber(arrow_join_radius, 4);
   const arrowRadiusValue = toNumber(arrow_radius, 2);
@@ -386,7 +396,7 @@ const Tooltip = ({
         openFn();
       }, open_delay);
     },
-    [clear_open_timer, open_delay]
+    [clear_open_timer, open_delay],
   );
   const schedule_close = useCallback(
     (closeFn) => {
@@ -400,8 +410,36 @@ const Tooltip = ({
         closeFn();
       }, close_delay);
     },
-    [clear_close_timer, close_delay]
+    [clear_close_timer, close_delay],
   );
+
+  /* --- register / unregister with global listener --- */
+  const force_close = useCallback(() => {
+    clear_open_timer();
+    clear_close_timer();
+    setIsHoveringTrigger(false);
+    setIsHoveringTooltip(false);
+    setIsHoverPending(false);
+    setIsFocused(false);
+    setIsClickOpen(false);
+    if (isControlled && on_open_change) {
+      on_open_change(false);
+    }
+  }, [isControlled, on_open_change, clear_open_timer, clear_close_timer]);
+
+  useEffect(() => {
+    const id = ttl_id_ref.current;
+    ttl_register(id, force_close);
+    return () => ttl_unregister(id);
+  }, [force_close]);
+
+  useEffect(() => {
+    if (isOpen) {
+      ttl_requestOpen(ttl_id_ref.current);
+    } else {
+      ttl_notifyClose(ttl_id_ref.current);
+    }
+  }, [isOpen]);
 
   useEffect(() => {
     if (typeof document === "undefined") return undefined;
@@ -457,7 +495,7 @@ const Tooltip = ({
     if (!width && !height) return null;
     const size = { width, height };
     setBubbleSize((prev) =>
-      prev.width === size.width && prev.height === size.height ? prev : size
+      prev.width === size.width && prev.height === size.height ? prev : size,
     );
     return size;
   }, []);
@@ -642,7 +680,7 @@ const Tooltip = ({
         transform: anchor.transform,
       });
     },
-    [position, offset, show_arrow, arrowHeight, bubbleSize, align]
+    [position, offset, show_arrow, arrowHeight, bubbleSize, align],
   );
 
   useLayoutEffect(() => {
@@ -778,7 +816,7 @@ const Tooltip = ({
       isHoveringTooltip,
       isHoveringTrigger,
       schedule_close,
-    ]
+    ],
   );
 
   useEffect(() => {
@@ -824,7 +862,9 @@ const Tooltip = ({
   const textColor =
     styleTextColor ?? theme?.tooltip?.color ?? defaultTooltipStyle.color;
   const shadowValue =
-    styleBoxShadow ?? theme?.tooltip?.boxShadow ?? defaultTooltipStyle.boxShadow;
+    styleBoxShadow ??
+    theme?.tooltip?.boxShadow ??
+    defaultTooltipStyle.boxShadow;
   const contentPadding = stylePadding ?? "6px";
   const contentMaxWidth = styleMaxWidth ?? 260;
   const contentFontSize = styleFontSize ?? 12;
@@ -835,14 +875,10 @@ const Tooltip = ({
   const arrowExtent = show_arrow ? arrowHeight : 0;
   const tooltipWidth =
     bubbleSize.width +
-    (activePosition === "left" || activePosition === "right"
-      ? arrowExtent
-      : 0);
+    (activePosition === "left" || activePosition === "right" ? arrowExtent : 0);
   const tooltipHeight =
     bubbleSize.height +
-    (activePosition === "top" || activePosition === "bottom"
-      ? arrowExtent
-      : 0);
+    (activePosition === "top" || activePosition === "bottom" ? arrowExtent : 0);
   const bubbleOffsetX = activePosition === "right" ? arrowExtent : 0;
   const bubbleOffsetY = activePosition === "bottom" ? arrowExtent : 0;
   const tooltipPath = useMemo(() => {
@@ -981,7 +1017,7 @@ const Tooltip = ({
                 </div>
               </div>
             </div>,
-            portal_element
+            portal_element,
           )
         : null}
     </>

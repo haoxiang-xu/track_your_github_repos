@@ -9,7 +9,7 @@ import { ConfigContext } from "../../CONTAINERs/config/context";
 import Icon from "../../BUILTIN_COMPONENTs/icon/icon";
 /* { Components } ------------------------------------------------------------------------------------------------------------ */
 
-const GroupDemo = () => {
+const OthersDemo = () => {
   const { theme } = useContext(ConfigContext);
 
   const cardStyle = {
@@ -50,7 +50,7 @@ const GroupDemo = () => {
           userSelect: "none",
         }}
       >
-        Group
+        Others
       </span>
 
       {/* ---- Navigation Bar ---- */}
@@ -252,4 +252,4 @@ const NavBarDemo = () => {
   );
 };
 
-export default GroupDemo;
+export default OthersDemo;
