@@ -81,7 +81,7 @@ console.log(hello);
         <Markdown
           style={{
             pre: {
-              height: 512,
+              height: 600,
             }
           }}
         >{`

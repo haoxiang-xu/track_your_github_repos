@@ -1,4 +1,4 @@
-import { useContext, useEffect, useMemo, useRef } from "react";
+import { useContext, useMemo, useRef } from "react";
 import ReactShowdown from "react-showdown";
 
 /* { Components } ------------------------------------------------------------------------------------------------------------ */
@@ -88,11 +88,10 @@ const Markdown = ({
   className,
   style,
 }) => {
-  const { theme, onThemeMode } = useContext(ConfigContext);
+  const { theme } = useContext(ConfigContext);
   const idRef = useRef(
     `mini-ui-markdown-${Math.random().toString(36).slice(2, 10)}`,
   );
-  const highlightNodesRef = useRef({ light: [], dark: [] });
   const markdownText =
     typeof markdown === "string"
       ? markdown
@@ -109,57 +108,6 @@ const Markdown = ({
     () => mergeMarkdownTheme(theme?.markdown, markdownStyle),
     [theme, markdownStyle],
   );
-  useEffect(() => {
-    let cancelled = false;
-    const themeKey = onThemeMode === "dark_mode" ? "dark" : "light";
-
-    const loadTheme = async () => {
-      if (typeof document === "undefined") return;
-
-      if (!highlightNodesRef.current[themeKey]?.length) {
-        const before = Array.from(
-          document.head.querySelectorAll("style,link[rel='stylesheet']"),
-        );
-
-        try {
-          if (themeKey === "dark") {
-            await import("highlight.js/styles/vs2015.css");
-          } else {
-            await import("highlight.js/styles/atom-one-light.css");
-          }
-        } catch (error) {
-          console.error("[Markdown highlight theme load failed]:", error);
-          return;
-        }
-
-        if (cancelled) return;
-
-        const after = Array.from(
-          document.head.querySelectorAll("style,link[rel='stylesheet']"),
-        );
-        const newNodes = after.filter((node) => !before.includes(node));
-
-        highlightNodesRef.current[themeKey] = newNodes;
-        newNodes.forEach((node) =>
-          node.setAttribute("data-hljs-theme", themeKey),
-        );
-      }
-
-      Object.entries(highlightNodesRef.current).forEach(([key, nodes]) => {
-        const disabled = key !== themeKey;
-        nodes.forEach((node) => {
-          node.disabled = disabled;
-          if (node.sheet) node.sheet.disabled = disabled;
-        });
-      });
-    };
-
-    loadTheme();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [onThemeMode]);
   const css = useMemo(() => {
     const id = idRef.current;
     const markdownTheme = mergedMarkdownTheme;
@@ -235,12 +183,10 @@ const Markdown = ({
         border-radius: ${toPx(code.borderRadius, "4px")};
       }
       [data-markdown-id="${id}"] pre {
-        background: ${pre.backgroundColor || "#F6F6F6"};
-        padding: ${toPx(pre.padding, "12px")};
-        border-radius: ${toPx(pre.borderRadius, "6px")};
-        overflow: ${pre.overflow || "auto"};
-        height: ${toPx(pre.height, "auto")};
-        margin: ${pre.margin || "0 0 0.85em 0"};
+        background: transparent;
+        padding: 0;
+        margin: 0;
+        border: none;
       }
       [data-markdown-id="${id}"] pre code {
         background: transparent;

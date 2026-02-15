@@ -146,6 +146,9 @@ const CustomizedTooltip = ({ children, code }) => {
               margin: 0,
               border: "1px solid #E0E0E0",
             },
+            code: {
+              margin: 0,
+            },
           }}
         >
           {code}
