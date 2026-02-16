@@ -19,6 +19,7 @@ import ButtonDemo from "./button_demo";
 import MarkdownDemo from "./markdown_demo";
 import SelectDemo from "./select_demo";
 import CardDemo from "./card_demo";
+import IconDemo from "./icon_demo";
 import OthersDemo from "./others_demo";
 /* { Sections } -------------------------------------------------------------------------------------------------------------- */
 
@@ -224,6 +225,7 @@ const Demo = () => {
           <CardDemo />
           <MarkdownDemo />
           <OthersDemo />
+          <IconDemo />
         </div>
       </div>
     </div>
