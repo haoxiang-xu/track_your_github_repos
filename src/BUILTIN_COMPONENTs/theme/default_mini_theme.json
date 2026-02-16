@@ -26,10 +26,10 @@
     "foregroundColor": "#CCCCCC",
     "scrolling_bar": {
       "backgroundColor": {
-        "default": "#CCCCCCA3",
-        "active": "#CCCCCC"
+        "default": "rgba(0,0,0,0.12)",
+        "active": "rgba(0,0,0,0.30)"
       },
-      "border": "1px solid #CCCCCC00"
+      "edge": 2
     },
     "input": {
       "fontSize": 16,
@@ -156,10 +156,10 @@
     "foregroundColor": "#1E1E1E",
     "scrolling_bar": {
       "backgroundColor": {
-        "default": "#747880A3",
-        "active": "#747880"
+        "default": "rgba(255,255,255,0.12)",
+        "active": "rgba(255,255,255,0.38)"
       },
-      "border": "1px solid #89899600"
+      "edge": 2
     },
     "input": {
       "fontSize": 16,
