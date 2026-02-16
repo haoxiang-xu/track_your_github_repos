@@ -298,8 +298,7 @@ const ExplorerRow = ({
         userSelect: "none",
         WebkitUserSelect: "none",
         borderRadius: 5,
-        transition:
-          "opacity 0.15s ease, height 0.15s ease, padding 0.15s ease",
+        transition: "opacity 0.15s ease, height 0.15s ease, padding 0.15s ease",
         ...node.style,
       }}
       {...attributes}
@@ -543,7 +542,6 @@ const ExplorerRow = ({
           </div>,
           document.body,
         )}
-
     </div>
   );
 };
@@ -959,7 +957,9 @@ const Explorer = ({
               <Icon src="arrow_right" style={{ width: 14, height: 14 }} />
             </span>
             {activeNode.prefix_icon && (
-              <span style={{ display: "flex", alignItems: "center", flexShrink: 0 }}>
+              <span
+                style={{ display: "flex", alignItems: "center", flexShrink: 0 }}
+              >
                 <Icon
                   src={activeNode.prefix_icon}
                   style={{ width: overlayIconSize, height: overlayIconSize }}
@@ -967,7 +967,9 @@ const Explorer = ({
               </span>
             )}
             {activeNode.prefix && (
-              <span style={{ opacity: 0.5, fontSize: fontSize - 1, flexShrink: 0 }}>
+              <span
+                style={{ opacity: 0.5, fontSize: fontSize - 1, flexShrink: 0 }}
+              >
                 {activeNode.prefix}
               </span>
             )}
@@ -981,12 +983,16 @@ const Explorer = ({
               {activeNode.label}
             </span>
             {activeNode.postfix && (
-              <span style={{ opacity: 0.4, fontSize: fontSize - 1, flexShrink: 0 }}>
+              <span
+                style={{ opacity: 0.4, fontSize: fontSize - 1, flexShrink: 0 }}
+              >
                 {activeNode.postfix}
               </span>
             )}
             {activeNode.postfix_icon && (
-              <span style={{ display: "flex", alignItems: "center", flexShrink: 0 }}>
+              <span
+                style={{ display: "flex", alignItems: "center", flexShrink: 0 }}
+              >
                 <Icon
                   src={activeNode.postfix_icon}
                   style={{ width: overlayIconSize, height: overlayIconSize }}
