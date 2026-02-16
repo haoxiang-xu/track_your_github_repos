@@ -10,6 +10,7 @@ import Input, {
   Password,
   ValidationCodeInput,
   FlowingInput,
+  GhostInput,
 } from "../../BUILTIN_COMPONENTs/input/input";
 import { SemiSwitch } from "../../BUILTIN_COMPONENTs/input/switch";
 import Tooltip from "../../BUILTIN_COMPONENTs/tooltip/tooltip";
@@ -261,6 +262,49 @@ const InputDemo = () => {
           label="with Switch"
           postfix_component={<SemiSwitch />}
           style={{ width: 220 }}
+        />
+      </CustomizedTooltip>
+      <CustomizedTooltip
+        code={`
+\`\`\`js
+<GhostInput placeholder="Ghost input" />
+\`\`\`
+`}
+      >
+        <GhostInput placeholder="Ghost input" style={{ width: 200 }} />
+      </CustomizedTooltip>
+      <CustomizedTooltip
+        code={`
+\`\`\`js
+<GhostInput
+  placeholder="Search"
+  prefix_icon="search"
+/>
+\`\`\`
+`}
+      >
+        <GhostInput
+          placeholder="Search"
+          prefix_icon="search"
+          style={{ width: 220 }}
+        />
+      </CustomizedTooltip>
+      <CustomizedTooltip
+        code={`
+\`\`\`js
+<GhostInput
+  placeholder="Website"
+  prefix_label="https://"
+  postfix_label=".com"
+/>
+\`\`\`
+`}
+      >
+        <GhostInput
+          placeholder="Website"
+          prefix_label="https://"
+          postfix_label=".com"
+          style={{ width: 280 }}
         />
       </CustomizedTooltip>
     </div>

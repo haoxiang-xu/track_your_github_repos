@@ -938,6 +938,236 @@ const FlowingInput = ({
   );
 };
 
+/* ── GhostInput ──────────────────────────────────────────────────────────────── */
+/**
+ * Ghost-style single-line input — transparent background, faint border.
+ * On hover / focus the background scales from center (same animation as Button)
+ * and the border disappears.
+ */
+const GhostInput = ({
+  label,
+  placeholder,
+  value,
+  set_value = () => {},
+  on_focus = () => {},
+  on_blur = () => {},
+  on_key_down = () => {},
+  input_ref,
+  type = "text",
+  style,
+  max_length,
+  disabled = false,
+  prefix_icon,
+  prefix_label,
+  postfix_icon,
+  postfix_label,
+  postfix_component,
+}) => {
+  const { theme, onThemeMode } = useContext(ConfigContext);
+  const isDark = onThemeMode === "dark_mode";
+  const tf = theme?.textfield || {};
+
+  const [defaultValue, setDefaultValue] = useState("");
+  const default_input_ref = useRef(null);
+  const [focused, setFocused] = useState(false);
+  const [hovered, setHovered] = useState(false);
+
+  const isControlled = value !== undefined;
+  const currentValue = isControlled ? value : defaultValue;
+  const hasValue =
+    currentValue !== undefined &&
+    currentValue !== null &&
+    String(currentValue).length > 0;
+
+  /* ── design tokens ── */
+  const fontSize = style?.fontSize || tf.fontSize || 16;
+  const fontFamily =
+    style?.fontFamily || theme?.font?.fontFamily || "Jost, sans-serif";
+  const borderRadius = style?.borderRadius || tf.borderRadius || 7;
+  const baseColor = style?.color || theme?.color || (isDark ? "#CCC" : "#222");
+  const placeholderColor = isDark
+    ? "rgba(255,255,255,0.35)"
+    : "rgba(0,0,0,0.35)";
+  const hoverBg = isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.06)";
+  const activeBg = isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.10)";
+  const faintBorder = isDark
+    ? "1px solid rgba(255,255,255,0.08)"
+    : "1px solid rgba(0,0,0,0.12)";
+  const paddingV = style?.paddingVertical ?? 6;
+  const paddingH = style?.paddingHorizontal ?? 12;
+  const iconSize = style?.iconSize || Math.round(fontSize * 1.05);
+  const gap = style?.gap ?? 6;
+
+  const showBg = hovered || focused;
+
+  const hasPrefix = prefix_icon !== undefined || prefix_label !== undefined;
+  const hasPostfix =
+    postfix_icon !== undefined ||
+    postfix_label !== undefined ||
+    postfix_component !== undefined;
+
+  return (
+    <div
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      onClick={() => {
+        if (disabled) return;
+        const ref = input_ref || default_input_ref;
+        if (ref?.current) ref.current.focus();
+      }}
+      style={{
+        position: "relative",
+        display: "inline-flex",
+        alignItems: "center",
+        gap,
+        fontFamily,
+        fontSize,
+        color: baseColor,
+        background: "transparent",
+        border: showBg ? "1px solid transparent" : faintBorder,
+        outline: "none",
+        borderRadius,
+        padding: `${paddingV}px ${paddingH}px`,
+        cursor: disabled ? "not-allowed" : "text",
+        opacity: disabled ? 0.4 : 1,
+        overflow: "hidden",
+        boxSizing: "border-box",
+        transition: "border 0.2s ease",
+        width: style?.width || "auto",
+        ...style,
+        border: showBg ? "1px solid transparent" : faintBorder,
+      }}
+    >
+      {/* ── Hover / focus background (scales from center) ── */}
+      <span
+        aria-hidden="true"
+        style={{
+          position: "absolute",
+          inset: 0,
+          borderRadius,
+          backgroundColor: focused ? activeBg : hoverBg,
+          transform: showBg ? "scale(1)" : "scale(0.5, 0)",
+          opacity: showBg ? 1 : 0,
+          transition: showBg
+            ? "transform 0.25s cubic-bezier(0.2, 0.9, 0.3, 1.0), opacity 0.18s ease"
+            : "transform 0.2s cubic-bezier(0.4, 0, 1, 1), opacity 0.15s ease",
+          pointerEvents: "none",
+          zIndex: 0,
+        }}
+      />
+
+      {/* prefix */}
+      {prefix_icon && (
+        <span
+          style={{
+            position: "relative",
+            zIndex: 1,
+            display: "flex",
+            alignItems: "center",
+          }}
+        >
+          <Icon
+            src={prefix_icon}
+            style={{ width: iconSize, height: iconSize }}
+          />
+        </span>
+      )}
+      {prefix_label && (
+        <span
+          style={{
+            position: "relative",
+            zIndex: 1,
+            color: placeholderColor,
+            userSelect: "none",
+            whiteSpace: "nowrap",
+          }}
+        >
+          {prefix_label}
+        </span>
+      )}
+
+      {/* input */}
+      <input
+        ref={input_ref || default_input_ref}
+        type={type}
+        disabled={disabled}
+        maxLength={max_length}
+        value={currentValue}
+        placeholder={placeholder || label || ""}
+        onChange={(e) => {
+          if (isControlled) set_value(e.target.value, e);
+          else setDefaultValue(e.target.value);
+        }}
+        onFocus={() => {
+          setFocused(true);
+          on_focus();
+        }}
+        onBlur={() => {
+          setFocused(false);
+          on_blur();
+        }}
+        onKeyDown={on_key_down}
+        style={{
+          position: "relative",
+          zIndex: 1,
+          flex: 1,
+          fontFamily,
+          fontSize,
+          color: baseColor,
+          caretColor: baseColor,
+          background: "transparent",
+          border: "none",
+          outline: "none",
+          padding: 0,
+          minWidth: 0,
+        }}
+      />
+
+      {/* postfix */}
+      {postfix_label && (
+        <span
+          style={{
+            position: "relative",
+            zIndex: 1,
+            color: placeholderColor,
+            userSelect: "none",
+            whiteSpace: "nowrap",
+          }}
+        >
+          {postfix_label}
+        </span>
+      )}
+      {postfix_icon && (
+        <span
+          style={{
+            position: "relative",
+            zIndex: 1,
+            display: "flex",
+            alignItems: "center",
+          }}
+        >
+          <Icon
+            src={postfix_icon}
+            style={{ width: iconSize, height: iconSize }}
+          />
+        </span>
+      )}
+      {postfix_component && (
+        <div
+          style={{
+            position: "relative",
+            zIndex: 1,
+            display: "flex",
+            alignItems: "center",
+          }}
+        >
+          {postfix_component}
+        </div>
+      )}
+    </div>
+  );
+};
+
 export {
   Input as default,
   Input,
@@ -945,4 +1175,5 @@ export {
   InputWithDelete,
   ValidationCodeInput,
   FlowingInput,
+  GhostInput,
 };

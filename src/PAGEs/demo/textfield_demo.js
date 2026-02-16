@@ -6,35 +6,10 @@ import { ConfigContext } from "../../CONTAINERs/config/context";
 
 /* { Components } ------------------------------------------------------------------------------------------------------------ */
 import TextField from "../../BUILTIN_COMPONENTs/input/textfield";
-import Icon from "../../BUILTIN_COMPONENTs/icon/icon";
+import { GhostTextField } from "../../BUILTIN_COMPONENTs/input/textfield";
+import Button from "../../BUILTIN_COMPONENTs/input/button";
 import { CustomizedTooltip } from "./demo";
 /* { Components } ------------------------------------------------------------------------------------------------------------ */
-
-/* ── Shared small button ── */
-const IconBtn = ({ src, color, size = 28, iconSize = 16, onClick }) => {
-  const [hovered, setHovered] = useState(false);
-  return (
-    <div
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      onClick={onClick}
-      style={{
-        width: size,
-        height: size,
-        borderRadius: 7,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        cursor: "pointer",
-        backgroundColor: hovered ? "rgba(128,128,128,0.12)" : "transparent",
-        transition: "background-color 0.15s ease",
-        color: color || "inherit",
-      }}
-    >
-      <Icon src={src} style={{ width: iconSize, height: iconSize }} />
-    </div>
-  );
-};
 
 /* ── Attachment toolbar (chat input) ── */
 const AttachPanel = ({ color, bg, active }) => (
@@ -49,9 +24,9 @@ const AttachPanel = ({ color, bg, active }) => (
       transition: "background-color 0.22s ease",
     }}
   >
-    <IconBtn src="add" color={color} />
-    <IconBtn src="link" color={color} />
-    <IconBtn src="edit" color={color} />
+    <Button prefix_icon="add" style={{ color, fontSize: 14 }} />
+    <Button prefix_icon="link" style={{ color, fontSize: 14 }} />
+    <Button prefix_icon="edit" style={{ color, fontSize: 14 }} />
   </div>
 );
 
@@ -150,13 +125,16 @@ const TextFieldDemo = () => {
             functional_section={
               <>
                 {chatVal.length > 0 && (
-                  <IconBtn
-                    src="close"
-                    color={color}
+                  <Button
+                    prefix_icon="close"
+                    style={{ color, fontSize: 14 }}
                     onClick={() => setChatVal("")}
                   />
                 )}
-                <IconBtn src="arrow_up" color={color} />
+                <Button
+                  prefix_icon="arrow_up"
+                  style={{ color, fontSize: 14 }}
+                />
               </>
             }
             style={{ width: 320, marginTop: 32 }}
@@ -189,6 +167,49 @@ const TextFieldDemo = () => {
                 color={subColor}
               />
             }
+            style={{ width: 300 }}
+          />
+        </CustomizedTooltip>
+
+        {/* ── 3. Ghost chat input ── */}
+        <CustomizedTooltip
+          code={`
+\`\`\`js
+<GhostTextField
+  min_rows={1}
+  max_display_rows={6}
+  placeholder="Ghost message..."
+/>
+\`\`\`
+          `}
+        >
+          <GhostTextField
+            min_rows={1}
+            max_display_rows={6}
+            placeholder="Ghost message..."
+            functional_section={
+              <Button prefix_icon="arrow_up" style={{ color, fontSize: 14 }} />
+            }
+            style={{ width: 320 }}
+          />
+        </CustomizedTooltip>
+
+        {/* ── 4. Ghost note ── */}
+        <CustomizedTooltip
+          code={`
+\`\`\`js
+<GhostTextField
+  min_rows={3}
+  max_display_rows={8}
+  placeholder="Ghost note..."
+/>
+\`\`\`
+          `}
+        >
+          <GhostTextField
+            min_rows={3}
+            max_display_rows={8}
+            placeholder="Ghost note..."
             style={{ width: 300 }}
           />
         </CustomizedTooltip>

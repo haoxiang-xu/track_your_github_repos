@@ -5,7 +5,10 @@ import { ConfigContext } from "../../CONTAINERs/config/context";
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
 
 /* { Components } -------------------------------------------------------------------------------------------------------------- */
-import Select, { FlowingSelect } from "../../BUILTIN_COMPONENTs/select/select";
+import Select, {
+  FlowingSelect,
+  GhostSelect,
+} from "../../BUILTIN_COMPONENTs/select/select";
 import Input from "../../BUILTIN_COMPONENTs/input/input";
 import countries from "../../BUILTIN_COMPONENTs/consts/countries";
 /* { Components } -------------------------------------------------------------------------------------------------------------- */
@@ -234,6 +237,28 @@ const SelectDemo = () => {
         filter_mode="panel"
         search_placeholder="Filter..."
         style={{ width: 240 }}
+        dropdown_style={{ maxHeight: 220 }}
+      />
+      <GhostSelect
+        options={houseOptions}
+        value={house}
+        set_value={setHouse}
+        placeholder="Suit"
+        filterable={false}
+      />
+      <GhostSelect
+        options={simpleOptions}
+        value={simple}
+        set_value={setSimple}
+        placeholder="Priority"
+        filterable={false}
+      />
+      <GhostSelect
+        options={cityOptions}
+        value={city}
+        set_value={setCity}
+        placeholder="City"
+        search_placeholder="Filter cities..."
         dropdown_style={{ maxHeight: 220 }}
       />
     </div>
