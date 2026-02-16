@@ -292,6 +292,7 @@ const ScrollingBar = () => {
       const cleanDragH = makeDragger(hThumb, "h");
 
       container.addEventListener("scroll", onScroll, { passive: true });
+      container.addEventListener("input", onScroll, { passive: true });
       container.addEventListener("mouseenter", onContainerEnter);
       container.addEventListener("mouseleave", onContainerLeave);
       vThumb.addEventListener("mouseenter", onVEnter);
@@ -310,6 +311,7 @@ const ScrollingBar = () => {
       managed.set(container, {
         cleanup() {
           container.removeEventListener("scroll", onScroll);
+          container.removeEventListener("input", onScroll);
           container.removeEventListener("mouseenter", onContainerEnter);
           container.removeEventListener("mouseleave", onContainerLeave);
           vThumb.removeEventListener("mouseenter", onVEnter);
@@ -339,6 +341,14 @@ const ScrollingBar = () => {
 
     const mo = new MutationObserver((muts) => {
       for (const m of muts) {
+        /* Attribute change — class added/removed on existing node */
+        if (m.type === "attributes" && m.target.nodeType === 1) {
+          const el = m.target;
+          if (el.classList?.contains("scrolling-bar")) attach(el);
+          else detach(el);
+          continue;
+        }
+        /* Child list changes */
         for (const n of m.addedNodes) {
           if (n.nodeType !== 1) continue;
           if (n.classList?.contains("scrolling-bar")) attach(n);
@@ -351,7 +361,12 @@ const ScrollingBar = () => {
         }
       }
     });
-    mo.observe(document.body, { childList: true, subtree: true });
+    mo.observe(document.body, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ["class"],
+    });
 
     return () => {
       document.head.removeChild(styleEl);

@@ -72,6 +72,30 @@
         "padding": "6px 10px"
       }
     },
+    "code": {
+      "fontFamily": "Menlo, Monaco, Consolas, monospace",
+      "fontSize": 13,
+      "lineHeight": 1.5,
+      "backgroundColor": "#F5F5F5",
+      "borderRadius": 7,
+      "padding": 0,
+      "header": {
+        "fontSize": 12,
+        "padding": "6px 10px"
+      }
+    },
+    "textfield": {
+      "fontSize": 16,
+      "lineHeight": 1.5,
+      "borderRadius": 7,
+      "backgroundColor": "rgba(255, 255, 255, 0.95)",
+      "border": "1px solid rgba(0, 0, 0, 0.06)",
+      "boxShadow": "0 4px 24px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.06)",
+      "boxShadowFocus": "0 12px 36px rgba(0, 0, 0, 0.10), 0 3px 8px rgba(0, 0, 0, 0.06)",
+      "padding": 12,
+      "contentSectionColor": "rgba(0, 0, 0, 0.38)",
+      "contentSectionActiveColor": "rgba(0, 0, 0, 0.55)"
+    },
     "tooltip": {
       "color": "#FFFFFF",
       "backgroundColor": "rgba(20, 20, 20, 0.92)",
@@ -208,11 +232,23 @@
       "lineHeight": 1.5,
       "backgroundColor": "#1E1E1E",
       "borderRadius": 7,
-      "padding": 6,
+      "padding": 0,
       "header": {
         "fontSize": 12,
         "padding": "6px 10px"
       }
+    },
+    "textfield": {
+      "fontSize": 14,
+      "lineHeight": 1.5,
+      "borderRadius": 7,
+      "backgroundColor": "rgba(30, 30, 30, 0.95)",
+      "border": "1px solid rgba(255, 255, 255, 0.08)",
+      "boxShadow": "0 4px 24px rgba(0, 0, 0, 0.5), 0 1px 3px rgba(0, 0, 0, 0.3)",
+      "boxShadowFocus": "0 12px 36px rgba(0, 0, 0, 0.55), 0 3px 8px rgba(0, 0, 0, 0.35)",
+      "padding": 12,
+      "contentSectionColor": "rgba(255, 255, 255, 0.35)",
+      "contentSectionActiveColor": "rgba(255, 255, 255, 0.55)"
     },
     "tooltip": {
       "color": "#111111",
@@ -221,7 +257,7 @@
     },
     "markdown": {
       "fontFamily": "NunitoSans",
-      "fontSize": 16,
+      "fontSize": 14,
       "lineHeight": 1.6,
       "color": "#E0E0E0",
       "backgroundColor": "transparent",

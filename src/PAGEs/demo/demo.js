@@ -14,6 +14,7 @@ import Icon from "../../BUILTIN_COMPONENTs/icon/icon";
 import SwitchDemo from "./switch_demo";
 import SpinnerDemo from "./spinner_demo";
 import InputDemo from "./input_demo";
+import TextFieldDemo from "./textfield_demo";
 import MarkdownDemo from "./markdown_demo";
 import SelectDemo from "./select_demo";
 import CardDemo from "./card_demo";
@@ -216,6 +217,7 @@ const Demo = () => {
           <SwitchDemo />
           <SpinnerDemo />
           <InputDemo />
+          <TextFieldDemo />
           <SelectDemo />
           <CardDemo />
           <MarkdownDemo />
