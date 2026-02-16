@@ -6,6 +6,7 @@ import { ConfigContext } from "../../CONTAINERs/config/context";
 
 /* { Components } ------------------------------------------------------------------------------------------------------------ */
 import Button from "../../BUILTIN_COMPONENTs/input/button";
+import SegmentedButton from "../../BUILTIN_COMPONENTs/input/segmented_button";
 import { CustomizedTooltip } from "./demo";
 /* { Components } ------------------------------------------------------------------------------------------------------------ */
 
@@ -122,6 +123,68 @@ const ButtonDemo = () => {
           `}
         >
           <Button prefix_icon="lock" label="Locked" disabled />
+        </CustomizedTooltip>
+      </div>
+
+      {/* ── Button Group ──────────────────────────── */}
+      <div
+        style={{
+          display: "flex",
+          flexWrap: "wrap",
+          gap: 16,
+          alignItems: "center",
+        }}
+      >
+        <CustomizedTooltip
+          code={`
+\`\`\`js
+<SegmentedButton
+  options={["Completions", "Responses",
+    "Conversations", "ChatKit threads",
+    "Traces"]}
+  default_value="Responses"
+/>
+\`\`\`
+          `}
+        >
+          <SegmentedButton
+            options={[
+              "Completions",
+              "Responses",
+              "Conversations",
+              "ChatKit threads",
+              "Traces",
+            ]}
+            default_value="Responses"
+          />
+        </CustomizedTooltip>
+
+        <CustomizedTooltip
+          code={`
+\`\`\`js
+<SegmentedButton
+  options={[
+    { icon: "home", value: "home" },
+    { icon: "search", value: "search" },
+    { icon: "notification_on", value: "notifications" },
+    { icon: "settings", value: "settings" },
+  ]}
+  default_value="home"
+  button_style={{ padding: "8px 12px" }}
+/>
+\`\`\`
+          `}
+        >
+          <SegmentedButton
+            options={[
+              { icon: "home", value: "home" },
+              { icon: "search", value: "search" },
+              { icon: "notification_on", value: "notifications" },
+              { icon: "settings", value: "settings" },
+            ]}
+            default_value="home"
+            button_style={{ padding: "8px 12px" }}
+          />
         </CustomizedTooltip>
       </div>
     </div>
