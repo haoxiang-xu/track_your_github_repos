@@ -13,6 +13,16 @@
       "boxShadow": "inset 0 2px 3px rgba(0, 0, 0, 0.16)",
       "cursor": "pointer"
     },
+    "slider": {
+      "width": 300,
+      "height": 32,
+      "trackThickness": 2,
+      "thumbSize": 12,
+      "gapWidth": 36,
+      "activeColor": "rgba(0,0,0,0.55)",
+      "inactiveColor": "rgba(0,0,0,0.12)",
+      "labelColor": "#222222"
+    },
     "font": {
       "fontFamily": "Jost",
       "fontSize": 14,
@@ -166,6 +176,16 @@
       "color": "#222222",
       "boxShadow": "inset 0 2px 3px rgba(0, 0, 0, 0.16)",
       "cursor": "pointer"
+    },
+    "slider": {
+      "width": 300,
+      "height": 32,
+      "trackThickness": 2,
+      "thumbSize": 12,
+      "gapWidth": 36,
+      "activeColor": "rgba(255,255,255,0.72)",
+      "inactiveColor": "rgba(255,255,255,0.15)",
+      "labelColor": "#CCCCCC"
     },
     "font": {
       "fontFamily": "Jost",

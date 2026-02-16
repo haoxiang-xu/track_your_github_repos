@@ -12,6 +12,7 @@ import Icon from "../../BUILTIN_COMPONENTs/icon/icon";
 
 /* { Sections } -------------------------------------------------------------------------------------------------------------- */
 import SwitchDemo from "./switch_demo";
+import SliderDemo from "./slider_demo";
 import SpinnerDemo from "./spinner_demo";
 import InputDemo from "./input_demo";
 import TextFieldDemo from "./textfield_demo";
@@ -217,6 +218,7 @@ const Demo = () => {
           }}
         >
           <SwitchDemo />
+          <SliderDemo />
           <SpinnerDemo />
           <InputDemo />
           <TextFieldDemo />
