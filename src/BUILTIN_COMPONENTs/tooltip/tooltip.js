@@ -791,7 +791,7 @@ const Tooltip = ({
       document.removeEventListener("mousedown", handleMouseDown);
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [isClickEnabled, isClickOpen, isControlled, on_open_change]);
+  }, [isClickEnabled, isClickOpen, isControlled, on_open_change, open]);
 
   const handle_trigger_mouse_enter = () => {
     if (!isHoverEnabled) return;

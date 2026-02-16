@@ -67,12 +67,6 @@ const TextField = ({
       : "0 12px 36px rgba(0,0,0,0.10), 0 3px 8px rgba(0,0,0,0.06)");
   const padding = style?.padding ?? tf.padding ?? 12;
   const baseColor = style?.color || theme?.color || (isDark ? "#CCC" : "#222");
-  const contentColor =
-    tf.contentSectionColor ||
-    (isDark ? "rgba(255,255,255,0.35)" : "rgba(0,0,0,0.38)");
-  const contentActiveColor =
-    tf.contentSectionActiveColor ||
-    (isDark ? "rgba(255,255,255,0.55)" : "rgba(0,0,0,0.55)");
 
   const lineHeightPx = Math.round(fontSize * lineHeight);
 
@@ -141,6 +135,7 @@ const TextField = ({
       Math.min(raw, maxH === Infinity ? raw : maxH),
     );
     setContentHeight(clamped);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentValue, minH, maxH]);
 
   useEffect(() => {
@@ -153,6 +148,7 @@ const TextField = ({
     const ro = new ResizeObserver(() => measure());
     ro.observe(taRef.current);
     return () => ro.disconnect();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [measure]);
 
   const shouldScroll = maxH !== Infinity && contentHeight >= maxH;
@@ -366,12 +362,6 @@ const GhostTextField = ({
   const borderRadius = style?.borderRadius || tf.borderRadius || 7;
   const baseColor = style?.color || theme?.color || (isDark ? "#CCC" : "#222");
   const padding = style?.padding ?? tf.padding ?? 12;
-  const contentColor =
-    tf.contentSectionColor ||
-    (isDark ? "rgba(255,255,255,0.35)" : "rgba(0,0,0,0.38)");
-  const contentActiveColor =
-    tf.contentSectionActiveColor ||
-    (isDark ? "rgba(255,255,255,0.55)" : "rgba(0,0,0,0.55)");
 
   /* ghost-specific tokens */
   const hoverBg = isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.06)";
@@ -446,6 +436,7 @@ const GhostTextField = ({
       Math.min(raw, maxH === Infinity ? raw : maxH),
     );
     setContentHeight(clamped);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentValue, minH, maxH]);
 
   useEffect(() => {
@@ -457,6 +448,7 @@ const GhostTextField = ({
     const ro = new ResizeObserver(() => measure());
     ro.observe(taRef.current);
     return () => ro.disconnect();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [measure]);
 
   const shouldScroll = maxH !== Infinity && contentHeight >= maxH;

@@ -749,6 +749,7 @@ const RangeSlider = ({
         role="slider"
         aria-valuemin={min}
         aria-valuemax={max}
+        aria-valuenow={currentLow}
         tabIndex={disabled ? -1 : 0}
         style={{
           position: "relative",

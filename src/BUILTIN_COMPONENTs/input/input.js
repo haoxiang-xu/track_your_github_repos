@@ -974,6 +974,7 @@ const GhostInput = ({
 
   const isControlled = value !== undefined;
   const currentValue = isControlled ? value : defaultValue;
+  // eslint-disable-next-line no-unused-vars
   const hasValue =
     currentValue !== undefined &&
     currentValue !== null &&
@@ -999,12 +1000,6 @@ const GhostInput = ({
   const gap = style?.gap ?? 6;
 
   const showBg = hovered || focused;
-
-  const hasPrefix = prefix_icon !== undefined || prefix_label !== undefined;
-  const hasPostfix =
-    postfix_icon !== undefined ||
-    postfix_label !== undefined ||
-    postfix_component !== undefined;
 
   return (
     <div
@@ -1035,7 +1030,6 @@ const GhostInput = ({
         transition: "border 0.2s ease",
         width: style?.width || "auto",
         ...style,
-        border: showBg ? "1px solid transparent" : faintBorder,
       }}
     >
       {/* ── Hover / focus background (scales from center) ── */}

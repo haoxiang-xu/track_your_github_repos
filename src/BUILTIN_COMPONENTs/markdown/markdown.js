@@ -135,7 +135,6 @@ const Markdown = ({
     const list = markdownTheme.list || {};
     const blockquote = markdownTheme.blockquote || {};
     const code = markdownTheme.code || {};
-    const pre = markdownTheme.pre || {};
     const link = markdownTheme.link || {};
     const hr = markdownTheme.hr || {};
     const table = markdownTheme.table || {};
