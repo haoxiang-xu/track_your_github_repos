@@ -129,7 +129,7 @@ const findParentArray = (nodes, id, parent = null) => {
 
 const ROW_HEIGHT = 30;
 const INDENT = 16;
-const LINE_LEFT = 11;
+const LINE_LEFT = 9;
 
 const ExplorerRow = ({
   node,
@@ -721,7 +721,7 @@ const Explorer = ({
   }, []);
 
   /* ── sizing / colors ───────────────────────────────── */
-  const fontSize = style?.fontSize ?? 13;
+  const fontSize = style?.fontSize ?? 14;
   const containerWidth = style?.width ?? 260;
   const colors = useMemo(() => {
     const bg = theme?.backgroundColor ?? (isDark ? "#1E1E1E" : "#FFFFFF");
@@ -738,10 +738,17 @@ const Explorer = ({
   const autoExpandTimer = useRef(null);
   const collapsedOnDrag = useRef(null);
 
+  /* keep a ref so drag-end always reads the latest expanded map */
+  const expandedRef = useRef(expanded);
+  expandedRef.current = expanded;
+
   const visibleIds = useMemo(
     () => collectIds(tree, expanded),
     [tree, expanded],
   );
+
+  /* force SortableContext re-mount when tree structure changes */
+  const sortableKey = useMemo(() => visibleIds.join(","), [visibleIds]);
 
   /* ── drag start: collapse the dragged folder ───────── */
   const handleDragStart = useCallback(
@@ -810,27 +817,24 @@ const Explorer = ({
 
       setTree((prev) => {
         const next = cloneTree(prev);
-        const activeInfo = findParentArray(next, active.id);
-        const overInfo = findParentArray(next, over.id);
-        if (!activeInfo || !overInfo) return prev;
 
-        if (activeInfo.array === overInfo.array) {
-          const arr = activeInfo.array;
-          const from = arr.findIndex((n) => n.id === active.id);
-          const to = arr.findIndex((n) => n.id === over.id);
-          const moved = arrayMove(arr, from, to);
-          arr.length = 0;
-          arr.push(...moved);
+        /* remove the dragged node from wherever it was */
+        const [withoutActive, removed] = removeNode(next, active.id);
+        if (!removed) return prev;
+        next.length = 0;
+        next.push(...withoutActive);
+
+        const overNode = findNode(next, over.id);
+        if (!overNode) return prev;
+
+        if (overNode.children && expandedRef.current[over.id]) {
+          /* target is an expanded folder → insert as first child */
+          overNode.children.unshift(removed);
         } else {
-          /* cross-parent: remove from source, then insert at target */
-          const [withoutActive, removed] = removeNode(next, active.id);
-          if (!removed) return prev;
-          /* replace next's contents with the version that has the node removed */
-          next.length = 0;
-          next.push(...withoutActive);
-          const overRefresh = findParentArray(next, over.id);
-          if (!overRefresh) return prev;
-          overRefresh.array.splice(overRefresh.index, 0, removed);
+          /* target is a leaf OR a collapsed folder → insert right after it */
+          const overInfo = findParentArray(next, over.id);
+          if (!overInfo) return prev;
+          overInfo.array.splice(overInfo.index + 1, 0, removed);
         }
 
         if (on_reorder) on_reorder(next);
@@ -911,6 +915,7 @@ const Explorer = ({
       onDragCancel={handleDragCancel}
     >
       <SortableContext
+        key={sortableKey}
         items={visibleIds}
         strategy={verticalListSortingStrategy}
       >
