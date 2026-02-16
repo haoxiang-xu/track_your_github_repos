@@ -23,6 +23,7 @@ import CardDemo from "./card_demo";
 import IconDemo from "./icon_demo";
 import OthersDemo from "./others_demo";
 import DndDemo from "./dnd_demo";
+import ExplorerDemo from "./explorer_demo";
 /* { Sections } -------------------------------------------------------------------------------------------------------------- */
 
 const Landing = () => {
@@ -228,6 +229,7 @@ const Demo = () => {
           <CardDemo />
           <MarkdownDemo />
           <DndDemo />
+          <ExplorerDemo />
           <OthersDemo />
           <IconDemo />
         </div>
