@@ -22,6 +22,7 @@ import SelectDemo from "./select_demo";
 import CardDemo from "./card_demo";
 import IconDemo from "./icon_demo";
 import OthersDemo from "./others_demo";
+import DndDemo from "./dnd_demo";
 /* { Sections } -------------------------------------------------------------------------------------------------------------- */
 
 const Landing = () => {
@@ -203,7 +204,7 @@ const Demo = () => {
           flexDirection: "column",
           gap: "32px",
           paddingBottom: "512px",
-          overflowY: "scroll",
+          overflow: "scroll",
         }}
       >
         <Landing />
@@ -226,6 +227,7 @@ const Demo = () => {
           <SelectDemo />
           <CardDemo />
           <MarkdownDemo />
+          <DndDemo />
           <OthersDemo />
           <IconDemo />
         </div>
