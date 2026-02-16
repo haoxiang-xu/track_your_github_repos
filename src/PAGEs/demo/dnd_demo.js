@@ -270,7 +270,12 @@ const DndDemo = () => {
       </CustomizedTooltip>
 
       {/* ── Sort Only (no cross-container) ────────────── */}
-      <SortOnlyDemo isDark={isDark} theme={theme} containerStyle={containerStyle} labelStyle={labelStyle} />
+      <SortOnlyDemo
+        isDark={isDark}
+        theme={theme}
+        containerStyle={containerStyle}
+        labelStyle={labelStyle}
+      />
     </div>
   );
 };
@@ -286,18 +291,15 @@ const SORT_ONLY_INITIAL = {
 const SortOnlyList = ({ listId, isDark, containerStyle, labelStyle }) => {
   const [items, setItems] = useState(SORT_ONLY_INITIAL[listId]);
 
-  const onDragEnd = useCallback(
-    (event) => {
-      const { active, over } = event;
-      if (!over || active.id === over.id) return;
-      setItems((prev) => {
-        const oldIndex = prev.indexOf(active.id);
-        const newIndex = prev.indexOf(over.id);
-        return arrayMove(prev, oldIndex, newIndex);
-      });
-    },
-    [],
-  );
+  const onDragEnd = useCallback((event) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+    setItems((prev) => {
+      const oldIndex = prev.indexOf(active.id);
+      const newIndex = prev.indexOf(over.id);
+      return arrayMove(prev, oldIndex, newIndex);
+    });
+  }, []);
 
   const renderOverlay = useCallback(
     (activeId) => {
@@ -311,7 +313,11 @@ const SortOnlyList = ({ listId, isDark, containerStyle, labelStyle }) => {
   return (
     <div style={containerStyle}>
       <div style={labelStyle}>List {listId} (sort only)</div>
-      <DndContext on_drag_end={onDragEnd} overlay={renderOverlay} modifiers={[restrictToParentElement]}>
+      <DndContext
+        on_drag_end={onDragEnd}
+        overlay={renderOverlay}
+        modifiers={[restrictToParentElement]}
+      >
         <Droppable id={listId} items={items} direction="vertical" gap={8}>
           {items.map((id) => (
             <Draggable key={id} id={id}>
