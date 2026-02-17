@@ -32,7 +32,6 @@ const SettingsRow = ({ label, description, children }) => {
         <div
           style={{
             fontSize: 14,
-            fontWeight: 500,
             fontFamily: theme?.font?.fontFamily || "inherit",
             color: theme?.color || "#222",
           }}
@@ -70,7 +69,6 @@ const SettingsSection = ({ title, children }) => {
       <div
         style={{
           fontSize: 11,
-          fontWeight: 600,
           fontFamily: theme?.font?.fontFamily || "inherit",
           textTransform: "uppercase",
           letterSpacing: "1.5px",
@@ -134,7 +132,14 @@ const GeneralPage = () => {
               }
             }}
             filterable={false}
-            style={{ minWidth: 140 }}
+            style={{
+              minWidth: 140,
+              fontSize: 13,
+              paddingVertical: 4,
+              paddingHorizontal: 10,
+            }}
+            option_style={{ height: 28, padding: "4px 8px", fontSize: 13 }}
+            dropdown_style={{ padding: 4 }}
           />
         </SettingsRow>
         <SettingsRow
@@ -151,7 +156,14 @@ const GeneralPage = () => {
             value={language}
             set_value={setLanguage}
             filterable={false}
-            style={{ minWidth: 140 }}
+            style={{
+              minWidth: 140,
+              fontSize: 13,
+              paddingVertical: 4,
+              paddingHorizontal: 10,
+            }}
+            option_style={{ height: 28, padding: "4px 8px", fontSize: 13 }}
+            dropdown_style={{ padding: 4 }}
           />
         </SettingsRow>
       </SettingsSection>
@@ -161,10 +173,18 @@ const GeneralPage = () => {
           label="Notifications"
           description="Receive in-app notifications"
         >
-          <SemiSwitch on={notifications} set_on={setNotifications} />
+          <SemiSwitch
+            on={notifications}
+            set_on={setNotifications}
+            style={{ width: 56, height: 28 }}
+          />
         </SettingsRow>
         <SettingsRow label="Auto-save" description="Automatically save changes">
-          <SemiSwitch on={autoSave} set_on={setAutoSave} />
+          <SemiSwitch
+            on={autoSave}
+            set_on={setAutoSave}
+            style={{ width: 56, height: 28 }}
+          />
         </SettingsRow>
       </SettingsSection>
     </div>
@@ -214,7 +234,6 @@ const ProfilePage = () => {
           <div
             style={{
               fontSize: 18,
-              fontWeight: 600,
               fontFamily: theme?.font?.fontFamily || "inherit",
               color: theme?.color || "#222",
             }}
@@ -257,7 +276,14 @@ const ProfilePage = () => {
             value="private"
             set_value={() => {}}
             filterable={false}
-            style={{ minWidth: 140 }}
+            style={{
+              minWidth: 140,
+              fontSize: 13,
+              paddingVertical: 4,
+              paddingHorizontal: 10,
+            }}
+            option_style={{ height: 28, padding: "4px 8px", fontSize: 13 }}
+            dropdown_style={{ padding: 4 }}
           />
         </SettingsRow>
       </SettingsSection>
@@ -427,7 +453,7 @@ const SettingsShowroom = () => {
       {/* ── side menu ───────────────────────────────────── */}
       <div
         style={{
-            position: "relative",
+          position: "relative",
           width: 200,
           flexShrink: 0,
           backgroundColor: isDark
@@ -446,7 +472,6 @@ const SettingsShowroom = () => {
         <div
           style={{
             fontSize: 12,
-            fontWeight: 700,
             textTransform: "uppercase",
             letterSpacing: "1.5px",
             color: theme?.color || "#222",
@@ -467,7 +492,6 @@ const SettingsShowroom = () => {
               width: "100%",
               justifyContent: "flex-start",
               fontSize: 13,
-              fontWeight: 400,
               opacity: selectedKey === page.key ? 1 : 0.65,
               padding: "8px 12px",
               borderRadius: 7,
@@ -486,13 +510,12 @@ const SettingsShowroom = () => {
             label="Log out"
             onClick={() => {}}
             style={{
-             position: "absolute",
+              position: "absolute",
               bottom: 8,
               left: 8,
               width: "calc(100% - 16px)",
               justifyContent: "flex-start",
               fontSize: 13,
-              fontWeight: 400,
               padding: "8px 12px",
               borderRadius: 7,
               opacity: 0.65,
@@ -515,7 +538,6 @@ const SettingsShowroom = () => {
         <div
           style={{
             fontSize: 22,
-            fontWeight: 600,
             fontFamily: theme?.font?.fontFamily || "inherit",
             color: theme?.color || "#222",
             padding: "8px 0 4px",

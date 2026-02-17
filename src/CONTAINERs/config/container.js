@@ -43,6 +43,11 @@ const ConfigContainer = ({ children }) => {
       setTheme(available_themes[selectedTheme][onThemeMode]);
     }
   }, [onThemeMode, selectedTheme]);
+  useEffect(() => {
+    if (syncWithSystemTheme && system_theme) {
+      setOnThemeMode(system_theme);
+    }
+  }, [syncWithSystemTheme, system_theme]);
   /* { global theme } ---------------------------------------------------------------------------------------------------- */
   /* { STYLE } =========================================================================================================== */
 
