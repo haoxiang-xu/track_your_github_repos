@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef } from "react";
+import { useState, useContext, useEffect, useRef } from "react";
 
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
 import { ConfigContext } from "../../CONTAINERs/config/context";
@@ -8,6 +8,7 @@ import { ConfigContext } from "../../CONTAINERs/config/context";
 import Tooltip from "../../BUILTIN_COMPONENTs/tooltip/tooltip";
 import Markdown from "../../BUILTIN_COMPONENTs/markdown/markdown";
 import Icon from "../../BUILTIN_COMPONENTs/icon/icon";
+import SegmentedButton from "../../BUILTIN_COMPONENTs/input/segmented_button";
 /* { Components } ------------------------------------------------------------------------------------------------------------ */
 
 /* { Sections } -------------------------------------------------------------------------------------------------------------- */
@@ -25,9 +26,10 @@ import OthersDemo from "./individual_component_demo/others_demo";
 import DndDemo from "./individual_component_demo/dnd_demo";
 import ExplorerDemo from "./individual_component_demo/explorer_demo";
 import ModalDemo from "./individual_component_demo/modal_demo";
+import SettingsShowroom from "./show_room_demo/settings_showroom";
 /* { Sections } -------------------------------------------------------------------------------------------------------------- */
 
-const Landing = () => {
+const Landing = ({ tab, onTabChange }) => {
   const { theme } = useContext(ConfigContext);
   return (
     <div
@@ -80,6 +82,13 @@ const Landing = () => {
       >
         A starting point for your React Project.
       </p>
+      <div style={{ marginTop: 32 }}>
+        <SegmentedButton
+          options={["Components", "Show Rooms"]}
+          value={tab}
+          on_change={onTabChange}
+        />
+      </div>
       <div
         style={{
           marginTop: 48,
@@ -175,9 +184,10 @@ const CustomizedTooltip = ({ children, code }) => {
 const Demo = () => {
   const { theme } = useContext(ConfigContext);
   const scrollRef = useRef(null);
+  const [tab, setTab] = useState("Components");
   useEffect(() => {
     if (scrollRef.current) scrollRef.current.scrollTop = 0;
-  }, []);
+  }, [tab]);
   return (
     <div
       id="demo"
@@ -209,32 +219,52 @@ const Demo = () => {
           overflow: "scroll",
         }}
       >
-        <Landing />
-        <div
-          style={{
-            position: "relative",
-            margin: "0 auto",
-            width: "75%",
-            minWidth: 700,
-            maxWidth: 1000,
-            paddingBottom: "512px",
-          }}
-        >
-          <SwitchDemo />
-          <SliderDemo />
-          <SpinnerDemo />
-          <InputDemo />
-          <TextFieldDemo />
-          <ButtonDemo />
-          <SelectDemo />
-          <CardDemo />
-          <MarkdownDemo />
-          <DndDemo />
-          <ExplorerDemo />
-          <ModalDemo />
-          <OthersDemo />
-          <IconDemo />
-        </div>
+        <Landing tab={tab} onTabChange={setTab} />
+        {tab === "Components" && (
+          <div
+            style={{
+              position: "relative",
+              margin: "0 auto",
+              width: "75%",
+              minWidth: 700,
+              maxWidth: 1000,
+              paddingBottom: "512px",
+            }}
+          >
+            <SwitchDemo />
+            <SliderDemo />
+            <SpinnerDemo />
+            <InputDemo />
+            <TextFieldDemo />
+            <ButtonDemo />
+            <SelectDemo />
+            <CardDemo />
+            <MarkdownDemo />
+            <DndDemo />
+            <ExplorerDemo />
+            <ModalDemo />
+            <OthersDemo />
+            <IconDemo />
+          </div>
+        )}
+        {tab === "Show Rooms" && (
+          <div
+            style={{
+              position: "relative",
+              margin: "0 auto",
+              width: "85%",
+              minWidth: 700,
+              maxWidth: 1000,
+              paddingBottom: "512px",
+              display: "flex",
+              flexDirection: "column",
+              gap: 48,
+              padding: "32px 24px 512px",
+            }}
+          >
+            <SettingsShowroom />
+          </div>
+        )}
       </div>
     </div>
   );
