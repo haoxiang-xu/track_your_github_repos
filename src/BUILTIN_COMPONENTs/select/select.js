@@ -507,7 +507,7 @@ const Select = ({
       <div
         id={listboxIdRef.current}
         role="listbox"
-        className="scrolling-bar"
+        className="scrollable"
         style={{
           display: "flex",
           flexDirection: "column",
@@ -1098,7 +1098,7 @@ const FlowingSelect = ({
       <div
         id={listboxIdRef.current}
         role="listbox"
-        className="scrolling-bar"
+        className="scrollable"
         style={{
           display: "flex",
           flexDirection: "column",
@@ -1643,7 +1643,7 @@ const GhostSelect = ({
       <div
         id={listboxIdRef.current}
         role="listbox"
-        className="scrolling-bar"
+        className="scrollable"
         style={{
           display: "flex",
           flexDirection: "column",

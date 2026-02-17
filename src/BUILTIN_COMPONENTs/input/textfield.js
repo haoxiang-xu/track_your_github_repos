@@ -236,7 +236,7 @@ const TextField = ({
             on_blur();
           }}
           onKeyDown={on_key_down}
-          className={shouldScroll ? "scrolling-bar" : undefined}
+          className={shouldScroll ? "scrollable" : undefined}
           data-sb-edge={Math.max(6, borderRadius)}
           style={{
             position: "absolute",
@@ -549,7 +549,7 @@ const GhostTextField = ({
             on_blur();
           }}
           onKeyDown={on_key_down}
-          className={shouldScroll ? "scrolling-bar" : undefined}
+          className={shouldScroll ? "scrollable" : undefined}
           data-sb-edge={Math.max(6, borderRadius)}
           style={{
             position: "absolute",

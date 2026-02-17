@@ -5,7 +5,7 @@ import {
   useWebBrowser,
   useDeviceType,
 } from "../../BUILTIN_COMPONENTs/mini_react/mini_use";
-import ScrollingBar from "../../BUILTIN_COMPONENTs/class/scrolling_bar";
+import Scrollable from "../../BUILTIN_COMPONENTs/class/scrollable";
 
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
 import { ConfigContext } from "./context";
@@ -70,7 +70,7 @@ const ConfigContainer = ({ children }) => {
       }}
     >
       {children}
-      <ScrollingBar />
+      <Scrollable />
     </ConfigContext.Provider>
   );
 };

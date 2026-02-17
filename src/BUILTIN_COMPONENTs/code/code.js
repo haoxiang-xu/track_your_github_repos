@@ -211,7 +211,7 @@ const Code = ({
 
       {/* ── Scrollable code area ──────────────────────────────────── */}
       <div
-        className="scrolling-bar"
+        className="scrollable"
         style={{
           ...(hasHeightConstraint ? { flex: 1, minHeight: 0 } : {}),
           margin: 6,

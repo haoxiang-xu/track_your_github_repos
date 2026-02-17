@@ -10,11 +10,11 @@ import { ConfigContext } from "../../CONTAINERs/config/context";
  *
  * Per-element config via data-sb-edge="N" (edge inset in px).
  */
-const ScrollingBar = () => {
+const Scrollable = () => {
   const { theme, onThemeMode } = useContext(ConfigContext);
 
   useEffect(() => {
-    const sb = theme?.scrolling_bar || {};
+    const sb = theme?.scrollable || {};
     const isDark = onThemeMode === "dark_mode";
 
     const COLOR_IDLE =
@@ -32,11 +32,11 @@ const ScrollingBar = () => {
     /* ---- 1. Hide native scrollbars ---- */
     const styleEl = document.createElement("style");
     styleEl.textContent = `
-      .scrolling-bar {
+      .scrollable {
         scrollbar-width: none !important;
         -ms-overflow-style: none !important;
       }
-      .scrolling-bar::-webkit-scrollbar {
+      .scrollable::-webkit-scrollbar {
         width: 0 !important;
         height: 0 !important;
         display: none !important;
@@ -337,27 +337,27 @@ const ScrollingBar = () => {
     }
 
     /* ---- 3. Auto-attach ---- */
-    document.querySelectorAll(".scrolling-bar").forEach(attach);
+    document.querySelectorAll(".scrollable").forEach(attach);
 
     const mo = new MutationObserver((muts) => {
       for (const m of muts) {
         /* Attribute change — class added/removed on existing node */
         if (m.type === "attributes" && m.target.nodeType === 1) {
           const el = m.target;
-          if (el.classList?.contains("scrolling-bar")) attach(el);
+          if (el.classList?.contains("scrollable")) attach(el);
           else detach(el);
           continue;
         }
         /* Child list changes */
         for (const n of m.addedNodes) {
           if (n.nodeType !== 1) continue;
-          if (n.classList?.contains("scrolling-bar")) attach(n);
-          n.querySelectorAll?.(".scrolling-bar").forEach(attach);
+          if (n.classList?.contains("scrollable")) attach(n);
+          n.querySelectorAll?.(".scrollable").forEach(attach);
         }
         for (const n of m.removedNodes) {
           if (n.nodeType !== 1) continue;
-          if (n.classList?.contains("scrolling-bar")) detach(n);
-          n.querySelectorAll?.(".scrolling-bar").forEach(detach);
+          if (n.classList?.contains("scrollable")) detach(n);
+          n.querySelectorAll?.(".scrollable").forEach(detach);
         }
       }
     });
@@ -377,4 +377,4 @@ const ScrollingBar = () => {
   }, [theme, onThemeMode]);
 };
 
-export default ScrollingBar;
+export default Scrollable;

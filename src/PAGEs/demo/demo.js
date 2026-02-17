@@ -194,7 +194,7 @@ const Demo = () => {
       <div
         ref={scrollRef}
         id="component_scroll_container"
-        className="scrolling-bar"
+        className="scrollable"
         style={{
           position: "absolute",
           top: 0,

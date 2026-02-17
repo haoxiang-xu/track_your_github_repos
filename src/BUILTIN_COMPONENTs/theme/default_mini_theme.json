@@ -34,7 +34,7 @@
     "color": "#222222",
     "backgroundColor": "#FFFFFF",
     "foregroundColor": "#CCCCCC",
-    "scrolling_bar": {
+    "scrollable": {
       "backgroundColor": {
         "default": "rgba(0,0,0,0.12)",
         "active": "rgba(0,0,0,0.30)"
@@ -198,7 +198,7 @@
     "color": "#CCCCCC",
     "backgroundColor": "#121212",
     "foregroundColor": "#1E1E1E",
-    "scrolling_bar": {
+    "scrollable": {
       "backgroundColor": {
         "default": "rgba(255,255,255,0.12)",
         "active": "rgba(255,255,255,0.38)"
