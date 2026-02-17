@@ -570,7 +570,8 @@ const ExplorerRow = ({
           height: 18,
           flexShrink: 0,
           opacity: showFull ? 0 : isFolder ? 0.7 : 0,
-          transition: "transform 0.2s cubic-bezier(0.32,1,0.32,1), opacity 0.15s ease",
+          transition:
+            "transform 0.2s cubic-bezier(0.32,1,0.32,1), opacity 0.15s ease",
         }}
       >
         <Icon src={expandIcon} style={{ width: 14, height: 14 }} />
