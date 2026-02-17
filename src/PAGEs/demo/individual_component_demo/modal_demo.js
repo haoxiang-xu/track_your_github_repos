@@ -68,7 +68,6 @@ const ModalDemo = () => {
       <ConfirmModal
         open={confirmOpen}
         onClose={() => setConfirmOpen(false)}
-        onConfirm={() => console.log("Confirmed!")}
         title="Delete Item"
         message="This action cannot be undone. Are you sure you want to delete this item permanently?"
       />
@@ -85,7 +84,6 @@ const ModalDemo = () => {
       <AgreementModal
         open={agreementOpen}
         onClose={() => setAgreementOpen(false)}
-        onAgree={() => console.log("Agreed!")}
         title="Terms & Conditions"
         message="By continuing, you agree to our Terms of Service and Privacy Policy. Please read them carefully before proceeding."
       />
