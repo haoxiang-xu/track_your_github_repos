@@ -1,16 +1,16 @@
 import { useContext, useState } from "react";
 
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
-import { ConfigContext } from "../../CONTAINERs/config/context";
+import { ConfigContext } from "../../../CONTAINERs/config/context";
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
 
 /* { Components } -------------------------------------------------------------------------------------------------------------- */
 import Select, {
   FlowingSelect,
   GhostSelect,
-} from "../../BUILTIN_COMPONENTs/select/select";
-import Input from "../../BUILTIN_COMPONENTs/input/input";
-import countries from "../../BUILTIN_COMPONENTs/consts/countries";
+} from "../../../BUILTIN_COMPONENTs/select/select";
+import Input from "../../../BUILTIN_COMPONENTs/input/input";
+import countries from "../../../BUILTIN_COMPONENTs/consts/countries";
 /* { Components } -------------------------------------------------------------------------------------------------------------- */
 
 const SelectDemo = () => {

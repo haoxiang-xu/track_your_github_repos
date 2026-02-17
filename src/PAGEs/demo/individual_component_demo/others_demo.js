@@ -2,11 +2,11 @@ import { useContext, useState, useRef, useEffect } from "react";
 import { useSpring, animated } from "react-spring";
 
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
-import { ConfigContext } from "../../CONTAINERs/config/context";
+import { ConfigContext } from "../../../CONTAINERs/config/context";
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
 
 /* { Components } ------------------------------------------------------------------------------------------------------------ */
-import Icon from "../../BUILTIN_COMPONENTs/icon/icon";
+import Icon from "../../../BUILTIN_COMPONENTs/icon/icon";
 /* { Components } ------------------------------------------------------------------------------------------------------------ */
 
 const OthersDemo = () => {

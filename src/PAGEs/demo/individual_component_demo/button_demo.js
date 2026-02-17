@@ -1,13 +1,13 @@
 import { useContext } from "react";
 
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
-import { ConfigContext } from "../../CONTAINERs/config/context";
+import { ConfigContext } from "../../../CONTAINERs/config/context";
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
 
 /* { Components } ------------------------------------------------------------------------------------------------------------ */
-import Button from "../../BUILTIN_COMPONENTs/input/button";
-import SegmentedButton from "../../BUILTIN_COMPONENTs/input/segmented_button";
-import { CustomizedTooltip } from "./demo";
+import Button from "../../../BUILTIN_COMPONENTs/input/button";
+import SegmentedButton from "../../../BUILTIN_COMPONENTs/input/segmented_button";
+import { CustomizedTooltip } from "../demo";
 /* { Components } ------------------------------------------------------------------------------------------------------------ */
 
 const ButtonDemo = () => {

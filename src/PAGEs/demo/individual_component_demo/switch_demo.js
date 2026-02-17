@@ -1,7 +1,7 @@
 import { useContext } from "react";
 
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
-import { ConfigContext } from "../../CONTAINERs/config/context";
+import { ConfigContext } from "../../../CONTAINERs/config/context";
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
 
 /* { Components } -------------------------------------------------------------------------------------------------------------- */
@@ -11,8 +11,8 @@ import {
   NotificationSwitch,
   MaterialSwitch,
   SemiSwitch,
-} from "../../BUILTIN_COMPONENTs/input/switch";
-import { CustomizedTooltip } from "./demo";
+} from "../../../BUILTIN_COMPONENTs/input/switch";
+import { CustomizedTooltip } from "../demo";
 /* { Components } -------------------------------------------------------------------------------------------------------------- */
 
 const SwitchDemo = () => {

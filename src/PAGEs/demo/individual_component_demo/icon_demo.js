@@ -1,12 +1,12 @@
 import { useContext, useMemo } from "react";
 
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
-import { ConfigContext } from "../../CONTAINERs/config/context";
+import { ConfigContext } from "../../../CONTAINERs/config/context";
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
 
 /* { Components } ------------------------------------------------------------------------------------------------------------ */
-import Icon from "../../BUILTIN_COMPONENTs/icon/icon";
-import Tooltip from "../../BUILTIN_COMPONENTs/tooltip/tooltip";
+import Icon from "../../../BUILTIN_COMPONENTs/icon/icon";
+import Tooltip from "../../../BUILTIN_COMPONENTs/tooltip/tooltip";
 /* { Components } ------------------------------------------------------------------------------------------------------------ */
 
 /* { Icon Registry } --------------------------------------------------------------------------------------------------------- */
@@ -14,7 +14,7 @@ import {
   fileTypeSVGs,
   LogoSVGs,
   UISVGs,
-} from "../../BUILTIN_COMPONENTs/icon/icon_manifest";
+} from "../../../BUILTIN_COMPONENTs/icon/icon_manifest";
 /* { Icon Registry } --------------------------------------------------------------------------------------------------------- */
 
 /* ── single icon cell ──────────────────────────────────────────────── */

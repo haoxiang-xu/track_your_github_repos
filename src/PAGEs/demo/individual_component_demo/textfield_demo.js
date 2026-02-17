@@ -1,14 +1,14 @@
 import { useContext, useState } from "react";
 
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
-import { ConfigContext } from "../../CONTAINERs/config/context";
+import { ConfigContext } from "../../../CONTAINERs/config/context";
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
 
 /* { Components } ------------------------------------------------------------------------------------------------------------ */
-import TextField from "../../BUILTIN_COMPONENTs/input/textfield";
-import { GhostTextField } from "../../BUILTIN_COMPONENTs/input/textfield";
-import Button from "../../BUILTIN_COMPONENTs/input/button";
-import { CustomizedTooltip } from "./demo";
+import TextField from "../../../BUILTIN_COMPONENTs/input/textfield";
+import { GhostTextField } from "../../../BUILTIN_COMPONENTs/input/textfield";
+import Button from "../../../BUILTIN_COMPONENTs/input/button";
+import { CustomizedTooltip } from "../demo";
 /* { Components } ------------------------------------------------------------------------------------------------------------ */
 
 /* ── Attachment toolbar (chat input) ── */

@@ -1,11 +1,11 @@
 import { useContext, useState, useCallback } from "react";
 
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
-import { ConfigContext } from "../../CONTAINERs/config/context";
+import { ConfigContext } from "../../../CONTAINERs/config/context";
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
 
 /* { Components } ------------------------------------------------------------------------------------------------------------ */
-import Explorer from "../../BUILTIN_COMPONENTs/explorer/explorer";
+import Explorer from "../../../BUILTIN_COMPONENTs/explorer/explorer";
 /* { Components } ------------------------------------------------------------------------------------------------------------ */
 
 /* ── flat data: key → node props, children = array of keys ── */

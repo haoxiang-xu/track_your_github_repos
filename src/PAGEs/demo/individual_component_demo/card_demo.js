@@ -1,13 +1,13 @@
 import { useContext } from "react";
 
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
-import { ConfigContext } from "../../CONTAINERs/config/context";
+import { ConfigContext } from "../../../CONTAINERs/config/context";
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
 
 /* { Components } ------------------------------------------------------------------------------------------------------------ */
-import Card from "../../BUILTIN_COMPONENTs/card/card";
-import Icon from "../../BUILTIN_COMPONENTs/icon/icon";
-import { CustomizedTooltip } from "./demo";
+import Card from "../../../BUILTIN_COMPONENTs/card/card";
+import Icon from "../../../BUILTIN_COMPONENTs/icon/icon";
+import { CustomizedTooltip } from "../demo";
 /* { Components } ------------------------------------------------------------------------------------------------------------ */
 
 const CardDemo = () => {

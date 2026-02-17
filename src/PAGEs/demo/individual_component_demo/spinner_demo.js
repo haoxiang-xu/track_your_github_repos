@@ -1,14 +1,14 @@
 import { useContext } from "react";
 
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
-import { ConfigContext } from "../../CONTAINERs/config/context";
+import { ConfigContext } from "../../../CONTAINERs/config/context";
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
 
 /* { Components } -------------------------------------------------------------------------------------------------------------- */
-import StringSpinner from "../../BUILTIN_COMPONENTs/spinner/string_spinner";
-import CellSplitSpinner from "../../BUILTIN_COMPONENTs/spinner/cell_split_spinner";
-import Card from "../../BUILTIN_COMPONENTs/card/card";
-import { CustomizedTooltip } from "./demo";
+import StringSpinner from "../../../BUILTIN_COMPONENTs/spinner/string_spinner";
+import CellSplitSpinner from "../../../BUILTIN_COMPONENTs/spinner/cell_split_spinner";
+import Card from "../../../BUILTIN_COMPONENTs/card/card";
+import { CustomizedTooltip } from "../demo";
 /* { Components } -------------------------------------------------------------------------------------------------------------- */
 
 const SpinnerDemo = () => {

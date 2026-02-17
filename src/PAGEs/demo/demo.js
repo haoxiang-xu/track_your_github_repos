@@ -11,19 +11,19 @@ import Icon from "../../BUILTIN_COMPONENTs/icon/icon";
 /* { Components } ------------------------------------------------------------------------------------------------------------ */
 
 /* { Sections } -------------------------------------------------------------------------------------------------------------- */
-import SwitchDemo from "./switch_demo";
-import SliderDemo from "./slider_demo";
-import SpinnerDemo from "./spinner_demo";
-import InputDemo from "./input_demo";
-import TextFieldDemo from "./textfield_demo";
-import ButtonDemo from "./button_demo";
-import MarkdownDemo from "./markdown_demo";
-import SelectDemo from "./select_demo";
-import CardDemo from "./card_demo";
-import IconDemo from "./icon_demo";
-import OthersDemo from "./others_demo";
-import DndDemo from "./dnd_demo";
-import ExplorerDemo from "./explorer_demo";
+import SwitchDemo from "./individual_component_demo/switch_demo";
+import SliderDemo from "./individual_component_demo/slider_demo";
+import SpinnerDemo from "./individual_component_demo/spinner_demo";
+import InputDemo from "./individual_component_demo/input_demo";
+import TextFieldDemo from "./individual_component_demo/textfield_demo";
+import ButtonDemo from "./individual_component_demo/button_demo";
+import MarkdownDemo from "./individual_component_demo/markdown_demo";
+import SelectDemo from "./individual_component_demo/select_demo";
+import CardDemo from "./individual_component_demo/card_demo";
+import IconDemo from "./individual_component_demo/icon_demo";
+import OthersDemo from "./individual_component_demo/others_demo";
+import DndDemo from "./individual_component_demo/dnd_demo";
+import ExplorerDemo from "./individual_component_demo/explorer_demo";
 /* { Sections } -------------------------------------------------------------------------------------------------------------- */
 
 const Landing = () => {

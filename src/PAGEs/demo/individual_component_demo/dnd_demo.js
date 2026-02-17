@@ -1,7 +1,7 @@
 import { useContext, useState, useCallback, useMemo } from "react";
 
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
-import { ConfigContext } from "../../CONTAINERs/config/context";
+import { ConfigContext } from "../../../CONTAINERs/config/context";
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
 
 /* { Components } ------------------------------------------------------------------------------------------------------------ */
@@ -12,8 +12,8 @@ import {
   arrayMove,
   findContainer,
   moveBetweenContainers,
-} from "../../BUILTIN_COMPONENTs/dnd";
-import { CustomizedTooltip } from "./demo";
+} from "../../../BUILTIN_COMPONENTs/dnd";
+import { CustomizedTooltip } from "../demo";
 import { restrictToParentElement } from "@dnd-kit/modifiers";
 /* { Components } ------------------------------------------------------------------------------------------------------------ */
 
@@ -79,72 +79,66 @@ const DndDemo = () => {
   const [containers, setContainers] = useState(INITIAL_CONTAINERS);
 
   /* ── drag events ────────────────────────────────────── */
-  const onDragOver = useCallback(
-    (event) => {
-      const { active, over } = event;
-      if (!over) return;
+  const onDragOver = useCallback((event) => {
+    const { active, over } = event;
+    if (!over) return;
 
-      setContainers((prev) => {
-        const activeContainer = findContainer(active.id, prev);
-        const overContainer = findContainer(over.id, prev);
-        if (
-          !activeContainer ||
-          !overContainer ||
-          activeContainer === overContainer
-        ) {
+    setContainers((prev) => {
+      const activeContainer = findContainer(active.id, prev);
+      const overContainer = findContainer(over.id, prev);
+      if (
+        !activeContainer ||
+        !overContainer ||
+        activeContainer === overContainer
+      ) {
+        return prev;
+      }
+
+      return moveBetweenContainers(
+        prev,
+        activeContainer,
+        overContainer,
+        active.id,
+        over.id,
+      );
+    });
+  }, []);
+
+  const onDragEnd = useCallback((event) => {
+    const { active, over } = event;
+    if (!over) return;
+
+    setContainers((prev) => {
+      const activeContainer = findContainer(active.id, prev);
+      const overContainer = findContainer(over.id, prev);
+      if (!activeContainer || !overContainer) return prev;
+
+      if (activeContainer === overContainer) {
+        const items = prev[activeContainer];
+        const oldIndex = items.indexOf(active.id);
+        const newIndex = items.indexOf(over.id);
+        if (oldIndex === -1 || newIndex === -1 || oldIndex === newIndex) {
           return prev;
         }
+        return {
+          ...prev,
+          [activeContainer]: arrayMove(
+            prev[activeContainer],
+            oldIndex,
+            newIndex,
+          ),
+        };
+      }
 
-        return moveBetweenContainers(
-          prev,
-          activeContainer,
-          overContainer,
-          active.id,
-          over.id,
-        );
-      });
-    },
-    [],
-  );
-
-  const onDragEnd = useCallback(
-    (event) => {
-      const { active, over } = event;
-      if (!over) return;
-
-      setContainers((prev) => {
-        const activeContainer = findContainer(active.id, prev);
-        const overContainer = findContainer(over.id, prev);
-        if (!activeContainer || !overContainer) return prev;
-
-        if (activeContainer === overContainer) {
-          const items = prev[activeContainer];
-          const oldIndex = items.indexOf(active.id);
-          const newIndex = items.indexOf(over.id);
-          if (oldIndex === -1 || newIndex === -1 || oldIndex === newIndex) {
-            return prev;
-          }
-          return {
-            ...prev,
-            [activeContainer]: arrayMove(
-              prev[activeContainer],
-              oldIndex,
-              newIndex,
-            ),
-          };
-        }
-
-        return moveBetweenContainers(
-          prev,
-          activeContainer,
-          overContainer,
-          active.id,
-          over.id,
-        );
-      });
-    },
-    [],
-  );
+      return moveBetweenContainers(
+        prev,
+        activeContainer,
+        overContainer,
+        active.id,
+        over.id,
+      );
+    });
+  }, []);
 
   /* ── overlay renderer ──────────────────────────────── */
   const renderOverlay = useCallback(

@@ -1,12 +1,12 @@
 import { useContext } from "react";
 
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
-import { ConfigContext } from "../../CONTAINERs/config/context";
+import { ConfigContext } from "../../../CONTAINERs/config/context";
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
 
 /* { Components } ------------------------------------------------------------------------------------------------------------ */
-import { Slider, RangeSlider } from "../../BUILTIN_COMPONENTs/input/slider";
-import { CustomizedTooltip } from "./demo";
+import { Slider, RangeSlider } from "../../../BUILTIN_COMPONENTs/input/slider";
+import { CustomizedTooltip } from "../demo";
 /* { Components } ------------------------------------------------------------------------------------------------------------ */
 
 const SliderDemo = () => {

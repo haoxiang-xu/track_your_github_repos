@@ -1,7 +1,7 @@
 import { useContext } from "react";
 
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
-import { ConfigContext } from "../../CONTAINERs/config/context";
+import { ConfigContext } from "../../../CONTAINERs/config/context";
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
 
 /* { Components } ------------------------------------------------------------------------------------------------------------ */
@@ -11,11 +11,11 @@ import Input, {
   ValidationCodeInput,
   FlowingInput,
   GhostInput,
-} from "../../BUILTIN_COMPONENTs/input/input";
-import { SemiSwitch } from "../../BUILTIN_COMPONENTs/input/switch";
-import Tooltip from "../../BUILTIN_COMPONENTs/tooltip/tooltip";
-import Markdown from "../../BUILTIN_COMPONENTs/markdown/markdown";
-import { CustomizedTooltip } from "./demo";
+} from "../../../BUILTIN_COMPONENTs/input/input";
+import { SemiSwitch } from "../../../BUILTIN_COMPONENTs/input/switch";
+import Tooltip from "../../../BUILTIN_COMPONENTs/tooltip/tooltip";
+import Markdown from "../../../BUILTIN_COMPONENTs/markdown/markdown";
+import { CustomizedTooltip } from "../demo";
 /* { Components } ------------------------------------------------------------------------------------------------------------ */
 
 const InputDemo = () => {

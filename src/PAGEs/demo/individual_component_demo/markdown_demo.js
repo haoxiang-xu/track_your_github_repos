@@ -1,11 +1,11 @@
 import { useContext } from "react";
 
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
-import { ConfigContext } from "../../CONTAINERs/config/context";
+import { ConfigContext } from "../../../CONTAINERs/config/context";
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
 
 /* { Components } -------------------------------------------------------------------------------------------------------------- */
-import Markdown from "../../BUILTIN_COMPONENTs/markdown/markdown";
+import Markdown from "../../../BUILTIN_COMPONENTs/markdown/markdown";
 /* { Components } -------------------------------------------------------------------------------------------------------------- */
 
 const MarkdownDemo = () => {
@@ -82,7 +82,7 @@ console.log(hello);
           style={{
             pre: {
               height: 600,
-            }
+            },
           }}
         >{`
 \`\`\`js
