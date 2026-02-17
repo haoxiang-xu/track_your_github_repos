@@ -8,6 +8,7 @@ import {
   useSensors,
   closestCorners,
   MeasuringStrategy,
+  MeasuringFrequency,
 } from "@dnd-kit/core";
 import { sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 
@@ -16,7 +17,10 @@ import { sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 
 const MEASURING = {
-  droppable: { strategy: MeasuringStrategy.Always },
+  droppable: {
+    strategy: MeasuringStrategy.WhileDragging,
+    frequency: MeasuringFrequency.Optimized,
+  },
 };
 
 const DndContext = ({

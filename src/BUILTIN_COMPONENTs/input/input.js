@@ -504,8 +504,8 @@ const Input = ({
               color: style?.color || theme?.color || "black",
 
               userSelect: "none",
-              webkitUserSelect: "none",
-              mozUserSelect: "none",
+              WebkitUserSelect: "none",
+              MozUserSelect: "none",
               msUserSelect: "none",
             }}
           >
@@ -582,8 +582,8 @@ const Input = ({
               color: style?.color || theme?.color || "black",
 
               userSelect: "none",
-              webkitUserSelect: "none",
-              mozUserSelect: "none",
+              WebkitUserSelect: "none",
+              MozUserSelect: "none",
               msUserSelect: "none",
             }}
           >
@@ -661,8 +661,8 @@ const Input = ({
                 : 0.45,
 
             userSelect: "none",
-            webkitUserSelect: "none",
-            mozUserSelect: "none",
+            WebkitUserSelect: "none",
+            MozUserSelect: "none",
             msUserSelect: "none",
           }}
         >

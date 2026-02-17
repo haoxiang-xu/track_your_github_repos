@@ -31,8 +31,8 @@ const SliderDemo = () => {
           color: theme?.color || "black",
 
           userSelect: "none",
-          webkitUserSelect: "none",
-          mozUserSelect: "none",
+          WebkitUserSelect: "none",
+          MozUserSelect: "none",
           msUserSelect: "none",
         }}
       >

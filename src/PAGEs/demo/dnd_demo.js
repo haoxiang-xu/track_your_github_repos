@@ -84,27 +84,27 @@ const DndDemo = () => {
       const { active, over } = event;
       if (!over) return;
 
-      const activeContainer = findContainer(active.id, containers);
-      const overContainer = findContainer(over.id, containers);
+      setContainers((prev) => {
+        const activeContainer = findContainer(active.id, prev);
+        const overContainer = findContainer(over.id, prev);
+        if (
+          !activeContainer ||
+          !overContainer ||
+          activeContainer === overContainer
+        ) {
+          return prev;
+        }
 
-      if (
-        !activeContainer ||
-        !overContainer ||
-        activeContainer === overContainer
-      )
-        return;
-
-      setContainers((prev) =>
-        moveBetweenContainers(
+        return moveBetweenContainers(
           prev,
           activeContainer,
           overContainer,
           active.id,
           over.id,
-        ),
-      );
+        );
+      });
     },
-    [containers],
+    [],
   );
 
   const onDragEnd = useCallback(
@@ -112,39 +112,38 @@ const DndDemo = () => {
       const { active, over } = event;
       if (!over) return;
 
-      const activeContainer = findContainer(active.id, containers);
-      const overContainer = findContainer(over.id, containers);
+      setContainers((prev) => {
+        const activeContainer = findContainer(active.id, prev);
+        const overContainer = findContainer(over.id, prev);
+        if (!activeContainer || !overContainer) return prev;
 
-      if (!activeContainer || !overContainer) return;
-
-      if (activeContainer === overContainer) {
-        const items = containers[activeContainer];
-        const oldIndex = items.indexOf(active.id);
-        const newIndex = items.indexOf(over.id);
-        if (oldIndex !== newIndex) {
-          setContainers((prev) => ({
+        if (activeContainer === overContainer) {
+          const items = prev[activeContainer];
+          const oldIndex = items.indexOf(active.id);
+          const newIndex = items.indexOf(over.id);
+          if (oldIndex === -1 || newIndex === -1 || oldIndex === newIndex) {
+            return prev;
+          }
+          return {
             ...prev,
             [activeContainer]: arrayMove(
               prev[activeContainer],
               oldIndex,
               newIndex,
             ),
-          }));
+          };
         }
-      } else {
-        // Already handled in onDragOver — finalize position
-        setContainers((prev) =>
-          moveBetweenContainers(
-            prev,
-            activeContainer,
-            overContainer,
-            active.id,
-            over.id,
-          ),
+
+        return moveBetweenContainers(
+          prev,
+          activeContainer,
+          overContainer,
+          active.id,
+          over.id,
         );
-      }
+      });
     },
-    [containers],
+    [],
   );
 
   /* ── overlay renderer ──────────────────────────────── */

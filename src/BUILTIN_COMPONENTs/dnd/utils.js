@@ -36,14 +36,29 @@ export const moveBetweenContainers = (
   activeId,
   overId,
 ) => {
+  if (!activeContainer || !overContainer) return containers;
+  if (activeContainer === overContainer) return containers;
+  if (!(activeContainer in containers) || !(overContainer in containers)) {
+    return containers;
+  }
+
   const activeItems = [...containers[activeContainer]];
   const overItems = [...containers[overContainer]];
   const activeIndex = activeItems.indexOf(activeId);
+  if (activeIndex === -1) return containers;
   const overIndex = overId ? overItems.indexOf(overId) : overItems.length;
 
   activeItems.splice(activeIndex, 1);
   const insertAt = overIndex >= 0 ? overIndex : overItems.length;
   overItems.splice(insertAt, 0, activeId);
+
+  const unchangedSource =
+    activeItems.length === containers[activeContainer].length &&
+    activeItems.every((item, index) => item === containers[activeContainer][index]);
+  const unchangedTarget =
+    overItems.length === containers[overContainer].length &&
+    overItems.every((item, index) => item === containers[overContainer][index]);
+  if (unchangedSource && unchangedTarget) return containers;
 
   return {
     ...containers,

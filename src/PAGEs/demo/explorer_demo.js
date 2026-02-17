@@ -8,83 +8,85 @@ import { ConfigContext } from "../../CONTAINERs/config/context";
 import Explorer from "../../BUILTIN_COMPONENTs/explorer/explorer";
 /* { Components } ------------------------------------------------------------------------------------------------------------ */
 
-const SAMPLE_TREE = [
-  {
-    id: "src",
+/* ── flat data: key → node props, children = array of keys ── */
+/* Every node now carries an explicit `type: "folder" | "file"`.
+   Empty folders (children: []) still behave as folders — they keep their
+   expand arrow and accept drops inside them. */
+const SAMPLE_DATA = {
+  src: {
     label: "src",
+    type: "folder",
+    prefix_icon: "draft",
+    children: ["components", "pages", "app.js", "index.js"],
+  },
+  components: {
+    label: "components",
+    type: "folder",
     prefix_icon: "draft",
     children: [
-      {
-        id: "components",
-        label: "components",
-        prefix_icon: "draft",
-        children: [
-          {
-            id: "button.js",
-            label: "button.js",
-            postfix: "2.1 KB",
-          },
-          {
-            id: "input.js",
-            label: "input.js",
-            postfix: "1.8 KB",
-          },
-          {
-            id: "explorer.js",
-            label: "explorer.js",
-            postfix: "5.4 KB",
-          },
-          {
-            id: "segmented_button_with_a_very_long_name.js",
-            label: "segmented_button_with_a_very_long_name.js",
-            postfix: "3.2 KB",
-          },
-        ],
-      },
-      {
-        id: "pages",
-        label: "pages",
-        prefix_icon: "draft",
-        children: [
-          { id: "home.js", label: "home.js" },
-          { id: "about.js", label: "about.js" },
-          {
-            id: "settings",
-            label: "settings",
-            prefix_icon: "settings",
-            children: [
-              { id: "general.js", label: "general.js" },
-              { id: "profile.js", label: "profile.js" },
-              { id: "security.js", label: "security.js" },
-            ],
-          },
-        ],
-      },
-      { id: "app.js", label: "App.js", prefix_icon: "home" },
-      { id: "index.js", label: "index.js" },
+      "button.js",
+      "input.js",
+      "explorer.js",
+      "segmented_button_with_a_very_long_name.js",
     ],
   },
-  {
-    id: "public",
+  "button.js": { label: "button.js", type: "file", postfix: "2.1 KB" },
+  "input.js": { label: "input.js", type: "file", postfix: "1.8 KB" },
+  "explorer.js": { label: "explorer.js", type: "file", postfix: "5.4 KB" },
+  "segmented_button_with_a_very_long_name.js": {
+    label: "segmented_button_with_a_very_long_name.js",
+    type: "file",
+    postfix: "3.2 KB",
+  },
+  pages: {
+    label: "pages",
+    type: "folder",
+    prefix_icon: "draft",
+    children: ["home.js", "about.js", "settings"],
+  },
+  "home.js": { label: "home.js", type: "file" },
+  "about.js": { label: "about.js", type: "file" },
+  settings: {
+    label: "settings",
+    type: "folder",
+    prefix_icon: "settings",
+    children: ["general.js", "profile.js", "security.js"],
+  },
+  "general.js": { label: "general.js", type: "file" },
+  "profile.js": { label: "profile.js", type: "file" },
+  "security.js": { label: "security.js", type: "file" },
+  "app.js": { label: "App.js", type: "file", prefix_icon: "home" },
+  "index.js": { label: "index.js", type: "file" },
+  public: {
     label: "public",
+    type: "folder",
     prefix_icon: "draft",
-    children: [
-      { id: "index.html", label: "index.html" },
-      { id: "favicon.ico", label: "favicon.ico" },
-    ],
+    children: ["index.html", "favicon.ico"],
   },
-  { id: "package.json", label: "package.json", prefix_icon: "link" },
-  { id: "README.md", label: "README.md", prefix_icon: "edit" },
-];
+  "index.html": { label: "index.html", type: "file" },
+  "favicon.ico": { label: "favicon.ico", type: "file" },
+  dist: {
+    label: "dist",
+    type: "folder",
+    prefix_icon: "draft",
+    children: [],
+  },
+  "package.json": { label: "package.json", type: "file", prefix_icon: "link" },
+  "README.md": { label: "README.md", type: "file", prefix_icon: "edit" },
+};
+
+const SAMPLE_ROOT = ["src", "public", "dist", "package.json", "README.md"];
 
 const ExplorerDemo = () => {
   const { theme } = useContext(ConfigContext);
   const color = theme?.color || "black";
 
-  const [treeData, setTreeData] = useState(SAMPLE_TREE);
+  const [data, setData] = useState(SAMPLE_DATA);
+  const [root, setRoot] = useState(SAMPLE_ROOT);
 
-  const handleReorder = useCallback((newData) => {
-    setTreeData(newData);
+  const handleReorder = useCallback((newData, newRoot) => {
+    setData(newData);
+    setRoot(newRoot);
   }, []);
 
   return (
@@ -132,7 +134,8 @@ const ExplorerDemo = () => {
             Default
           </span>
           <Explorer
-            data={SAMPLE_TREE}
+            data={SAMPLE_DATA}
+            root={SAMPLE_ROOT}
             default_expanded={["src", "components"]}
             style={{ width: 240 }}
           />
@@ -151,7 +154,8 @@ const ExplorerDemo = () => {
             Expanded + Draggable
           </span>
           <Explorer
-            data={treeData}
+            data={data}
+            root={root}
             default_expanded={true}
             draggable
             on_reorder={handleReorder}
