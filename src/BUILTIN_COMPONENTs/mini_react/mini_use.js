@@ -4,6 +4,14 @@ import {
   useRef,
   useLayoutEffect as reactUseLayoutEffect,
 } from "react";
+import {
+  createMemoryStorageAdapter,
+  createIndexedDBStorageAdapter,
+  createStorageAdapterFromMethods,
+  registerStorageAdapter,
+  resetStorageAdapter,
+  useIndexedStorage,
+} from "./mini_storage";
 
 /* { BASIC HOOKs } ------------------------------------------------------------------------------------------------ */
 const useLayoutEffect =
@@ -47,7 +55,14 @@ const useWindowSize = () => {
   return windowSize;
 };
 const useMouse = () => {
-  const [mouse, setMouse] = useState({ x: -999, y: -999, vx: 0, vy: 0, leftKeyDown: false, rightKeyDown: false });
+  const [mouse, setMouse] = useState({
+    x: -999,
+    y: -999,
+    vx: 0,
+    vy: 0,
+    leftKeyDown: false,
+    rightKeyDown: false,
+  });
 
   const lastRef = useRef({
     x: 0,
@@ -166,4 +181,10 @@ export {
   useMouse,
   useWebBrowser,
   useDeviceType,
+  createMemoryStorageAdapter,
+  createIndexedDBStorageAdapter,
+  createStorageAdapterFromMethods,
+  registerStorageAdapter,
+  resetStorageAdapter,
+  useIndexedStorage,
 };
