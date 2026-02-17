@@ -1,11 +1,4 @@
-import {
-  useState,
-  useEffect,
-  useRef,
-  useCallback,
-  useContext,
-  useMemo,
-} from "react";
+import { useState, useEffect, useRef, useContext } from "react";
 import ReactDOM from "react-dom";
 import Icon from "../icon/icon";
 import { ConfigContext } from "../../CONTAINERs/config/context";

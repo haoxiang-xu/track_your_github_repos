@@ -1,4 +1,4 @@
-import { useContext, useState, useCallback, useMemo } from "react";
+import { useContext, useState, useCallback, useMemo, useRef, useEffect } from "react";
 
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
 import { ConfigContext } from "../../../CONTAINERs/config/context";
@@ -77,10 +77,17 @@ const DndDemo = () => {
   const { theme, onThemeMode } = useContext(ConfigContext);
   const isDark = onThemeMode === "dark_mode";
   const [containers, setContainers] = useState(INITIAL_CONTAINERS);
+  const dragOverRafRef = useRef(null);
+  const pendingDragOverRef = useRef(null);
 
   /* ── drag events ────────────────────────────────────── */
-  const onDragOver = useCallback((event) => {
-    const { active, over } = event;
+  const flushDragOver = useCallback(() => {
+    dragOverRafRef.current = null;
+    const pending = pendingDragOverRef.current;
+    pendingDragOverRef.current = null;
+    if (!pending) return;
+
+    const { active, over } = pending;
     if (!over) return;
 
     setContainers((prev) => {
@@ -104,7 +111,22 @@ const DndDemo = () => {
     });
   }, []);
 
+  const onDragOver = useCallback(
+    (event) => {
+      pendingDragOverRef.current = { active: event.active, over: event.over };
+      if (dragOverRafRef.current != null) return;
+      dragOverRafRef.current = window.requestAnimationFrame(flushDragOver);
+    },
+    [flushDragOver],
+  );
+
   const onDragEnd = useCallback((event) => {
+    if (dragOverRafRef.current != null) {
+      window.cancelAnimationFrame(dragOverRafRef.current);
+      dragOverRafRef.current = null;
+    }
+    pendingDragOverRef.current = null;
+
     const { active, over } = event;
     if (!over) return;
 
@@ -139,6 +161,15 @@ const DndDemo = () => {
       );
     });
   }, []);
+
+  useEffect(
+    () => () => {
+      if (dragOverRafRef.current != null) {
+        window.cancelAnimationFrame(dragOverRafRef.current);
+      }
+    },
+    [],
+  );
 
   /* ── overlay renderer ──────────────────────────────── */
   const renderOverlay = useCallback(
@@ -207,8 +238,7 @@ const DndDemo = () => {
       <CustomizedTooltip
         code={`
 \`\`\`js
-<DndContext on_drag_over={handleDragOver}
-            on_drag_end={handleDragEnd}
+<DndContext on_drag_end={handleDragEnd}
             overlay={(id) => <Card>{items[id]}</Card>}>
   <Droppable id="A" items={listA} direction="vertical">
     {listA.map((id) => (

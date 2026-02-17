@@ -100,7 +100,6 @@ const GeneralPage = () => {
     setOnThemeMode,
     syncWithSystemTheme,
     setSyncWithSystemTheme,
-    availableThemes,
   } = useContext(ConfigContext);
 
   const [notifications, setNotifications] = useState(true);
@@ -296,8 +295,6 @@ const ProfilePage = () => {
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 
 const AccountPage = () => {
-  const { theme, onThemeMode } = useContext(ConfigContext);
-  const isDark = onThemeMode === "dark_mode";
   const [logoutOpen, setLogoutOpen] = useState(false);
 
   return (
@@ -345,64 +342,6 @@ const AccountPage = () => {
 };
 
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-/*  SideMenuItem                                                                                                               */
-/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-
-const SideMenuItem = ({ icon, label, selected, onClick }) => {
-  const { theme, onThemeMode } = useContext(ConfigContext);
-  const isDark = onThemeMode === "dark_mode";
-  const [hovered, setHovered] = useState(false);
-
-  const bg = selected
-    ? isDark
-      ? "rgba(255,255,255,0.10)"
-      : "rgba(0,0,0,0.07)"
-    : hovered
-      ? isDark
-        ? "rgba(255,255,255,0.05)"
-        : "rgba(0,0,0,0.04)"
-      : "transparent";
-
-  return (
-    <div
-      onClick={onClick}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      style={{
-        display: "flex",
-        alignItems: "center",
-        gap: 10,
-        padding: "8px 12px",
-        borderRadius: 7,
-        cursor: "pointer",
-        backgroundColor: bg,
-        transition: "background-color 0.15s ease",
-        userSelect: "none",
-        WebkitUserSelect: "none",
-      }}
-    >
-      <Icon
-        src={icon}
-        color={theme?.color || "#222"}
-        style={{ width: 16, height: 16, opacity: selected ? 0.8 : 0.45 }}
-      />
-      <span
-        style={{
-          fontSize: 13,
-          fontWeight: selected ? 600 : 400,
-          fontFamily: theme?.font?.fontFamily || "inherit",
-          color: theme?.color || "#222",
-          opacity: selected ? 1 : 0.65,
-          transition: "opacity 0.15s ease",
-        }}
-      >
-        {label}
-      </span>
-    </div>
-  );
-};
-
-/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 /*  SettingsShowroom — the full settings panel                                                                                 */
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 
@@ -417,7 +356,7 @@ const PAGES = [
   { key: "account", icon: "lock", label: "Account", component: AccountPage },
 ];
 
-const SettingsShowroom = () => {
+const SettingsShowroom = ({ onClose }) => {
   const { theme, onThemeMode } = useContext(ConfigContext);
   const isDark = onThemeMode === "dark_mode";
   const [selectedKey, setSelectedKey] = useState("general");
@@ -529,11 +468,28 @@ const SettingsShowroom = () => {
       <div
         className="scrollable"
         style={{
+          position: "relative",
           flex: 1,
           overflowY: "auto",
           padding: "16px 32px",
         }}
       >
+        {/* close button */}
+        <Button
+          prefix_icon="close"
+          onClick={onClose || (() => {})}
+          style={{
+            position: "absolute",
+            top: 12,
+            right: 12,
+            padding: 6,
+            borderRadius: 6,
+            iconSize: 14,
+            opacity: 0.45,
+            zIndex: 2,
+          }}
+        />
+
         {/* page title */}
         <div
           style={{
