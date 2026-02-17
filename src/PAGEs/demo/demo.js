@@ -27,6 +27,7 @@ import DndDemo from "./individual_component_demo/dnd_demo";
 import ExplorerDemo from "./individual_component_demo/explorer_demo";
 import ModalDemo from "./individual_component_demo/modal_demo";
 import SettingsShowroom from "./show_room_demo/settings_showroom";
+import ChatShowroom from "./show_room_demo/chat_showroom";
 /* { Sections } -------------------------------------------------------------------------------------------------------------- */
 
 const Landing = ({ tab, onTabChange }) => {
@@ -263,6 +264,7 @@ const Demo = () => {
             }}
           >
             <SettingsShowroom />
+            <ChatShowroom />
           </div>
         )}
       </div>
