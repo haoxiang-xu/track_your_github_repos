@@ -1,4 +1,9 @@
-import { BrowserRouter, HashRouter } from "react-router-dom";
+import {
+  BrowserRouter,
+  HashRouter,
+  Routes as ReactRoutes,
+  Route as ReactRoute,
+} from "react-router-dom";
 
 /* { ROUTER ADAPTER } -------------------------------------------------------------------------------------------- */
 const ROUTER_MODE = {
@@ -73,7 +78,7 @@ const resetRouterAdapter = () => {
   registeredRouterAdapter = null;
 };
 
-const MiniRouter = ({ children, mode = ROUTER_MODE.AUTO, ...routerProps }) => {
+const Router = ({ children, mode = ROUTER_MODE.AUTO, ...routerProps }) => {
   if (registeredRouterAdapter) {
     const RegisteredRouterAdapter = registeredRouterAdapter;
     return (
@@ -89,6 +94,9 @@ const MiniRouter = ({ children, mode = ROUTER_MODE.AUTO, ...routerProps }) => {
   }
   return <BrowserRouter {...routerProps}>{children}</BrowserRouter>;
 };
+
+const Routes = ReactRoutes;
+const Route = ReactRoute;
 /* { ROUTER ADAPTER } -------------------------------------------------------------------------------------------- */
 
 export {
@@ -97,5 +105,7 @@ export {
   resolveRouterMode,
   registerRouterAdapter,
   resetRouterAdapter,
-  MiniRouter,
+  Router,
+  Routes,
+  Route,
 };
