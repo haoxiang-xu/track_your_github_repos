@@ -24,6 +24,7 @@ import IconDemo from "./individual_component_demo/icon_demo";
 import OthersDemo from "./individual_component_demo/others_demo";
 import DndDemo from "./individual_component_demo/dnd_demo";
 import ExplorerDemo from "./individual_component_demo/explorer_demo";
+import ModalDemo from "./individual_component_demo/modal_demo";
 /* { Sections } -------------------------------------------------------------------------------------------------------------- */
 
 const Landing = () => {
@@ -230,6 +231,7 @@ const Demo = () => {
           <MarkdownDemo />
           <DndDemo />
           <ExplorerDemo />
+          <ModalDemo />
           <OthersDemo />
           <IconDemo />
         </div>

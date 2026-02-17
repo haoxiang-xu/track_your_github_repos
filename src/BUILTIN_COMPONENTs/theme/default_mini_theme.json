@@ -161,6 +161,28 @@
         "borderRadius": 7,
         "maxWidth": "100%"
       }
+    },
+    "modal": {
+      "backgroundColor": "#FFFFFF",
+      "borderRadius": 12,
+      "boxShadow": "0 24px 80px rgba(0, 0, 0, 0.15), 0 8px 24px rgba(0, 0, 0, 0.08)",
+      "border": "1px solid rgba(0, 0, 0, 0.08)",
+      "padding": 18,
+      "minWidth": 360,
+      "maxWidth": 480,
+      "overlayColor": "rgba(0, 0, 0, 0.25)",
+      "titleFontSize": 18,
+      "titleFontWeight": 600,
+      "bodyFontSize": 14,
+      "bodyColor": "rgba(0, 0, 0, 0.55)",
+      "closeButtonColor": "rgba(0, 0, 0, 0.3)",
+      "closeButtonHoverColor": "rgba(0, 0, 0, 0.65)",
+      "primaryButtonBg": "#1A1A1A",
+      "primaryButtonColor": "#FFFFFF",
+      "secondaryButtonBg": "rgba(0, 0, 0, 0.05)",
+      "secondaryButtonColor": "#333333",
+      "errorAccent": "#DC3545",
+      "successAccent": "#22C55E"
     }
   },
   "dark_mode": {
@@ -325,6 +347,28 @@
         "borderRadius": 6,
         "maxWidth": "100%"
       }
+    },
+    "modal": {
+      "backgroundColor": "#1E1E1E",
+      "borderRadius": 12,
+      "boxShadow": "0 24px 80px rgba(0, 0, 0, 0.6), 0 8px 24px rgba(0, 0, 0, 0.4)",
+      "border": "1px solid rgba(255, 255, 255, 0.06)",
+      "padding": 18,
+      "minWidth": 360,
+      "maxWidth": 480,
+      "overlayColor": "rgba(0, 0, 0, 0.6)",
+      "titleFontSize": 18,
+      "titleFontWeight": 600,
+      "bodyFontSize": 14,
+      "bodyColor": "rgba(255, 255, 255, 0.5)",
+      "closeButtonColor": "rgba(255, 255, 255, 0.3)",
+      "closeButtonHoverColor": "rgba(255, 255, 255, 0.75)",
+      "primaryButtonBg": "rgba(255, 255, 255, 0.9)",
+      "primaryButtonColor": "#111111",
+      "secondaryButtonBg": "rgba(255, 255, 255, 0.06)",
+      "secondaryButtonColor": "rgba(255, 255, 255, 0.7)",
+      "errorAccent": "#F87171",
+      "successAccent": "#4ADE80"
     }
   }
 }
