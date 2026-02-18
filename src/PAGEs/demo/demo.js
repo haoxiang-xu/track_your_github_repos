@@ -26,6 +26,7 @@ import OthersDemo from "./individual_component_demo/others_demo";
 import DndDemo from "./individual_component_demo/dnd_demo";
 import ExplorerDemo from "./individual_component_demo/explorer_demo";
 import ModalDemo from "./individual_component_demo/modal_demo";
+import FlowEditorDemo from "./individual_component_demo/flow_editor_demo";
 import SettingsShowroom from "./show_room_demo/settings_showroom";
 import ChatShowroom from "./show_room_demo/chat_showroom";
 /* { Sections } -------------------------------------------------------------------------------------------------------------- */
@@ -244,6 +245,7 @@ const Demo = () => {
             <DndDemo />
             <ExplorerDemo />
             <ModalDemo />
+            <FlowEditorDemo />
             <OthersDemo />
             <IconDemo />
           </div>

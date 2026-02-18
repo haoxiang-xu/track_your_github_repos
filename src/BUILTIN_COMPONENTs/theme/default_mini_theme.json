@@ -106,6 +106,56 @@
       "contentSectionColor": "rgba(0, 0, 0, 0.38)",
       "contentSectionActiveColor": "rgba(0, 0, 0, 0.55)"
     },
+    "button": {
+      "root": {
+        "fontSize": 16,
+        "fontFamily": "Jost, sans-serif",
+        "borderRadius": 7,
+        "color": "#222222",
+        "paddingVertical": 6,
+        "paddingHorizontal": 12,
+        "iconOnlyPaddingVertical": 8,
+        "iconOnlyPaddingHorizontal": 8,
+        "gap": 6
+      },
+      "background": {
+        "hoverBackgroundColor": "rgba(0,0,0,0.06)",
+        "activeBackgroundColor": "rgba(0,0,0,0.10)",
+        "transformHidden": "scale(0.5, 0)",
+        "transformVisible": "scale(1)",
+        "pressedInset": 2,
+        "minPressedRadius": 2,
+        "transitionIn": "transform 0.25s cubic-bezier(0.2, 0.9, 0.3, 1.0), opacity 0.18s ease, inset 0.15s cubic-bezier(0.32, 1, 0.32, 1), border-radius 0.15s ease",
+        "transitionOut": "transform 0.2s cubic-bezier(0.4, 0, 1, 1), opacity 0.15s ease, inset 0.15s ease, border-radius 0.15s ease"
+      },
+      "content": {
+        "root": { "position": "relative", "zIndex": 1 },
+        "prefixIconWrap": {
+          "position": "relative",
+          "zIndex": 1,
+          "display": "flex",
+          "alignItems": "center"
+        },
+        "prefixText": { "position": "relative", "zIndex": 1 },
+        "label": { "position": "relative", "zIndex": 1 },
+        "postfixText": { "position": "relative", "zIndex": 1 },
+        "postfixIconWrap": {
+          "position": "relative",
+          "zIndex": 1,
+          "display": "flex",
+          "alignItems": "center"
+        },
+        "icon": {}
+      },
+      "state": {
+        "hover": { "root": {}, "background": {} },
+        "active": { "root": {}, "background": {} },
+        "disabled": {
+          "root": { "opacity": 0.4, "cursor": "not-allowed" },
+          "background": {}
+        }
+      }
+    },
     "tooltip": {
       "color": "#FFFFFF",
       "backgroundColor": "rgba(20, 20, 20, 0.92)",
@@ -183,6 +233,27 @@
       "secondaryButtonColor": "#333333",
       "errorAccent": "#DC3545",
       "successAccent": "#22C55E"
+    },
+    "flow_editor": {
+      "canvasBackground": "#f5f5f5",
+      "gridColor": "rgba(0, 0, 0, 0.05)",
+      "nodeBackground": "#ffffff",
+      "nodeBorder": "rgba(0, 0, 0, 0.12)",
+      "nodeShadow": "0 1px 8px rgba(0, 0, 0, 0.08)",
+      "nodeShadowHover": "0 4px 20px rgba(0, 0, 0, 0.13)",
+      "nodeSelectedBorder": "#2563eb",
+      "portColor": "#C8C8C8",
+      "portHoverColor": "#2563eb",
+      "edgeColor": "rgba(0, 0, 0, 0.18)",
+      "edgeActiveColor": "#2563eb",
+      "edgeWidth": 2,
+      "fontColor": "rgba(0, 0, 0, 0.8)",
+      "edgeAddBtnBg": "#ffffff",
+      "edgeAddBtnBorder": "rgba(0, 0, 0, 0.12)",
+      "edgeAddBtnColor": "rgba(0, 0, 0, 0.35)",
+      "edgeAddBtnHoverColor": "#2563eb",
+      "edgeAddBtnShadow": "drop-shadow(0 2px 6px rgba(0, 0, 0, 0.15))",
+      "snapGuideColor": "rgba(37, 99, 235, 0.45)"
     }
   },
   "dark_mode": {
@@ -292,6 +363,56 @@
       "contentSectionColor": "rgba(255, 255, 255, 0.35)",
       "contentSectionActiveColor": "rgba(255, 255, 255, 0.55)"
     },
+    "button": {
+      "root": {
+        "fontSize": 16,
+        "fontFamily": "Jost, sans-serif",
+        "borderRadius": 7,
+        "color": "#CCCCCC",
+        "paddingVertical": 6,
+        "paddingHorizontal": 12,
+        "iconOnlyPaddingVertical": 8,
+        "iconOnlyPaddingHorizontal": 8,
+        "gap": 6
+      },
+      "background": {
+        "hoverBackgroundColor": "rgba(255,255,255,0.08)",
+        "activeBackgroundColor": "rgba(255,255,255,0.14)",
+        "transformHidden": "scale(0.5, 0)",
+        "transformVisible": "scale(1)",
+        "pressedInset": 2,
+        "minPressedRadius": 2,
+        "transitionIn": "transform 0.25s cubic-bezier(0.2, 0.9, 0.3, 1.0), opacity 0.18s ease, inset 0.15s cubic-bezier(0.32, 1, 0.32, 1), border-radius 0.15s ease",
+        "transitionOut": "transform 0.2s cubic-bezier(0.4, 0, 1, 1), opacity 0.15s ease, inset 0.15s ease, border-radius 0.15s ease"
+      },
+      "content": {
+        "root": { "position": "relative", "zIndex": 1 },
+        "prefixIconWrap": {
+          "position": "relative",
+          "zIndex": 1,
+          "display": "flex",
+          "alignItems": "center"
+        },
+        "prefixText": { "position": "relative", "zIndex": 1 },
+        "label": { "position": "relative", "zIndex": 1 },
+        "postfixText": { "position": "relative", "zIndex": 1 },
+        "postfixIconWrap": {
+          "position": "relative",
+          "zIndex": 1,
+          "display": "flex",
+          "alignItems": "center"
+        },
+        "icon": {}
+      },
+      "state": {
+        "hover": { "root": {}, "background": {} },
+        "active": { "root": {}, "background": {} },
+        "disabled": {
+          "root": { "opacity": 0.4, "cursor": "not-allowed" },
+          "background": {}
+        }
+      }
+    },
     "tooltip": {
       "color": "#111111",
       "backgroundColor": "rgba(200, 200, 200, 0.96)",
@@ -369,6 +490,27 @@
       "secondaryButtonColor": "rgba(255, 255, 255, 0.7)",
       "errorAccent": "#F87171",
       "successAccent": "#4ADE80"
+    },
+    "flow_editor": {
+      "canvasBackground": "#1a1a1a",
+      "gridColor": "rgba(255, 255, 255, 0.04)",
+      "nodeBackground": "#252525",
+      "nodeBorder": "rgba(255, 255, 255, 0.10)",
+      "nodeShadow": "0 2px 12px rgba(0, 0, 0, 0.3)",
+      "nodeShadowHover": "0 4px 24px rgba(0, 0, 0, 0.45)",
+      "nodeSelectedBorder": "rgba(255, 255, 255, 0.55)",
+      "portColor": "#555555",
+      "portHoverColor": "#AAAAAA",
+      "edgeColor": "rgba(255, 255, 255, 0.15)",
+      "edgeActiveColor": "rgba(255, 255, 255, 0.55)",
+      "edgeWidth": 2,
+      "fontColor": "rgba(255, 255, 255, 0.8)",
+      "edgeAddBtnBg": "#303030",
+      "edgeAddBtnBorder": "rgba(255, 255, 255, 0.12)",
+      "edgeAddBtnColor": "rgba(255, 255, 255, 0.35)",
+      "edgeAddBtnHoverColor": "rgba(255, 255, 255, 0.75)",
+      "edgeAddBtnShadow": "drop-shadow(0 2px 6px rgba(0, 0, 0, 0.4))",
+      "snapGuideColor": "rgba(255, 255, 255, 0.25)"
     }
   }
 }

@@ -3,6 +3,7 @@ import React, {
   useCallback,
   useContext,
   useEffect,
+  useLayoutEffect,
   useMemo,
   useRef,
   useState,
@@ -169,14 +170,13 @@ const SegmentedButton = ({
   const [indicator, setIndicator] = useState({ left: 0, width: 0 });
   const initialised = useRef(false);
 
-  /* measure the selected button on mount + value change */
-  useEffect(() => {
+  const measureIndicator = useCallback(() => {
     const container = containerRef.current;
-    if (!container) return;
+    if (!container) return false;
 
     const selectedIdx = items.findIndex((o) => o.value === selected);
     const btn = buttonRefs.current[selectedIdx];
-    if (!btn) return;
+    if (!btn) return false;
 
     const cRect = container.getBoundingClientRect();
     const bRect = btn.getBoundingClientRect();
@@ -184,13 +184,77 @@ const SegmentedButton = ({
       left: bRect.left - cRect.left,
       width: bRect.width,
     });
+    return true;
+  }, [items, selected]);
+
+  /* measure before paint on mount + value/options change */
+  useLayoutEffect(() => {
+    const measured = measureIndicator();
     /* Turn on transition after first measurement */
-    if (!initialised.current) {
+    if (measured && !initialised.current) {
       requestAnimationFrame(() => {
         initialised.current = true;
       });
     }
-  }, [selected, items, options]);
+  }, [measureIndicator]);
+
+  /* keep indicator aligned when selected button/container changes size */
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return undefined;
+
+    const selectedIdx = items.findIndex((o) => o.value === selected);
+    const btn = buttonRefs.current[selectedIdx];
+    if (!btn) return undefined;
+
+    if (typeof ResizeObserver !== "undefined") {
+      const observer = new ResizeObserver(() => {
+        measureIndicator();
+      });
+      observer.observe(container);
+      observer.observe(btn);
+      return () => observer.disconnect();
+    }
+
+    const onResize = () => {
+      measureIndicator();
+    };
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, [items, measureIndicator, selected]);
+
+  /* fonts may finish loading after first paint and change text width */
+  useEffect(() => {
+    if (
+      typeof document === "undefined" ||
+      !document.fonts ||
+      !document.fonts.ready
+    ) {
+      return undefined;
+    }
+
+    let cancelled = false;
+    document.fonts.ready.then(() => {
+      if (!cancelled) {
+        measureIndicator();
+      }
+    });
+
+    const onFontsDone = () => {
+      measureIndicator();
+    };
+    if (document.fonts.addEventListener) {
+      document.fonts.addEventListener("loadingdone", onFontsDone);
+      return () => {
+        cancelled = true;
+        document.fonts.removeEventListener("loadingdone", onFontsDone);
+      };
+    }
+
+    return () => {
+      cancelled = true;
+    };
+  }, [measureIndicator]);
 
   /* ── sizing — derived from style overrides ─────────── */
   const fontSize = style?.fontSize ?? 14;
