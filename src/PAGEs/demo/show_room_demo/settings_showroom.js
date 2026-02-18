@@ -7,7 +7,7 @@ import { ConfigContext } from "../../../CONTAINERs/config/context";
 /* { Components } ------------------------------------------------------------------------------------------------------------ */
 import Icon from "../../../BUILTIN_COMPONENTs/icon/icon";
 import Button from "../../../BUILTIN_COMPONENTs/input/button";
-import { GhostSelect } from "../../../BUILTIN_COMPONENTs/select/select";
+import Select from "../../../BUILTIN_COMPONENTs/select/select";
 import { SemiSwitch } from "../../../BUILTIN_COMPONENTs/input/switch";
 import { ConfirmModal } from "../../../BUILTIN_COMPONENTs/modal/modal";
 /* { Components } ------------------------------------------------------------------------------------------------------------ */
@@ -115,7 +115,7 @@ const GeneralPage = () => {
           label="Theme"
           description="Choose between light and dark mode"
         >
-          <GhostSelect
+          <Select
             options={[
               { value: "light_mode", label: "Light" },
               { value: "dark_mode", label: "Dark" },
@@ -145,7 +145,7 @@ const GeneralPage = () => {
           label="Language"
           description="Display language for the interface"
         >
-          <GhostSelect
+          <Select
             options={[
               { value: "english", label: "English" },
               { value: "chinese", label: "中文" },
@@ -266,7 +266,7 @@ const ProfilePage = () => {
           label="Profile visibility"
           description="Control who can see your profile"
         >
-          <GhostSelect
+          <Select
             options={[
               { value: "public", label: "Public" },
               { value: "private", label: "Private" },

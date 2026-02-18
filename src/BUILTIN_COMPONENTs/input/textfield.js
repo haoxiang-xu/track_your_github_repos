@@ -5,7 +5,7 @@ import { ConfigContext } from "../../CONTAINERs/config/context";
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
 
 /**
- * TextField — auto-expanding multi-line input.
+ * FloatingTextField — auto-expanding multi-line input.
  *
  * Props:
  *   value / set_value      – controlled text
@@ -20,7 +20,7 @@ import { ConfigContext } from "../../CONTAINERs/config/context";
  *   on_key_down            – keyDown handler (e.g. Shift+Enter)
  *   textarea_ref           – optional external ref for the <textarea>
  */
-const TextField = ({
+const FloatingTextField = ({
   value,
   set_value = () => {},
   min_rows = 1,
@@ -329,13 +329,13 @@ const TextField = ({
   );
 };
 
-/* ── GhostTextField ──────────────────────────────────────────────────────────── */
+/* ── TextField ───────────────────────────────────────────────────────────────── */
 /**
  * Ghost-style multi-line input — transparent background, faint border.
  * On hover / focus the background scales from center (same animation as Button)
- * and the border disappears.  Same props as TextField.
+ * and the border disappears.  Same props as FloatingTextField.
  */
-const GhostTextField = ({
+const TextField = ({
   value,
   set_value = () => {},
   min_rows = 1,
@@ -643,4 +643,4 @@ const GhostTextField = ({
   );
 };
 
-export { TextField as default, GhostTextField };
+export { TextField as default, FloatingTextField, TextField };

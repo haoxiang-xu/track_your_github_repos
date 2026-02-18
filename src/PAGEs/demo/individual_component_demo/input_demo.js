@@ -6,11 +6,11 @@ import { ConfigContext } from "../../../CONTAINERs/config/context";
 
 /* { Components } ------------------------------------------------------------------------------------------------------------ */
 import Input, {
+  SinkingInput,
   InputWithDelete,
   Password,
   ValidationCodeInput,
-  FlowingInput,
-  GhostInput,
+  FloatingInput,
 } from "../../../BUILTIN_COMPONENTs/input/input";
 import { SemiSwitch } from "../../../BUILTIN_COMPONENTs/input/switch";
 import Tooltip from "../../../BUILTIN_COMPONENTs/tooltip/tooltip";
@@ -50,38 +50,38 @@ const InputDemo = () => {
       <CustomizedTooltip
         code={` 
 \`\`\`js
-<Input label="User name" style={{ width: "200px" }} />
+<SinkingInput label="User name" style={{ width: "200px" }} />
 \`\`\` 
           `}
       >
-        <Input label="User name" style={{ width: "200px" }} />
+        <SinkingInput label="User name" style={{ width: "200px" }} />
       </CustomizedTooltip>
       <CustomizedTooltip
         code={` 
 \`\`\`js
-<Input prefix_icon="edit" prefix_label="Prefix" />
+<SinkingInput prefix_icon="edit" prefix_label="Prefix" />
 \`\`\` 
           `}
       >
-        <Input prefix_icon="edit" prefix_label="Prefix" />
+        <SinkingInput prefix_icon="edit" prefix_label="Prefix" />
       </CustomizedTooltip>
       <CustomizedTooltip
         code={` 
 \`\`\`js
-<Input prefix_label="Prefix" />
+<SinkingInput prefix_label="Prefix" />
 \`\`\` 
           `}
       >
-        <Input prefix_label="Prefix" />
+        <SinkingInput prefix_label="Prefix" />
       </CustomizedTooltip>
       <CustomizedTooltip
         code={` 
 \`\`\`js
-<Input postfix_label="Postfix" />
+<SinkingInput postfix_label="Postfix" />
 \`\`\` 
           `}
       >
-        <Input postfix_label="Postfix" />
+        <SinkingInput postfix_label="Postfix" />
       </CustomizedTooltip>
       <CustomizedTooltip
         code={` 
@@ -113,7 +113,7 @@ const InputDemo = () => {
             }}
           >{` 
 \`\`\`js
-<Input
+<SinkingInput
   prefix_icon="link"
   prefix_label="https://"
   postfix_label=".com"
@@ -129,7 +129,7 @@ const InputDemo = () => {
         }}
         close_delay={80}
       >
-        <Input
+        <SinkingInput
           prefix_icon="link"
           prefix_label="https://"
           postfix_label=".com"
@@ -139,7 +139,7 @@ const InputDemo = () => {
       <CustomizedTooltip
         code={` 
 \`\`\`js
-<Input
+<SinkingInput
   label="search on Google"
   prefix_icon="search"
   prefix_label="G"
@@ -148,7 +148,7 @@ const InputDemo = () => {
 \`\`\` 
           `}
       >
-        <Input
+        <SinkingInput
           label="search on Google"
           prefix_icon="search"
           prefix_label="G"
@@ -167,7 +167,7 @@ const InputDemo = () => {
       <CustomizedTooltip
         code={` 
 \`\`\`js
-<Input
+<SinkingInput
   label="with Switch"
   postfix_component={<SemiSwitch />}
   no_separator
@@ -175,7 +175,7 @@ const InputDemo = () => {
 \`\`\` 
           `}
       >
-        <Input
+        <SinkingInput
           label="with Switch"
           postfix_component={<SemiSwitch />}
           no_separator
@@ -184,20 +184,20 @@ const InputDemo = () => {
       <CustomizedTooltip
         code={`
 \`\`\`js
-<FlowingInput label="Username" />
+<FloatingInput label="Username" />
 \`\`\`
 `}
       >
-        <FlowingInput label="Username" style={{ width: 200 }} />
+        <FloatingInput label="Username" style={{ width: 200 }} />
       </CustomizedTooltip>
       <CustomizedTooltip
         code={`
 \`\`\`js
-<FlowingInput label="Email" placeholder="you@example.com" />
+<FloatingInput label="Email" placeholder="you@example.com" />
 \`\`\`
 `}
       >
-        <FlowingInput
+        <FloatingInput
           label="Email"
           placeholder="you@example.com"
           style={{ width: 240 }}
@@ -206,16 +206,16 @@ const InputDemo = () => {
       <CustomizedTooltip
         code={`
 \`\`\`js
-<FlowingInput placeholder="No label" />
+<FloatingInput placeholder="No label" />
 \`\`\`
 `}
       >
-        <FlowingInput placeholder="No label" style={{ width: 180 }} />
+        <FloatingInput placeholder="No label" style={{ width: 180 }} />
       </CustomizedTooltip>
       <CustomizedTooltip
         code={`
 \`\`\`js
-<FlowingInput
+<FloatingInput
   label="Website"
   prefix_icon="link"
   prefix_label="https://"
@@ -224,7 +224,7 @@ const InputDemo = () => {
 \`\`\`
 `}
       >
-        <FlowingInput
+        <FloatingInput
           label="Website"
           prefix_icon="link"
           prefix_label="https://"
@@ -235,14 +235,14 @@ const InputDemo = () => {
       <CustomizedTooltip
         code={`
 \`\`\`js
-<FlowingInput
+<FloatingInput
   label="Search"
   prefix_icon="search"
 />
 \`\`\`
 `}
       >
-        <FlowingInput
+        <FloatingInput
           label="Search"
           prefix_icon="search"
           style={{ width: 220 }}
@@ -251,14 +251,14 @@ const InputDemo = () => {
       <CustomizedTooltip
         code={`
 \`\`\`js
-<FlowingInput
+<FloatingInput
   label="with Switch"
   postfix_component={<SemiSwitch />}
 />
 \`\`\`
 `}
       >
-        <FlowingInput
+        <FloatingInput
           label="with Switch"
           postfix_component={<SemiSwitch />}
           style={{ width: 220 }}
@@ -267,23 +267,23 @@ const InputDemo = () => {
       <CustomizedTooltip
         code={`
 \`\`\`js
-<GhostInput placeholder="Ghost input" />
+<Input placeholder="Ghost input" />
 \`\`\`
 `}
       >
-        <GhostInput placeholder="Ghost input" style={{ width: 200 }} />
+        <Input placeholder="Ghost input" style={{ width: 200 }} />
       </CustomizedTooltip>
       <CustomizedTooltip
         code={`
 \`\`\`js
-<GhostInput
+<Input
   placeholder="Search"
   prefix_icon="search"
 />
 \`\`\`
 `}
       >
-        <GhostInput
+        <Input
           placeholder="Search"
           prefix_icon="search"
           style={{ width: 220 }}
@@ -292,7 +292,7 @@ const InputDemo = () => {
       <CustomizedTooltip
         code={`
 \`\`\`js
-<GhostInput
+<Input
   placeholder="Website"
   prefix_label="https://"
   postfix_label=".com"
@@ -300,7 +300,7 @@ const InputDemo = () => {
 \`\`\`
 `}
       >
-        <GhostInput
+        <Input
           placeholder="Website"
           prefix_label="https://"
           postfix_label=".com"

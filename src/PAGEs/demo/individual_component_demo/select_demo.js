@@ -6,10 +6,10 @@ import { ConfigContext } from "../../../CONTAINERs/config/context";
 
 /* { Components } -------------------------------------------------------------------------------------------------------------- */
 import Select, {
-  FlowingSelect,
-  GhostSelect,
+  SinkingSelect,
+  FloatingSelect,
 } from "../../../BUILTIN_COMPONENTs/select/select";
-import Input from "../../../BUILTIN_COMPONENTs/input/input";
+import { SinkingInput } from "../../../BUILTIN_COMPONENTs/input/input";
 import countries from "../../../BUILTIN_COMPONENTs/consts/countries";
 /* { Components } -------------------------------------------------------------------------------------------------------------- */
 
@@ -132,7 +132,7 @@ const SelectDemo = () => {
       >
         Selects
       </span>
-      <Select
+      <SinkingSelect
         options={houseOptions}
         value={house}
         set_value={setHouse}
@@ -140,7 +140,7 @@ const SelectDemo = () => {
         placeholder="Select suit"
         style={{ width: 240 }}
       />
-      <Select
+      <SinkingSelect
         options={cityOptions}
         value={city}
         set_value={setCity}
@@ -158,7 +158,7 @@ const SelectDemo = () => {
           flexWrap: "wrap",
         }}
       >
-        <Select
+        <SinkingSelect
           options={dialCodeOptions}
           value={dialCode}
           set_value={setDialCode}
@@ -169,14 +169,14 @@ const SelectDemo = () => {
           dropdown_style={{ maxWidth: 700, maxHeight: 240 }}
           show_trigger_icon={false}
         />
-        <Input
+        <SinkingInput
           label="Phone number"
           value={phone}
           set_value={setPhone}
           style={{ width: 200, borderRadius: "0px 7px 7px 0px" }}
         />
       </div>
-      <Select
+      <SinkingSelect
         options={countryOptionsWithFlags}
         value={country}
         set_value={setCountry}
@@ -186,7 +186,7 @@ const SelectDemo = () => {
         style={{ width: 260 }}
         dropdown_style={{ maxWidth: 320, maxHeight: 240 }}
       />
-      <Select
+      <SinkingSelect
         options={simpleOptions}
         value={simple}
         set_value={setSimple}
@@ -195,7 +195,7 @@ const SelectDemo = () => {
         placeholder="Priority (no filter)"
         style={{ width: 240 }}
       />
-      <Select
+      <SinkingSelect
         options={cityOptions}
         filter_mode="panel"
         placeholder="Compact list"
@@ -203,14 +203,14 @@ const SelectDemo = () => {
         dropdown_style={{ maxWidth: 260, maxHeight: 180 }}
         option_style={{ height: 28, padding: "4px 8px" }}
       />
-      <Select
+      <SinkingSelect
         options={cityOptions}
         filter_mode="trigger"
         placeholder="Disabled select"
         style={{ width: 240 }}
         disabled
       />
-      <FlowingSelect
+      <FloatingSelect
         options={simpleOptions}
         value={simple}
         set_value={setSimple}
@@ -219,7 +219,7 @@ const SelectDemo = () => {
         filter_mode="panel"
         style={{ width: 200 }}
       />
-      <FlowingSelect
+      <FloatingSelect
         options={cityOptions}
         value={city}
         set_value={setCity}
@@ -229,7 +229,7 @@ const SelectDemo = () => {
         style={{ width: 240 }}
         dropdown_style={{ maxHeight: 220 }}
       />
-      <FlowingSelect
+      <FloatingSelect
         options={countryOptionsWithFlags}
         value={country}
         set_value={setCountry}
@@ -239,21 +239,21 @@ const SelectDemo = () => {
         style={{ width: 240 }}
         dropdown_style={{ maxHeight: 220 }}
       />
-      <GhostSelect
+      <Select
         options={houseOptions}
         value={house}
         set_value={setHouse}
         placeholder="Suit"
         filterable={false}
       />
-      <GhostSelect
+      <Select
         options={simpleOptions}
         value={simple}
         set_value={setSimple}
         placeholder="Priority"
         filterable={false}
       />
-      <GhostSelect
+      <Select
         options={cityOptions}
         value={city}
         set_value={setCity}

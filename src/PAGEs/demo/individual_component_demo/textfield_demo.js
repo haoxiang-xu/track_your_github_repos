@@ -5,8 +5,9 @@ import { ConfigContext } from "../../../CONTAINERs/config/context";
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
 
 /* { Components } ------------------------------------------------------------------------------------------------------------ */
-import TextField from "../../../BUILTIN_COMPONENTs/input/textfield";
-import { GhostTextField } from "../../../BUILTIN_COMPONENTs/input/textfield";
+import TextField, {
+  FloatingTextField,
+} from "../../../BUILTIN_COMPONENTs/input/textfield";
 import Button from "../../../BUILTIN_COMPONENTs/input/button";
 import { CustomizedTooltip } from "../demo";
 /* { Components } ------------------------------------------------------------------------------------------------------------ */
@@ -101,7 +102,7 @@ const TextFieldDemo = () => {
         <CustomizedTooltip
           code={`
 \`\`\`js
-<TextField
+<FloatingTextField
   min_rows={1}
   max_display_rows={6}
   placeholder="Type a message..."
@@ -111,7 +112,7 @@ const TextFieldDemo = () => {
 \`\`\`
           `}
         >
-          <TextField
+          <FloatingTextField
             value={chatVal}
             set_value={setChatVal}
             min_rows={1}
@@ -145,7 +146,7 @@ const TextFieldDemo = () => {
         <CustomizedTooltip
           code={`
 \`\`\`js
-<TextField
+<FloatingTextField
   min_rows={3}
   max_display_rows={8}
   placeholder="Write a note..."
@@ -154,7 +155,7 @@ const TextFieldDemo = () => {
 \`\`\`
           `}
         >
-          <TextField
+          <FloatingTextField
             value={noteVal}
             set_value={setNoteVal}
             min_rows={3}
@@ -175,7 +176,7 @@ const TextFieldDemo = () => {
         <CustomizedTooltip
           code={`
 \`\`\`js
-<GhostTextField
+<TextField
   min_rows={1}
   max_display_rows={6}
   placeholder="Ghost message..."
@@ -183,7 +184,7 @@ const TextFieldDemo = () => {
 \`\`\`
           `}
         >
-          <GhostTextField
+          <TextField
             min_rows={1}
             max_display_rows={6}
             placeholder="Ghost message..."
@@ -198,7 +199,7 @@ const TextFieldDemo = () => {
         <CustomizedTooltip
           code={`
 \`\`\`js
-<GhostTextField
+<TextField
   min_rows={3}
   max_display_rows={8}
   placeholder="Ghost note..."
@@ -206,7 +207,7 @@ const TextFieldDemo = () => {
 \`\`\`
           `}
         >
-          <GhostTextField
+          <TextField
             min_rows={3}
             max_display_rows={8}
             placeholder="Ghost note..."

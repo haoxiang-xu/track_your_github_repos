@@ -16,7 +16,7 @@ const default_gap_width = 8;
 const default_left_right_padding = 8;
 const default_top_bottom_padding = 6;
 
-const Select = ({
+const SinkingSelect = ({
   options = [],
   value,
   set_value = () => {},
@@ -620,8 +620,8 @@ const Select = ({
   );
 };
 
-/* ── FlowingSelect ────────────────────────────────────────────────────────── */
-const FlowingSelect = ({
+/* ── FloatingSelect ───────────────────────────────────────────────────────── */
+const FloatingSelect = ({
   options = [],
   value,
   set_value = () => {},
@@ -1204,12 +1204,12 @@ const FlowingSelect = ({
   );
 };
 
-/* ── GhostSelect ──────────────────────────────────────────────────────────── */
+/* ── Select ───────────────────────────────────────────────────────────────── */
 /**
  * Ghost-style select — no background, just icon + label + arrow.
  * On hover the background scales from center (same animation as Button).
  */
-const GhostSelect = ({
+const Select = ({
   options = [],
   value,
   set_value = () => {},
@@ -1448,6 +1448,12 @@ const GhostSelect = ({
     if (el?.scrollIntoView) el.scrollIntoView({ block: "nearest" });
   }, [mergedOpen, highlightedIndex]);
 
+  useEffect(() => {
+    if (!disabled) return;
+    setHovered(false);
+    setPressed(false);
+  }, [disabled]);
+
   /* ── design tokens (ghost style, similar to Button) ── */
   const fontSize = style?.fontSize || tf.fontSize || 16;
   const fontFamily =
@@ -1464,6 +1470,14 @@ const GhostSelect = ({
   const iconSize = style?.iconSize || Math.round(fontSize * 1.05);
   const arrowSize = Math.round(fontSize * 0.85);
   const gap = style?.gap ?? 6;
+  const pressedInset =
+    style?.pressedInset ?? theme?.button?.background?.pressedInset ?? 2;
+  const minPressedRadius =
+    style?.minPressedRadius ?? theme?.button?.background?.minPressedRadius ?? 2;
+  const pressedBorderRadius =
+    typeof borderRadius === "number"
+      ? Math.max(borderRadius - 1, minPressedRadius)
+      : borderRadius;
 
   const showBg = hovered || pressed || mergedOpen;
 
@@ -1497,12 +1511,18 @@ const GhostSelect = ({
       aria-expanded={mergedOpen}
       aria-disabled={disabled}
       tabIndex={disabled ? -1 : 0}
-      onMouseEnter={() => setHovered(true)}
+      onMouseEnter={() => {
+        if (disabled) return;
+        setHovered(true);
+      }}
       onMouseLeave={() => {
         setHovered(false);
         setPressed(false);
       }}
-      onMouseDown={() => setPressed(true)}
+      onMouseDown={() => {
+        if (disabled) return;
+        setPressed(true);
+      }}
       onMouseUp={() => setPressed(false)}
       onKeyDown={handle_key_down}
       style={{
@@ -1533,8 +1553,8 @@ const GhostSelect = ({
         aria-hidden="true"
         style={{
           position: "absolute",
-          inset: 0,
-          borderRadius,
+          inset: pressed ? pressedInset : 0,
+          borderRadius: pressed ? pressedBorderRadius : borderRadius,
           backgroundColor: pressed ? activeBg : hoverBg,
           transform: showBg ? "scale(1)" : "scale(0.5, 0)",
           opacity: showBg ? 1 : 0,
@@ -1752,4 +1772,9 @@ const GhostSelect = ({
   );
 };
 
-export { Select as default, Select, FlowingSelect, GhostSelect };
+export {
+  Select,
+  Select as default,
+  SinkingSelect,
+  FloatingSelect,
+};

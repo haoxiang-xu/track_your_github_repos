@@ -94,7 +94,7 @@ const ValidationCodeInput = ({ style }) => {
       }}
     >
       {values.map((val, idx) => (
-        <Input
+        <SinkingInput
           input_ref={(el) => (inputRefs.current[idx] = el)}
           key={idx}
           style={{
@@ -122,7 +122,7 @@ const InputWithDelete = ({ style, value, set_value = () => {}, ...props }) => {
   const [defaultValue, setDefaultValue] = useState("");
 
   return (
-    <Input
+    <SinkingInput
       style={{ ...style }}
       value={value !== undefined ? value : defaultValue}
       set_value={(next) => {
@@ -292,7 +292,7 @@ const Password = ({
   };
 
   return (
-    <Input
+    <SinkingInput
       type="text"
       input_ref={inputRef}
       style={{ ...style }}
@@ -321,7 +321,7 @@ const Password = ({
     />
   );
 };
-const Input = ({
+const SinkingInput = ({
   /* content props -------------- */
   label,
   prefix_component,
@@ -673,8 +673,8 @@ const Input = ({
   );
 };
 
-/* ── FlowingInput ────────────────────────────────────────────────────────────── */
-const FlowingInput = ({
+/* ── FloatingInput ───────────────────────────────────────────────────────────── */
+const FloatingInput = ({
   label,
   placeholder,
   value,
@@ -938,13 +938,13 @@ const FlowingInput = ({
   );
 };
 
-/* ── GhostInput ──────────────────────────────────────────────────────────────── */
+/* ── Input ───────────────────────────────────────────────────────────────────── */
 /**
  * Ghost-style single-line input — transparent background, faint border.
  * On hover / focus the background scales from center (same animation as Button)
  * and the border disappears.
  */
-const GhostInput = ({
+const Input = ({
   label,
   placeholder,
   value,
@@ -1163,11 +1163,11 @@ const GhostInput = ({
 };
 
 export {
-  Input as default,
   Input,
+  Input as default,
+  SinkingInput,
   Password,
   InputWithDelete,
   ValidationCodeInput,
-  FlowingInput,
-  GhostInput,
+  FloatingInput,
 };

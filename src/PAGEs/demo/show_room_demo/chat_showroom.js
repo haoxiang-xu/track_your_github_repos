@@ -8,7 +8,9 @@ import { ConfigContext } from "../../../CONTAINERs/config/context";
 import Icon from "../../../BUILTIN_COMPONENTs/icon/icon";
 import Button from "../../../BUILTIN_COMPONENTs/input/button";
 import Markdown from "../../../BUILTIN_COMPONENTs/markdown/markdown";
-import TextField from "../../../BUILTIN_COMPONENTs/input/textfield";
+import {
+  FloatingTextField,
+} from "../../../BUILTIN_COMPONENTs/input/textfield";
 /* { Components } ------------------------------------------------------------------------------------------------------------ */
 
 /* ── Attachment toolbar (chat input) ── */
@@ -455,7 +457,7 @@ const ChatShowroom = () => {
         }}
       >
         <div style={{ width: "60%" }}>
-          <TextField
+          <FloatingTextField
             textarea_ref={inputRef}
             value={inputValue}
             min_rows={1}
