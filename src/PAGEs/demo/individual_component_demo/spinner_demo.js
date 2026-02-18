@@ -7,7 +7,6 @@ import { ConfigContext } from "../../../CONTAINERs/config/context";
 /* { Components } -------------------------------------------------------------------------------------------------------------- */
 import StringSpinner from "../../../BUILTIN_COMPONENTs/spinner/string_spinner";
 import CellSplitSpinner from "../../../BUILTIN_COMPONENTs/spinner/cell_split_spinner";
-import Card from "../../../BUILTIN_COMPONENTs/card/card";
 import { CustomizedTooltip } from "../demo";
 /* { Components } -------------------------------------------------------------------------------------------------------------- */
 
@@ -47,28 +46,18 @@ const SpinnerDemo = () => {
 \`\`\` 
           `}
       >
-        <Card
-          width={160}
-          height={160}
-          max_tilt={0}
-          border_radius={12}
-          body_style={{
+        <div
+          style={{
+            position: "relative",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            padding: 0,
+            width: 160,
+            height: 160,
           }}
         >
-          <div
-            style={{
-              position: "relative",
-              width: 120,
-              height: 120,
-            }}
-          >
-            <StringSpinner size={34} amplitude={3} />
-          </div>
-        </Card>
+          <StringSpinner size={34} amplitude={3} />
+        </div>
       </CustomizedTooltip>
       <CustomizedTooltip
         code={` 
@@ -77,20 +66,17 @@ const SpinnerDemo = () => {
 \`\`\` 
           `}
       >
-        <Card
-          width={160}
-          height={160}
-          max_tilt={0}
-          border_radius={12}
-          body_style={{
+        <div
+          style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            padding: 0,
+            width: 160,
+            height: 160,
           }}
         >
           <CellSplitSpinner size={60} />
-        </Card>
+        </div>
       </CustomizedTooltip>
       <CustomizedTooltip
         code={` 
@@ -99,20 +85,17 @@ const SpinnerDemo = () => {
 \`\`\` 
           `}
       >
-        <Card
-          width={160}
-          height={160}
-          max_tilt={0}
-          border_radius={12}
-          body_style={{
+        <div
+          style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            padding: 0,
+            width: 160,
+            height: 160,
           }}
         >
           <CellSplitSpinner size={60} cells={4} stagger={80} />
-        </Card>
+        </div>
       </CustomizedTooltip>
       <CustomizedTooltip
         code={` 
@@ -121,16 +104,13 @@ const SpinnerDemo = () => {
 \`\`\` 
           `}
       >
-        <Card
-          width={160}
-          height={160}
-          max_tilt={0}
-          border_radius={12}
-          body_style={{
+        <div
+          style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            padding: 0,
+            width: 160,
+            height: 160,
           }}
         >
           <CellSplitSpinner
@@ -140,7 +120,7 @@ const SpinnerDemo = () => {
             spread={0.9}
             spin
           />
-        </Card>
+        </div>
       </CustomizedTooltip>
     </div>
   );
