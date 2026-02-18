@@ -1,4 +1,11 @@
-import { useCallback, useContext, useEffect, useRef, useState } from "react";
+import {
+  useCallback,
+  useContext,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
 import { ConfigContext } from "../../CONTAINERs/config/context";
@@ -349,48 +356,44 @@ const SinkingInput = ({
   const { theme } = useContext(ConfigContext);
   const [defaultValue, setDefaultValue] = useState("");
   const default_input_ref = useRef(null);
-  const prefix_label_ref = useRef(null);
-  const prefix_component_ref = useRef(null);
-  const postfix_label_ref = useRef(null);
-  const postfix_component_ref = useRef(null);
+  const input_node_ref = useRef(null);
   const [onFocus, setOnFocus] = useState(false);
+  const [labelLeft, setLabelLeft] = useState(default_left_right_padding);
+  const fontSize = style?.fontSize || theme?.input.fontSize || 16;
+  const iconSize = fontSize + 4;
+  const separatorHeight = fontSize + 4;
 
-  const calculate_input_width = useCallback(() => {
-    let width = 0;
-    let gap_count = 0;
-    if (prefix_component !== undefined) {
-      if (prefix_component_ref.current) {
-        width += prefix_component_ref.current.offsetWidth;
-        gap_count += 1;
+  const set_input_element_ref = useCallback(
+    (node) => {
+      input_node_ref.current = node;
+      default_input_ref.current = node;
+      if (typeof input_ref === "function") {
+        input_ref(node);
+      } else if (input_ref && typeof input_ref === "object") {
+        input_ref.current = node;
       }
-    }
-    if (prefix_icon !== undefined) {
-      width += (style?.fontSize || theme?.input.fontSize || 16) + 12;
-      gap_count += 1;
-    }
-    if (prefix_label !== undefined) {
-      if (prefix_label_ref.current) {
-        width += prefix_label_ref.current.offsetWidth;
-        gap_count += 1;
+    },
+    [input_ref],
+  );
+
+  useLayoutEffect(() => {
+    const update_label_left = () => {
+      if (!input_node_ref.current) {
+        setLabelLeft(default_left_right_padding);
+        return;
       }
+      setLabelLeft(input_node_ref.current.offsetLeft);
+    };
+
+    update_label_left();
+    if (typeof window !== "undefined") {
+      window.addEventListener("resize", update_label_left);
     }
-    if (postfix_component !== undefined) {
-      if (postfix_component_ref.current) {
-        width += postfix_component_ref.current.offsetWidth;
-        gap_count += 1;
+    return () => {
+      if (typeof window !== "undefined") {
+        window.removeEventListener("resize", update_label_left);
       }
-    }
-    if (postfix_icon !== undefined) {
-      width += (style?.fontSize || theme?.input.fontSize || 16) + 12;
-      gap_count += 1;
-    }
-    if (postfix_label !== undefined) {
-      if (postfix_label_ref.current) {
-        width += postfix_label_ref.current.offsetWidth;
-        gap_count += 1;
-      }
-    }
-    return `calc(100% - ${width + gap_count * default_gap_width + (no_separator ? 0 : default_gap_width * gap_count)}px)`;
+    };
   }, [
     prefix_component,
     prefix_icon,
@@ -398,34 +401,12 @@ const SinkingInput = ({
     postfix_component,
     postfix_icon,
     postfix_label,
-    style,
-    theme,
     no_separator,
+    fontSize,
   ]);
-  const calculate_label_left = useCallback(() => {
-    let left = default_left_right_padding;
-    let gap_count = 0;
-    if (prefix_component !== undefined) {
-      if (prefix_component_ref.current) {
-        left += prefix_component_ref.current.offsetWidth + default_gap_width;
-        gap_count += 1;
-      }
-    }
-    if (prefix_icon !== undefined) {
-      left +=
-        (style?.fontSize || theme?.input.fontSize || 16) +
-        12 +
-        default_gap_width;
-      gap_count += 1;
-    }
-    if (prefix_label !== undefined) {
-      if (prefix_label_ref.current) {
-        left += prefix_label_ref.current.offsetWidth + default_gap_width;
-        gap_count += 1;
-      }
-    }
-    return left + (no_separator ? 0 : default_gap_width * gap_count);
-  }, [prefix_component, prefix_icon, prefix_label, style, theme, no_separator]);
+  const hasValue =
+    (value !== undefined ? value : defaultValue)?.toString().length > 0;
+  const isLabelFloating = onFocus || hasValue;
 
   return (
     <div
@@ -446,27 +427,25 @@ const SinkingInput = ({
         borderRadius: style?.borderRadius || theme?.input.borderRadius || 4,
         boxShadow: style?.boxShadow || theme?.input.boxShadow || "none",
         outline:
-          style?.outline || onFocus
+          style?.outline ||
+          (onFocus
             ? theme?.input.outline.onFocus
-            : theme?.input.outline.onBlur || "1px solid #CCCCCC",
+            : theme?.input.outline.onBlur || "1px solid #CCCCCC"),
         ...style,
       }}
       onClick={() => {
-        if (
-          (input_ref || default_input_ref) &&
-          (input_ref || default_input_ref).current
-        ) {
-          (input_ref || default_input_ref).current.focus();
+        if (input_node_ref.current) {
+          input_node_ref.current.focus();
         }
       }}
     >
       {prefix_component !== undefined ? (
-        <div ref={prefix_component_ref}>
+        <div style={{ display: "flex", alignItems: "center", flexShrink: 0 }}>
           {prefix_component}
           {!no_separator && (
             <Separator
               style={{
-                height: (style?.fontSize || theme?.input.fontSize || 16) + 4,
+                height: separatorHeight,
               }}
             />
           )}
@@ -477,15 +456,16 @@ const SinkingInput = ({
           <Icon
             src={prefix_icon}
             style={{
-              width: (style?.fontSize || theme?.input.fontSize || 16) + 4,
-              height: (style?.fontSize || theme?.input.fontSize || 16) + 4,
+              width: iconSize,
+              height: iconSize,
+              flexShrink: 0,
             }}
             color={style?.color || theme?.color || "black"}
           />
           {!no_separator && (
             <Separator
               style={{
-                height: (style?.fontSize || theme?.input.fontSize || 16) + 4,
+                height: separatorHeight,
               }}
             />
           )}
@@ -494,14 +474,15 @@ const SinkingInput = ({
       {prefix_label === undefined ? null : (
         <>
           <span
-            ref={prefix_label_ref}
             style={{
               fontFamily:
                 style?.fontFamily ||
                 theme?.font.fontFamily ||
                 "Arial, sans-serif",
-              fontSize: style?.fontSize || theme?.input.fontSize || 16,
+              fontSize,
               color: style?.color || theme?.color || "black",
+              flexShrink: 0,
+              whiteSpace: "nowrap",
 
               userSelect: "none",
               WebkitUserSelect: "none",
@@ -514,20 +495,22 @@ const SinkingInput = ({
           {!no_separator && (
             <Separator
               style={{
-                height: (style?.fontSize || theme?.input.fontSize || 16) + 4,
+                height: separatorHeight,
               }}
             />
           )}
         </>
       )}
       <input
-        ref={input_ref || default_input_ref}
+        ref={set_input_element_ref}
         type={type}
         style={{
           fontFamily: style?.fontFamily || theme?.font.fontFamily || "Jost",
-          width: calculate_input_width(),
+          flex: 1,
+          minWidth: 0,
+          width: "auto",
           height: "90%",
-          fontSize: style?.fontSize || theme?.input.fontSize || 16,
+          fontSize,
           border: "1px solid rgba(255, 255, 255, 0)",
           backgroundColor: "rgba(0,0,0,0)",
           color: style?.color || theme?.color || "black",
@@ -567,19 +550,20 @@ const SinkingInput = ({
           {!no_separator && (
             <Separator
               style={{
-                height: (style?.fontSize || theme?.input.fontSize || 16) + 4,
+                height: separatorHeight,
               }}
             />
           )}
           <span
-            ref={postfix_label_ref}
             style={{
               fontFamily:
                 style?.fontFamily ||
                 theme?.font.fontFamily ||
                 "Arial, sans-serif",
-              fontSize: style?.fontSize || theme?.input.fontSize || 16,
+              fontSize,
               color: style?.color || theme?.color || "black",
+              flexShrink: 0,
+              whiteSpace: "nowrap",
 
               userSelect: "none",
               WebkitUserSelect: "none",
@@ -596,26 +580,27 @@ const SinkingInput = ({
           {!no_separator && (
             <Separator
               style={{
-                height: (style?.fontSize || theme?.input.fontSize || 16) + 4,
+                height: separatorHeight,
               }}
             />
           )}
           <Icon
             src={postfix_icon}
             style={{
-              width: (style?.fontSize || theme?.input.fontSize || 16) + 4,
-              height: (style?.fontSize || theme?.input.fontSize || 16) + 4,
+              width: iconSize,
+              height: iconSize,
+              flexShrink: 0,
             }}
             color={style?.color || theme?.color || "black"}
           />
         </>
       )}
       {postfix_component !== undefined ? (
-        <div ref={postfix_component_ref}>
+        <div style={{ display: "flex", alignItems: "center", flexShrink: 0 }}>
           {!no_separator && (
             <Separator
               style={{
-                height: (style?.fontSize || theme?.input.fontSize || 16) + 4,
+                height: separatorHeight,
               }}
             />
           )}
@@ -628,37 +613,25 @@ const SinkingInput = ({
             position: "absolute",
             transition: "all 0.18s cubic-bezier(0.4, 0, 0.2, 1)",
             top:
-              onFocus ||
-              (value && value.length > 0) ||
-              (defaultValue && defaultValue.length > 0)
-                ? `calc(0% - ${((style?.fontSize || theme?.input.fontSize || 16) * 0.75) / 2 + 6}px)`
+              isLabelFloating
+                ? `calc(0% - ${(fontSize * 0.75) / 2 + 6}px)`
                 : "50%",
             left:
-              onFocus ||
-              (value && value.length > 0) ||
-              (defaultValue && defaultValue.length > 0)
+              isLabelFloating
                 ? default_left_right_padding
-                : calculate_label_left(),
+                : labelLeft,
             transform: "translateY(-50%)",
             fontFamily:
               style?.fontFamily ||
               theme?.font.fontFamily ||
               "Arial, sans-serif",
             fontSize:
-              onFocus ||
-              (value && value.length > 0) ||
-              (defaultValue && defaultValue.length > 0)
-                ? (style?.fontSize || theme?.input.fontSize || 16) * 0.75
-                : style?.fontSize || theme?.input.fontSize || 16,
+              isLabelFloating ? fontSize * 0.75 : fontSize,
             color: onFocus
               ? style?.color || theme?.color || "black"
               : style?.color || theme?.color || "#666666",
             opacity:
-              onFocus ||
-              (value && value.length > 0) ||
-              (defaultValue && defaultValue.length > 0)
-                ? 0.6
-                : 0.45,
+              isLabelFloating ? 0.6 : 0.45,
 
             userSelect: "none",
             WebkitUserSelect: "none",
