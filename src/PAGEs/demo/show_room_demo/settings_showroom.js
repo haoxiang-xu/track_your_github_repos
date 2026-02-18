@@ -482,11 +482,23 @@ const SettingsShowroom = ({ onClose }) => {
             position: "absolute",
             top: 12,
             right: 12,
-            padding: 6,
+            paddingVertical: 6,
+            paddingHorizontal: 6,
             borderRadius: 6,
-            iconSize: 14,
             opacity: 0.45,
             zIndex: 2,
+            content: {
+              prefixIconWrap: {
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                lineHeight: 0,
+              },
+              icon: {
+                width: 14,
+                height: 14,
+              },
+            },
           }}
         />
 

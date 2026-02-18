@@ -14,10 +14,11 @@
 
 ## Table of Contents
 
-- [Component Standards](doc/component-standards.md)
+- [Documentation](#documentation)
 
 ## Documentation
 
 Use the component standard below as the root guideline for new UI work:
 
+- [Mini UI Project Architecture](doc/project-architecture.md)
 - [Mini UI Component Standards](doc/component-standards.md)
