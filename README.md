@@ -4,7 +4,7 @@
 ></link>
 
 <div align="center">
-  <img src="assets/logo.png" alt="Mini UI Logo" style="height: 128px">
+  <img src="public/assets/logo.png" alt="Mini UI Logo" style="height: 128px">
   <h1>Mini UI</h1>
   <p>A starting point for your React Project.</p>
 </div>
@@ -20,5 +20,5 @@
 
 Use the component standard below as the root guideline for new UI work:
 
-- [Mini UI Project Architecture](doc/project-architecture.md)
-- [Mini UI Component Standards](doc/component-standards.md)
+- [Mini UI Project Architecture](public/doc/project-architecture.md)
+- [Mini UI Component Standards](public/doc/component-standards.md)
