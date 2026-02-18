@@ -17,7 +17,6 @@ import { FlowEditorNode } from "./node";
 
 /* { Utilities } ------------------------------------------------------------------------------------------------------------- */
 import {
-  DEFAULT_PORTS,
   calculate_bezier_path,
   get_port_position,
   get_bezier_midpoint,

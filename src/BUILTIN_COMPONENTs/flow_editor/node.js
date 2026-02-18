@@ -106,8 +106,7 @@ const FlowEditorNode = React.memo(function FlowEditorNode({
         break;
     }
 
-    const is_port_connected = connected_port_ids?.has?.(port.id);
-    const show_port = is_port_connected || hovered || is_connecting || selected;
+    const show_port = hovered || is_connecting || selected;
 
     return (
       <div
