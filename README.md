@@ -4,7 +4,7 @@
 ></link>
 
 <div align="center">
-  <img src="public/assets/logo.png" alt="Mini UI Logo" style="height: 128px">
+  <img src="public/assets/logo_low_resolution.png" alt="Mini UI Logo" style="height: 128px">
   <h1>Mini UI</h1>
   <p>A starting point for your React Project.</p>
 </div>
@@ -14,11 +14,47 @@
 
 ## Table of Contents
 
-- [Documentation](#documentation)
+- [Prerequisites](#prerequisites)
+  - [Setup a Node.js environment with version 23.0.0](#setup-a-nodejs-environment-with-version-2300)
+  - [Setup npm version 11.1.0](#setup-npm)
+- [Version](#version)
+- [Code of Conduct](#code-of-conduct)
 
-## Documentation
+## Prerequisites <a id="prerequisites"></a>
 
-Use the component standard below as the root guideline for new UI work:
+[![Download for Node.js][node-shield]][node-url]
+[![Download for npm][npm-shield]][npm-url]
 
-- [Mini UI Project Architecture](public/doc/project-architecture.md)
-- [Mini UI Component Standards](public/doc/component-standards.md)
+### Setup a Node.js environment with version 23.0.0 <a id="setup-a-nodejs-environment-with-version-2300"></a>
+
+- [![Download for Node.js][node-shield]][node-url]
+
+  Download and install Node.js from the [official website](https://nodejs.org/en/download/). Make sure to use version 23.0.0 or later.
+
+### Setup npm <a id="setup-npm"></a>
+
+- [![Download for npm][npm-shield]][npm-url]
+
+  NPM is included with Node.js, so you don't need to install it separately. However, you can check the version of npm installed by running:
+
+  ```bash
+  npm -v
+  ```
+
+  If you need to update npm, you can run:
+
+  ```bash
+  npm install -g npm@latest
+  ```
+
+## Version <a id="version"></a>
+
+## Code of Conduct <a id="code-of-conduct"></a>
+
+- [Project Architecture](public/doc/project-architecture.md)
+- [Component Standards](public/doc/component-standards.md)
+
+[node-shield]: https://img.shields.io/badge/node.js-23.0.0-339933?style=for-the-badge&logo=node.js&logoColor=&labelColor=EBDBE2&color=339933
+[node-url]: https://nodejs.org/en/download/
+[npm-shield]: https://img.shields.io/badge/npm-11.1.0-CB3837?style=for-the-badge&logo=npm&logoColor=red&labelColor=EBDBE2&color=CB3837
+[npm-url]: https://www.npmjs.com/package/npm
