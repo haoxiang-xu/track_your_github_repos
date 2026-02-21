@@ -8,9 +8,7 @@ import { ConfigContext } from "../../../CONTAINERs/config/context";
 import Icon from "../../../BUILTIN_COMPONENTs/icon/icon";
 import Button from "../../../BUILTIN_COMPONENTs/input/button";
 import Markdown from "../../../BUILTIN_COMPONENTs/markdown/markdown";
-import {
-  FloatingTextField,
-} from "../../../BUILTIN_COMPONENTs/input/textfield";
+import { FloatingTextField } from "../../../BUILTIN_COMPONENTs/input/textfield";
 /* { Components } ------------------------------------------------------------------------------------------------------------ */
 
 /* ── Attachment toolbar (chat input) ── */
@@ -324,20 +322,10 @@ const ChatShowroom = () => {
         width: "100%",
         maxWidth: 820,
         margin: "0 auto",
-        height: 580,
-        borderRadius: 14,
+        height: "100%",
         overflow: "hidden",
         display: "flex",
         flexDirection: "column",
-        backgroundColor: isDark
-          ? "rgba(18, 18, 18, 0.98)"
-          : "rgba(255, 255, 255, 0.95)",
-        border: isDark
-          ? "1px solid rgba(255,255,255,0.08)"
-          : "1px solid rgba(0,0,0,0.06)",
-        boxShadow: isDark
-          ? "0 16px 48px rgba(0,0,0,0.4)"
-          : "0 16px 48px rgba(0,0,0,0.08)",
         fontFamily: theme?.font?.fontFamily || "inherit",
       }}
     >

@@ -254,6 +254,14 @@
       "edgeAddBtnHoverColor": "#2563eb",
       "edgeAddBtnShadow": "drop-shadow(0 2px 6px rgba(0, 0, 0, 0.15))",
       "snapGuideColor": "rgba(37, 99, 235, 0.45)"
+    },
+    "carousel": {
+      "backgroundColor": "rgba(255, 255, 255, 0.97)",
+      "color": "#222222",
+      "borderRadius": 14,
+      "border": "1px solid rgba(0, 0, 0, 0.06)",
+      "shadow": "0 8px 32px rgba(0,0,0,0.08), 0 2px 8px rgba(0,0,0,0.04)",
+      "shadowActive": "0 16px 48px rgba(0,0,0,0.12), 0 4px 14px rgba(0,0,0,0.06)"
     }
   },
   "dark_mode": {
@@ -511,6 +519,14 @@
       "edgeAddBtnHoverColor": "rgba(255, 255, 255, 0.75)",
       "edgeAddBtnShadow": "drop-shadow(0 2px 6px rgba(0, 0, 0, 0.4))",
       "snapGuideColor": "rgba(255, 255, 255, 0.25)"
+    },
+    "carousel": {
+      "backgroundColor": "rgba(30, 30, 30, 0.95)",
+      "color": "#CCCCCC",
+      "borderRadius": 14,
+      "border": "1px solid rgba(255, 255, 255, 0.06)",
+      "shadow": "0 8px 32px rgba(0,0,0,0.45), 0 2px 8px rgba(0,0,0,0.3)",
+      "shadowActive": "0 16px 48px rgba(0,0,0,0.55), 0 4px 14px rgba(0,0,0,0.35)"
     }
   }
 }

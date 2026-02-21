@@ -9,6 +9,7 @@ import Tooltip from "../../BUILTIN_COMPONENTs/tooltip/tooltip";
 import Markdown from "../../BUILTIN_COMPONENTs/markdown/markdown";
 import Icon from "../../BUILTIN_COMPONENTs/icon/icon";
 import SegmentedButton from "../../BUILTIN_COMPONENTs/input/segmented_button";
+import Carousel from "../../BUILTIN_COMPONENTs/carousel/carousel";
 /* { Components } ------------------------------------------------------------------------------------------------------------ */
 
 /* { Sections } -------------------------------------------------------------------------------------------------------------- */
@@ -27,8 +28,10 @@ import DndDemo from "./individual_component_demo/dnd_demo";
 import ExplorerDemo from "./individual_component_demo/explorer_demo";
 import ModalDemo from "./individual_component_demo/modal_demo";
 import FlowEditorDemo from "./individual_component_demo/flow_editor_demo";
+import CarouselDemo from "./individual_component_demo/carousel_demo";
 import SettingsShowroom from "./show_room_demo/settings_showroom";
 import ChatShowroom from "./show_room_demo/chat_showroom";
+import ChatExplorerShowroom from "./show_room_demo/chat_explorer_showroom";
 /* { Sections } -------------------------------------------------------------------------------------------------------------- */
 
 const Landing = ({ tab, onTabChange }) => {
@@ -187,6 +190,7 @@ const Demo = () => {
   const { theme } = useContext(ConfigContext);
   const scrollRef = useRef(null);
   const [tab, setTab] = useState("Components");
+  const [chatShowroomIndex, setChatShowroomIndex] = useState(0);
   useEffect(() => {
     if (scrollRef.current) scrollRef.current.scrollTop = 0;
   }, [tab]);
@@ -246,6 +250,7 @@ const Demo = () => {
             <ExplorerDemo />
             <ModalDemo />
             <FlowEditorDemo />
+            <CarouselDemo />
             <OthersDemo />
             <IconDemo />
           </div>
@@ -265,8 +270,75 @@ const Demo = () => {
               padding: "32px 24px 512px",
             }}
           >
-            <SettingsShowroom />
-            <ChatShowroom />
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: 14,
+              }}
+            >
+              <span
+                style={{
+                  width: "100%",
+                  textAlign: "center",
+                  fontSize: 18,
+                  fontFamily: theme?.font?.fontFamily || "Jost, sans-serif",
+                  color: theme?.color || "black",
+                  opacity: 0.7,
+                  userSelect: "none",
+                  WebkitUserSelect: "none",
+                }}
+              >
+                Settings
+              </span>
+              <SettingsShowroom />
+            </div>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: 14,
+              }}
+            >
+              <span
+                style={{
+                  width: "100%",
+                  textAlign: "center",
+                  fontSize: 18,
+                  fontFamily: theme?.font?.fontFamily || "Jost, sans-serif",
+                  color: theme?.color || "black",
+                  opacity: 0.7,
+                  userSelect: "none",
+                  WebkitUserSelect: "none",
+                }}
+              >
+                Chat
+              </span>
+              <Carousel
+                items={[
+                  { key: "chat", label: "Chat", component: <ChatShowroom /> },
+                  {
+                    key: "chat-explorer",
+                    label: "Chat Explorer",
+                    component: <ChatExplorerShowroom />,
+                  },
+                ]}
+                render_item={({ item }) => (
+                  <div style={{ width: "100%", height: "100%" }}>
+                    {item.component}
+                  </div>
+                )}
+                active_index={chatShowroomIndex}
+                on_change={setChatShowroomIndex}
+                card_width={820}
+                card_height={520}
+                card_gap={40}
+                visible_count={3}
+                max_rotate_y={0}
+                overlap={0}
+                style={{ backgroundColor: "transparent" }}
+              />
+            </div>
           </div>
         )}
       </div>
