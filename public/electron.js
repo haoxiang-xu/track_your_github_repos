@@ -21,7 +21,11 @@ const emitWindowState = () => {
 };
 
 const syncDarwinTrafficLightPosition = () => {
-  if (process.platform !== "darwin" || !mainWindow || mainWindow.isDestroyed()) {
+  if (
+    process.platform !== "darwin" ||
+    !mainWindow ||
+    mainWindow.isDestroyed()
+  ) {
     return;
   }
 
@@ -78,7 +82,10 @@ const createWindowOptions = () => {
       ...baseWindowOptions,
       frame: true,
       titleBarStyle: "hidden",
-      trafficLightPosition: { x: DARWIN_TRAFFIC_LIGHT_X, y: DARWIN_TRAFFIC_LIGHT_Y },
+      trafficLightPosition: {
+        x: DARWIN_TRAFFIC_LIGHT_X,
+        y: DARWIN_TRAFFIC_LIGHT_Y,
+      },
       vibrancy: "sidebar",
       visualEffectState: "active",
       hasShadow: true,
@@ -148,7 +155,10 @@ const createMainWindow = () => {
   });
 
   if (process.platform === "darwin") {
-    mainWindow.webContents.on("did-finish-load", scheduleDarwinTrafficLightSync);
+    mainWindow.webContents.on(
+      "did-finish-load",
+      scheduleDarwinTrafficLightSync,
+    );
     mainWindow.on("show", scheduleDarwinTrafficLightSync);
     mainWindow.on("focus", scheduleDarwinTrafficLightSync);
     mainWindow.on("resize", scheduleDarwinTrafficLightSync);
