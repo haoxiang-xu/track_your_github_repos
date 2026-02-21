@@ -11,6 +11,12 @@ contextBridge.exposeInMainWorld("osInfo", {
   platform: process.platform,
 });
 
+contextBridge.exposeInMainWorld("themeAPI", {
+  setBackgroundColor: (color) => {
+    ipcRenderer.send("theme-set-background-color", color);
+  },
+});
+
 contextBridge.exposeInMainWorld("windowStateAPI", {
   windowStateEventHandler: (action) => {
     ipcRenderer.send("window-state-event-handler", action);

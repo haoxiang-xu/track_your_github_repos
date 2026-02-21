@@ -86,8 +86,7 @@ const createWindowOptions = () => {
         x: DARWIN_TRAFFIC_LIGHT_X,
         y: DARWIN_TRAFFIC_LIGHT_Y,
       },
-      vibrancy: "sidebar",
-      visualEffectState: "active",
+      backgroundColor: "#121212",
       hasShadow: true,
     };
   }
@@ -98,7 +97,7 @@ const createWindowOptions = () => {
       frame: true,
       titleBarStyle: "hidden",
       hasShadow: true,
-      backgroundColor: "#171717",
+      backgroundColor: "#121212",
     };
   }
 
@@ -106,6 +105,7 @@ const createWindowOptions = () => {
     ...baseWindowOptions,
     frame: true,
     titleBarStyle: "hidden",
+    backgroundColor: "#121212",
   };
 };
 
@@ -182,6 +182,15 @@ const createMainWindow = () => {
     mainWindow = null;
   });
 };
+
+ipcMain.on("theme-set-background-color", (_event, color) => {
+  if (!mainWindow || mainWindow.isDestroyed()) {
+    return;
+  }
+  if (typeof color === "string" && /^#[0-9a-fA-F]{6,8}$/.test(color)) {
+    mainWindow.setBackgroundColor(color);
+  }
+});
 
 ipcMain.on("window-state-event-handler", (_event, action) => {
   if (!mainWindow || mainWindow.isDestroyed()) {

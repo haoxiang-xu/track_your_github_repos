@@ -51,6 +51,11 @@ const ConfigContainer = ({ children }) => {
     }
   }, [onThemeMode, selectedTheme]);
   useEffect(() => {
+    if (theme?.backgroundColor && window.themeAPI?.setBackgroundColor) {
+      window.themeAPI.setBackgroundColor(theme.backgroundColor);
+    }
+  }, [theme]);
+  useEffect(() => {
     if (syncWithSystemTheme && system_theme) {
       setOnThemeMode(system_theme);
     }
