@@ -4,14 +4,6 @@ import {
   useRef,
   useLayoutEffect as reactUseLayoutEffect,
 } from "react";
-import {
-  createMemoryStorageAdapter,
-  createIndexedDBStorageAdapter,
-  createStorageAdapterFromMethods,
-  registerStorageAdapter,
-  resetStorageAdapter,
-  useIndexedStorage,
-} from "./mini_storage";
 
 /* { BASIC HOOKs } ------------------------------------------------------------------------------------------------ */
 const useLayoutEffect =
@@ -24,7 +16,7 @@ const useSystemTheme = () => {
     window.matchMedia &&
       window.matchMedia("(prefers-color-scheme: dark)").matches
       ? "dark_mode"
-      : "light_mode"
+      : "light_mode",
   );
   useEffect(() => {
     const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
@@ -160,7 +152,7 @@ const useDeviceType = () => {
       const userAgent = navigator.userAgent;
       if (
         /Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-          userAgent
+          userAgent,
         )
       ) {
         setDeviceType("mobile");
@@ -172,6 +164,36 @@ const useDeviceType = () => {
   }, []);
   return deviceType;
 };
+const useRuntimePlatform = () => {
+  const detectRuntimePlatform = () => {
+    if (typeof window === "undefined") {
+      return "web";
+    }
+
+    if (window.runtime?.isElectron === true) {
+      return "electron";
+    }
+
+    const userAgent =
+      typeof navigator !== "undefined" ? navigator.userAgent || "" : "";
+    const hasElectronUserAgent = userAgent.includes("Electron");
+    const hasElectronProcess = Boolean(
+      window.process &&
+        window.process.versions &&
+        window.process.versions.electron,
+    );
+
+    return hasElectronUserAgent || hasElectronProcess ? "electron" : "web";
+  };
+
+  const [platform, setPlatform] = useState(detectRuntimePlatform);
+
+  useEffect(() => {
+    setPlatform(detectRuntimePlatform());
+  }, []);
+
+  return platform;
+};
 /* { ENVIRONMENT LISTENERs } ------------------------------------------------------------------------------------ */
 
 export {
@@ -181,10 +203,5 @@ export {
   useMouse,
   useWebBrowser,
   useDeviceType,
-  createMemoryStorageAdapter,
-  createIndexedDBStorageAdapter,
-  createStorageAdapterFromMethods,
-  registerStorageAdapter,
-  resetStorageAdapter,
-  useIndexedStorage,
+  useRuntimePlatform,
 };

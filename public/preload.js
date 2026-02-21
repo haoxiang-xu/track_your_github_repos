@@ -1,9 +1,11 @@
 const { contextBridge, ipcRenderer } = require("electron");
 
-contextBridge.exposeInMainWorld("miniUIRuntime", {
+const runtimeInfo = {
   isElectron: true,
   platform: process.platform,
-});
+};
+
+contextBridge.exposeInMainWorld("runtime", runtimeInfo);
 
 contextBridge.exposeInMainWorld("osInfo", {
   platform: process.platform,

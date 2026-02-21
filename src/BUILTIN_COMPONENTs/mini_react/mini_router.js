@@ -19,10 +19,7 @@ const isElectronRuntime = () => {
     return false;
   }
 
-  const hasPreloadBridge =
-    typeof window.miniUIRuntime !== "undefined" &&
-    window.miniUIRuntime &&
-    window.miniUIRuntime.isElectron === true;
+  const hasPreloadBridge = window.runtime?.isElectron === true;
   const userAgent =
     typeof navigator !== "undefined" ? navigator.userAgent || "" : "";
   const hasElectronUserAgent = userAgent.indexOf("Electron") >= 0;

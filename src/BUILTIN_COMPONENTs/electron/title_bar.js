@@ -11,11 +11,8 @@ const getRuntimePlatform = () => {
   if (window.osInfo && typeof window.osInfo.platform === "string") {
     return window.osInfo.platform;
   }
-  if (
-    window.miniUIRuntime &&
-    typeof window.miniUIRuntime.platform === "string"
-  ) {
-    return window.miniUIRuntime.platform;
+  if (window.runtime && typeof window.runtime.platform === "string") {
+    return window.runtime.platform;
   }
   return "web";
 };
@@ -25,8 +22,7 @@ const hasElectronWindowControls = () => {
     return false;
   }
   return Boolean(
-    window.miniUIRuntime &&
-      window.miniUIRuntime.isElectron === true &&
+    window.runtime?.isElectron === true &&
       window.windowStateAPI &&
       typeof window.windowStateAPI.windowStateEventHandler === "function",
   );
