@@ -5,8 +5,17 @@ const DEV_SERVER_URL =
   process.env.ELECTRON_START_URL || "http://localhost:2907/#/mini";
 const PROD_ENTRY_HASH = "/mini";
 const DEV_SERVER_RETRY_MS = 1200;
+const DARWIN_TOP_BAR_HEIGHT = 40;
+const DARWIN_TRAFFIC_LIGHT_X = 14;
+const DARWIN_TRAFFIC_LIGHT_SIZE = 12;
+const DARWIN_TRAFFIC_LIGHT_TUNE_Y = 3;
+const DARWIN_TRAFFIC_LIGHT_MIN_Y = 4;
+const DARWIN_TRAFFIC_LIGHT_MAX_Y = 48;
 
 let mainWindow = null;
+let darwinTrafficLightSyncTimeout = null;
+
+const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
 
 const emitWindowState = () => {
   if (!mainWindow || mainWindow.isDestroyed()) {
@@ -15,6 +24,52 @@ const emitWindowState = () => {
   mainWindow.webContents.send("window-state-event-listener", {
     isMaximized: mainWindow.isMaximized() || mainWindow.isFullScreen(),
   });
+};
+
+const syncDarwinTrafficLightPosition = () => {
+  if (process.platform !== "darwin" || !mainWindow || mainWindow.isDestroyed()) {
+    return;
+  }
+
+  if (typeof mainWindow.setWindowButtonPosition !== "function") {
+    return;
+  }
+
+  const zoomFactor =
+    typeof mainWindow.webContents?.getZoomFactor === "function"
+      ? mainWindow.webContents.getZoomFactor()
+      : 1;
+  const visualTopBarHeight = DARWIN_TOP_BAR_HEIGHT * zoomFactor;
+  const centeredY = Math.round(
+    (visualTopBarHeight - DARWIN_TRAFFIC_LIGHT_SIZE) / 2 +
+      DARWIN_TRAFFIC_LIGHT_TUNE_Y,
+  );
+  const y = clamp(centeredY, DARWIN_TRAFFIC_LIGHT_MIN_Y, DARWIN_TRAFFIC_LIGHT_MAX_Y);
+
+  if (typeof mainWindow.setWindowButtonVisibility === "function") {
+    mainWindow.setWindowButtonVisibility(true);
+  }
+  mainWindow.setWindowButtonPosition({
+    x: DARWIN_TRAFFIC_LIGHT_X,
+    y,
+  });
+};
+
+const scheduleDarwinTrafficLightSync = () => {
+  if (process.platform !== "darwin") {
+    return;
+  }
+
+  if (darwinTrafficLightSyncTimeout) {
+    clearTimeout(darwinTrafficLightSyncTimeout);
+  }
+
+  syncDarwinTrafficLightPosition();
+
+  darwinTrafficLightSyncTimeout = setTimeout(() => {
+    syncDarwinTrafficLightPosition();
+    setTimeout(syncDarwinTrafficLightPosition, 120);
+  }, 16);
 };
 
 const createWindowOptions = () => {
@@ -40,7 +95,7 @@ const createWindowOptions = () => {
       ...baseWindowOptions,
       frame: true,
       titleBarStyle: "hidden",
-      trafficLightPosition: { x: 14, y: 13 },
+      trafficLightPosition: { x: DARWIN_TRAFFIC_LIGHT_X, y: 13 },
       vibrancy: "sidebar",
       visualEffectState: "active",
       hasShadow: true,
@@ -109,13 +164,40 @@ const createMainWindow = () => {
     }
   });
 
+  if (process.platform === "darwin") {
+    mainWindow.webContents.on("zoom-changed", () => {
+      scheduleDarwinTrafficLightSync();
+    });
+    mainWindow.webContents.on("before-input-event", (_event, input) => {
+      const isMetaZoomKey =
+        (input.meta || input.control) &&
+        input.type === "keyDown" &&
+        ["+", "=", "-", "0"].includes(input.key);
+      if (isMetaZoomKey) {
+        scheduleDarwinTrafficLightSync();
+      }
+    });
+    mainWindow.webContents.on("did-finish-load", scheduleDarwinTrafficLightSync);
+    mainWindow.on("show", scheduleDarwinTrafficLightSync);
+    mainWindow.on("focus", scheduleDarwinTrafficLightSync);
+    mainWindow.on("resize", scheduleDarwinTrafficLightSync);
+    mainWindow.on("leave-full-screen", scheduleDarwinTrafficLightSync);
+  }
+
   mainWindow.on("maximize", emitWindowState);
   mainWindow.on("unmaximize", emitWindowState);
   mainWindow.on("enter-full-screen", emitWindowState);
   mainWindow.on("leave-full-screen", emitWindowState);
-  mainWindow.once("ready-to-show", emitWindowState);
+  mainWindow.once("ready-to-show", () => {
+    emitWindowState();
+    scheduleDarwinTrafficLightSync();
+  });
 
   mainWindow.on("closed", () => {
+    if (darwinTrafficLightSyncTimeout) {
+      clearTimeout(darwinTrafficLightSyncTimeout);
+      darwinTrafficLightSyncTimeout = null;
+    }
     mainWindow = null;
   });
 };

@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from "react";
 
 import { ConfigContext } from "../../CONTAINERs/config/context";
 
-const TOP_BAR_HEIGHT = 40;
+const TOP_BAR_HEIGHT = 50;
 
 const getRuntimePlatform = () => {
   if (typeof window === "undefined") {
@@ -16,7 +16,6 @@ const getRuntimePlatform = () => {
   }
   return "web";
 };
-
 const hasElectronWindowControls = () => {
   if (typeof window === "undefined") {
     return false;
@@ -27,7 +26,6 @@ const hasElectronWindowControls = () => {
       typeof window.windowStateAPI.windowStateEventHandler === "function",
   );
 };
-
 const WindowControlIcon = ({ type }) => {
   if (type === "minimize") {
     return (
@@ -88,7 +86,6 @@ const WindowControlIcon = ({ type }) => {
     </svg>
   );
 };
-
 const TitleBar = () => {
   const { theme } = useContext(ConfigContext);
   const [windowIsMaximized, setWindowIsMaximized] = useState(false);
@@ -167,7 +164,7 @@ const TitleBar = () => {
       style={{
         position: "absolute",
         top: 0,
-        left: isDarwin ? 128 : 0,
+        left: 0,
         right: 0,
         height: TOP_BAR_HEIGHT,
         zIndex: 2048,
@@ -177,13 +174,14 @@ const TitleBar = () => {
         WebkitAppRegion: "drag",
         userSelect: "none",
         WebkitUserSelect: "none",
+        border: "1px solid rgb(0, 0, 0)",
       }}
     >
       <div
         style={{
           position: "absolute",
           top: "50%",
-          left: isDarwin ? 12 : 14,
+          left: isDarwin ? 80 : 14,
           transform: "translateY(-50%)",
           opacity: 0.84,
           fontFamily: "Jost, sans-serif",
