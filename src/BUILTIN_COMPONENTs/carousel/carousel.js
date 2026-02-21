@@ -32,7 +32,6 @@ const Carousel = ({
 }) => {
   const { theme, onThemeMode } = useContext(ConfigContext);
   const isDark = onThemeMode === "dark_mode";
-  const carousel_theme = theme?.carousel || {};
 
   /* ---- State ---- */
   const [internalIndex, setInternalIndex] = useState(0);
@@ -163,27 +162,28 @@ const Carousel = ({
 
   /* ---- Resolved styles ---- */
   const resolved = useMemo(() => {
+    const carouselTheme = theme?.carousel;
     const bg =
       style?.backgroundColor ??
-      carousel_theme?.backgroundColor ??
+      carouselTheme?.backgroundColor ??
       (isDark ? "rgba(30, 30, 30, 1)" : "rgba(255, 255, 255, 1)");
     const color =
       style?.color ??
-      carousel_theme?.color ??
+      carouselTheme?.color ??
       theme?.color ??
       (isDark ? "#CCC" : "#222");
     const borderRadius =
-      style?.borderRadius ?? carousel_theme?.borderRadius ?? 14;
+      style?.borderRadius ?? carouselTheme?.borderRadius ?? 14;
     const fontFamily = theme?.font?.fontFamily ?? "Jost";
     const shadow =
       style?.boxShadow ??
-      carousel_theme?.boxShadow ??
+      carouselTheme?.boxShadow ??
       (isDark
         ? "0 8px 32px rgba(0,0,0,0.45), 0 2px 8px rgba(0,0,0,0.3)"
         : "0 8px 32px rgba(0,0,0,0.08), 0 2px 8px rgba(0,0,0,0.04)");
     const border =
       style?.border ??
-      carousel_theme?.border ??
+      carouselTheme?.border ??
       (isDark
         ? "1px solid rgba(255,255,255,0.06)"
         : "1px solid rgba(0,0,0,0.06)");
@@ -196,7 +196,7 @@ const Carousel = ({
       shadow,
       border,
     };
-  }, [isDark, theme, carousel_theme, style]);
+  }, [isDark, theme, style]);
 
   /* ---- Dots ---- */
   const renderDots = () => {

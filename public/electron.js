@@ -1,4 +1,4 @@
-const { app, BrowserWindow, shell } = require("electron");
+const { app, BrowserWindow, shell, ipcMain } = require("electron");
 const path = require("path");
 
 const DEV_SERVER_URL =
@@ -7,6 +7,62 @@ const PROD_ENTRY_HASH = "/mini";
 const DEV_SERVER_RETRY_MS = 1200;
 
 let mainWindow = null;
+
+const emitWindowState = () => {
+  if (!mainWindow || mainWindow.isDestroyed()) {
+    return;
+  }
+  mainWindow.webContents.send("window-state-event-listener", {
+    isMaximized: mainWindow.isMaximized() || mainWindow.isFullScreen(),
+  });
+};
+
+const createWindowOptions = () => {
+  const baseWindowOptions = {
+    title: "Mini UI",
+    width: 1280,
+    height: 820,
+    minWidth: 980,
+    minHeight: 620,
+    icon: path.join(__dirname, "favicon.ico"),
+    autoHideMenuBar: true,
+    resizable: true,
+    maximizable: true,
+    webPreferences: {
+      preload: path.join(__dirname, "preload.js"),
+      contextIsolation: true,
+      nodeIntegration: false,
+    },
+  };
+
+  if (process.platform === "darwin") {
+    return {
+      ...baseWindowOptions,
+      frame: true,
+      titleBarStyle: "hidden",
+      trafficLightPosition: { x: 14, y: 13 },
+      vibrancy: "sidebar",
+      visualEffectState: "active",
+      hasShadow: true,
+    };
+  }
+
+  if (process.platform === "win32") {
+    return {
+      ...baseWindowOptions,
+      frame: true,
+      titleBarStyle: "hidden",
+      hasShadow: true,
+      backgroundColor: "#171717",
+    };
+  }
+
+  return {
+    ...baseWindowOptions,
+    frame: true,
+    titleBarStyle: "hidden",
+  };
+};
 
 const loadDevUrlWhenReady = async () => {
   if (!mainWindow || mainWindow.isDestroyed()) {
@@ -27,20 +83,7 @@ const loadDevUrlWhenReady = async () => {
 };
 
 const createMainWindow = () => {
-  mainWindow = new BrowserWindow({
-    title: "Mini UI",
-    width: 1280,
-    height: 820,
-    minWidth: 980,
-    minHeight: 620,
-    icon: path.join(__dirname, "favicon.ico"),
-    autoHideMenuBar: true,
-    webPreferences: {
-      preload: path.join(__dirname, "preload.js"),
-      contextIsolation: true,
-      nodeIntegration: false,
-    },
-  });
+  mainWindow = new BrowserWindow(createWindowOptions());
 
   if (app.isPackaged) {
     mainWindow.loadFile(path.join(__dirname, "..", "build", "index.html"), {
@@ -66,10 +109,42 @@ const createMainWindow = () => {
     }
   });
 
+  mainWindow.on("maximize", emitWindowState);
+  mainWindow.on("unmaximize", emitWindowState);
+  mainWindow.on("enter-full-screen", emitWindowState);
+  mainWindow.on("leave-full-screen", emitWindowState);
+  mainWindow.once("ready-to-show", emitWindowState);
+
   mainWindow.on("closed", () => {
     mainWindow = null;
   });
 };
+
+ipcMain.on("window-state-event-handler", (_event, action) => {
+  if (!mainWindow || mainWindow.isDestroyed()) {
+    return;
+  }
+
+  switch (action) {
+    case "close":
+      mainWindow.close();
+      break;
+    case "minimize":
+      mainWindow.minimize();
+      break;
+    case "maximize":
+      if (process.platform === "darwin") {
+        mainWindow.setFullScreen(!mainWindow.isFullScreen());
+      } else if (mainWindow.isMaximized()) {
+        mainWindow.unmaximize();
+      } else {
+        mainWindow.maximize();
+      }
+      break;
+    default:
+      break;
+  }
+});
 
 app.whenReady().then(() => {
   createMainWindow();
@@ -77,6 +152,8 @@ app.whenReady().then(() => {
   app.on("activate", () => {
     if (BrowserWindow.getAllWindows().length === 0) {
       createMainWindow();
+    } else if (mainWindow && !mainWindow.isDestroyed()) {
+      mainWindow.show();
     }
   });
 });

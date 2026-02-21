@@ -1,6 +1,30 @@
-const { contextBridge } = require("electron");
+const { contextBridge, ipcRenderer } = require("electron");
 
 contextBridge.exposeInMainWorld("miniUIRuntime", {
   isElectron: true,
   platform: process.platform,
+});
+
+contextBridge.exposeInMainWorld("osInfo", {
+  platform: process.platform,
+});
+
+contextBridge.exposeInMainWorld("windowStateAPI", {
+  windowStateEventHandler: (action) => {
+    ipcRenderer.send("window-state-event-handler", action);
+  },
+  windowStateEventListener: (callback) => {
+    if (typeof callback !== "function") {
+      return () => {};
+    }
+
+    const listener = (_event, payload) => {
+      callback(payload || { isMaximized: false });
+    };
+    ipcRenderer.on("window-state-event-listener", listener);
+
+    return () => {
+      ipcRenderer.removeListener("window-state-event-listener", listener);
+    };
+  },
 });
