@@ -17,6 +17,7 @@
 - [Prerequisites](#prerequisites)
   - [Setup a Node.js environment with version 23.0.0](#setup-a-nodejs-environment-with-version-2300)
   - [Setup npm version 11.1.0](#setup-npm)
+- [Run as Electron App](#run-as-electron-app)
 
 ## Prerequisites <a id="prerequisites"></a>
 
@@ -49,3 +50,32 @@
 [node-url]: https://nodejs.org/en/download/
 [npm-shield]: https://img.shields.io/badge/npm-11.1.0-CB3837?style=for-the-badge&logo=npm&logoColor=red&labelColor=EBDBE2&color=CB3837
 [npm-url]: https://www.npmjs.com/package/npm
+
+## Run as Electron App <a id="run-as-electron-app"></a>
+
+- Install dependencies:
+
+  ```bash
+  npm install
+  ```
+
+- Start Electron in development mode (starts CRA + Electron together):
+
+  ```bash
+  npm start
+  ```
+
+- Start only the web app (without Electron):
+
+  ```bash
+  npm run start:web
+  ```
+
+- Build desktop packages:
+
+  ```bash
+  npm run pack
+  npm run pack:mac
+  npm run pack:win
+  npm run pack:linux
+  ```

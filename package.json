@@ -2,6 +2,8 @@
   "name": "mini_ui",
   "version": "0.1.0",
   "private": true,
+  "main": "public/electron.js",
+  "homepage": "./",
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
     "@dnd-kit/modifiers": "^9.0.0",
@@ -24,8 +26,15 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "cross-env BROWSER=none PORT=2907 react-scripts start",
+    "react-start": "cross-env BROWSER=none PORT=2907 react-scripts start",
+    "electron-start": "electron .",
+    "start": "concurrently -k \"npm run react-start\" \"npm run electron-start\"",
+    "start:web": "npm run react-start",
     "build": "react-scripts build",
+    "pack": "npm run build && electron-builder",
+    "pack:mac": "npm run build && electron-builder --mac",
+    "pack:win": "npm run build && electron-builder --win",
+    "pack:linux": "npm run build && electron-builder --linux",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
@@ -46,5 +55,40 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "build": {
+    "appId": "com.red.miniui",
+    "productName": "Mini UI",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "build/**/*",
+      "public/electron.js",
+      "public/preload.js",
+      "public/favicon.ico",
+      "public/logo512.png"
+    ],
+    "mac": {
+      "target": "dmg",
+      "icon": "public/favicon.ico"
+    },
+    "win": {
+      "target": "nsis",
+      "icon": "public/favicon.ico"
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb"
+      ],
+      "icon": "public/logo512.png",
+      "category": "Utility"
+    }
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1",
+    "electron": "^30.5.1",
+    "electron-builder": "^25.1.8"
   }
 }
