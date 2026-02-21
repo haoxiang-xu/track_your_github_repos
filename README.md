@@ -17,8 +17,6 @@
 - [Prerequisites](#prerequisites)
   - [Setup a Node.js environment with version 23.0.0](#setup-a-nodejs-environment-with-version-2300)
   - [Setup npm version 11.1.0](#setup-npm)
-- [Version](#version)
-- [Code of Conduct](#code-of-conduct)
 
 ## Prerequisites <a id="prerequisites"></a>
 
@@ -46,13 +44,6 @@
   ```bash
   npm install -g npm@latest
   ```
-
-## Version <a id="version"></a>
-
-## Code of Conduct <a id="code-of-conduct"></a>
-
-- [Project Architecture](public/doc/project-architecture.md)
-- [Component Standards](public/doc/component-standards.md)
 
 [node-shield]: https://img.shields.io/badge/node.js-23.0.0-339933?style=for-the-badge&logo=node.js&logoColor=&labelColor=EBDBE2&color=339933
 [node-url]: https://nodejs.org/en/download/
