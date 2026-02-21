@@ -24,6 +24,7 @@ const Icon = ({ src, color, ...props }) => {
           <SVG
             className="mini-ui-svg-icon"
             fill={color ? color : theme?.icon?.color}
+            style={{ width: "100%", height: "100%", display: "block" }}
           ></SVG>
         );
       } else if (src in LogoSVGs) {
@@ -32,6 +33,7 @@ const Icon = ({ src, color, ...props }) => {
           <SVG
             className="mini-ui-svg-icon"
             fill={color ? color : theme?.icon?.color}
+            style={{ width: "100%", height: "100%", display: "block" }}
           ></SVG>
         );
       } else if (src in fileTypeSVGs) {
@@ -110,7 +112,7 @@ const Icon = ({ src, color, ...props }) => {
     }
   }, [src, theme, fetch_icon]);
 
-  return <div style={{ ...props.style, color: color }}>{component}</div>;
+  return <div style={{ display: "flex", alignItems: "center", justifyContent: "center", ...props.style, color: color }}>{component}</div>;
 };
 
 export default Icon;

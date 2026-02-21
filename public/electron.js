@@ -5,17 +5,11 @@ const DEV_SERVER_URL =
   process.env.ELECTRON_START_URL || "http://localhost:2907/#/mini";
 const PROD_ENTRY_HASH = "/mini";
 const DEV_SERVER_RETRY_MS = 1200;
-const DARWIN_TOP_BAR_HEIGHT = 40;
 const DARWIN_TRAFFIC_LIGHT_X = 14;
-const DARWIN_TRAFFIC_LIGHT_SIZE = 12;
-const DARWIN_TRAFFIC_LIGHT_TUNE_Y = 3;
-const DARWIN_TRAFFIC_LIGHT_MIN_Y = 4;
-const DARWIN_TRAFFIC_LIGHT_MAX_Y = 48;
+const DARWIN_TRAFFIC_LIGHT_Y = 18;
 
 let mainWindow = null;
 let darwinTrafficLightSyncTimeout = null;
-
-const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
 
 const emitWindowState = () => {
   if (!mainWindow || mainWindow.isDestroyed()) {
@@ -35,23 +29,12 @@ const syncDarwinTrafficLightPosition = () => {
     return;
   }
 
-  const zoomFactor =
-    typeof mainWindow.webContents?.getZoomFactor === "function"
-      ? mainWindow.webContents.getZoomFactor()
-      : 1;
-  const visualTopBarHeight = DARWIN_TOP_BAR_HEIGHT * zoomFactor;
-  const centeredY = Math.round(
-    (visualTopBarHeight - DARWIN_TRAFFIC_LIGHT_SIZE) / 2 +
-      DARWIN_TRAFFIC_LIGHT_TUNE_Y,
-  );
-  const y = clamp(centeredY, DARWIN_TRAFFIC_LIGHT_MIN_Y, DARWIN_TRAFFIC_LIGHT_MAX_Y);
-
   if (typeof mainWindow.setWindowButtonVisibility === "function") {
     mainWindow.setWindowButtonVisibility(true);
   }
   mainWindow.setWindowButtonPosition({
     x: DARWIN_TRAFFIC_LIGHT_X,
-    y,
+    y: DARWIN_TRAFFIC_LIGHT_Y,
   });
 };
 
@@ -95,7 +78,7 @@ const createWindowOptions = () => {
       ...baseWindowOptions,
       frame: true,
       titleBarStyle: "hidden",
-      trafficLightPosition: { x: DARWIN_TRAFFIC_LIGHT_X, y: 13 },
+      trafficLightPosition: { x: DARWIN_TRAFFIC_LIGHT_X, y: DARWIN_TRAFFIC_LIGHT_Y },
       vibrancy: "sidebar",
       visualEffectState: "active",
       hasShadow: true,
@@ -165,18 +148,6 @@ const createMainWindow = () => {
   });
 
   if (process.platform === "darwin") {
-    mainWindow.webContents.on("zoom-changed", () => {
-      scheduleDarwinTrafficLightSync();
-    });
-    mainWindow.webContents.on("before-input-event", (_event, input) => {
-      const isMetaZoomKey =
-        (input.meta || input.control) &&
-        input.type === "keyDown" &&
-        ["+", "=", "-", "0"].includes(input.key);
-      if (isMetaZoomKey) {
-        scheduleDarwinTrafficLightSync();
-      }
-    });
     mainWindow.webContents.on("did-finish-load", scheduleDarwinTrafficLightSync);
     mainWindow.on("show", scheduleDarwinTrafficLightSync);
     mainWindow.on("focus", scheduleDarwinTrafficLightSync);
@@ -229,6 +200,19 @@ ipcMain.on("window-state-event-handler", (_event, action) => {
 });
 
 app.whenReady().then(() => {
+  if (process.platform === "darwin" && app.dock) {
+    const dockIconPath = path.join(__dirname, "logo512.png");
+    try {
+      const { nativeImage } = require("electron");
+      const icon = nativeImage.createFromPath(dockIconPath);
+      if (!icon.isEmpty()) {
+        app.dock.setIcon(icon);
+      }
+    } catch (_) {
+      // Silently ignore if icon cannot be loaded.
+    }
+  }
+
   createMainWindow();
 
   app.on("activate", () => {
