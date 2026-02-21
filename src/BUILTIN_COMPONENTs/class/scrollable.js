@@ -104,6 +104,8 @@ const Scrollable = () => {
 
       let fadeTimer = null;
       let rafId = null;
+      let settleTimerA = null;
+      let settleTimerB = null;
       let hoveringV = false;
       let hoveringH = false;
       let scrolling = false;
@@ -168,6 +170,11 @@ const Scrollable = () => {
         }
       }
 
+      function scheduleSync() {
+        cancelAnimationFrame(rafId);
+        rafId = requestAnimationFrame(sync);
+      }
+
       function showActive() {
         scrolling = true;
         vThumb.style.opacity = "1";
@@ -202,7 +209,7 @@ const Scrollable = () => {
 
       function onContainerEnter() {
         mouseInside = true;
-        cancelAnimationFrame(rafId);
+        scheduleSync();
         rafId = requestAnimationFrame(() => {
           sync();
           vThumb.style.opacity = "0.45";
@@ -301,12 +308,28 @@ const Scrollable = () => {
       hThumb.addEventListener("mouseleave", onHLeave);
 
       sync();
+      /* Layout can settle after first paint (fonts/content/parent sizing), so re-sync shortly after mount. */
+      scheduleSync();
+      settleTimerA = setTimeout(scheduleSync, 64);
+      settleTimerB = setTimeout(scheduleSync, 180);
 
       const ro = new ResizeObserver(() => {
-        cancelAnimationFrame(rafId);
-        rafId = requestAnimationFrame(sync);
+        scheduleSync();
       });
       ro.observe(container);
+      ro.observe(parent);
+
+      const contentMo = new MutationObserver(() => {
+        scheduleSync();
+      });
+      contentMo.observe(container, {
+        childList: true,
+        subtree: true,
+        attributes: true,
+        attributeFilter: ["style", "class"],
+      });
+
+      window.addEventListener("resize", scheduleSync, { passive: true });
 
       managed.set(container, {
         cleanup() {
@@ -321,8 +344,12 @@ const Scrollable = () => {
           cleanDragV();
           cleanDragH();
           clearTimeout(fadeTimer);
+          clearTimeout(settleTimerA);
+          clearTimeout(settleTimerB);
           cancelAnimationFrame(rafId);
           ro.disconnect();
+          contentMo.disconnect();
+          window.removeEventListener("resize", scheduleSync);
           overlay.remove();
         },
       });
