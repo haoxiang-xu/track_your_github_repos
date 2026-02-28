@@ -1,6 +1,8 @@
 {
   "light_mode": {
-    "icon": { "color": "#222222" },
+    "icon": {
+      "color": "#222222"
+    },
     "switch": {
       "transition": "left 0.2s cubic-bezier(0.4, 0, 0.2, 1.32), width 0.2s cubic-bezier(0.4, 0, 0.2, 1.32), height 0.2s cubic-bezier(0.4, 0, 0.2, 1.32), background-color 0.12s ease",
       "position": "relative",
@@ -147,16 +149,28 @@
         "transitionOut": "transform 0.2s cubic-bezier(0.4, 0, 1, 1), opacity 0.15s ease, inset 0.15s ease, border-radius 0.15s ease"
       },
       "content": {
-        "root": { "position": "relative", "zIndex": 1 },
+        "root": {
+          "position": "relative",
+          "zIndex": 1
+        },
         "prefixIconWrap": {
           "position": "relative",
           "zIndex": 1,
           "display": "flex",
           "alignItems": "center"
         },
-        "prefixText": { "position": "relative", "zIndex": 1 },
-        "label": { "position": "relative", "zIndex": 1 },
-        "postfixText": { "position": "relative", "zIndex": 1 },
+        "prefixText": {
+          "position": "relative",
+          "zIndex": 1
+        },
+        "label": {
+          "position": "relative",
+          "zIndex": 1
+        },
+        "postfixText": {
+          "position": "relative",
+          "zIndex": 1
+        },
         "postfixIconWrap": {
           "position": "relative",
           "zIndex": 1,
@@ -166,10 +180,19 @@
         "icon": {}
       },
       "state": {
-        "hover": { "root": {}, "background": {} },
-        "active": { "root": {}, "background": {} },
+        "hover": {
+          "root": {},
+          "background": {}
+        },
+        "active": {
+          "root": {},
+          "background": {}
+        },
         "disabled": {
-          "root": { "opacity": 0.4, "cursor": "not-allowed" },
+          "root": {
+            "opacity": 0.4,
+            "cursor": "not-allowed"
+          },
           "background": {}
         }
       }
@@ -188,10 +211,26 @@
       "blockGap": 12,
       "paragraphMargin": "0 0 0 0",
       "heading": {
-        "h1": { "fontSize": 28, "fontWeight": 700, "margin": "1.2em 0 0.4em" },
-        "h2": { "fontSize": 24, "fontWeight": 700, "margin": "1.1em 0 0.35em" },
-        "h3": { "fontSize": 20, "fontWeight": 600, "margin": "1.0em 0 0.3em" },
-        "h4": { "fontSize": 18, "fontWeight": 600, "margin": "0.9em 0 0.3em" }
+        "h1": {
+          "fontSize": 28,
+          "fontWeight": 700,
+          "margin": "1.2em 0 0.4em"
+        },
+        "h2": {
+          "fontSize": 24,
+          "fontWeight": 700,
+          "margin": "1.1em 0 0.35em"
+        },
+        "h3": {
+          "fontSize": 20,
+          "fontWeight": 600,
+          "margin": "1.0em 0 0.3em"
+        },
+        "h4": {
+          "fontSize": 18,
+          "fontWeight": 600,
+          "margin": "0.9em 0 0.3em"
+        }
       },
       "list": {
         "paddingLeft": 24,
@@ -280,10 +319,24 @@
       "border": "1px solid rgba(0, 0, 0, 0.06)",
       "shadow": "0 8px 32px rgba(0,0,0,0.08), 0 2px 8px rgba(0,0,0,0.04)",
       "shadowActive": "0 16px 48px rgba(0,0,0,0.12), 0 4px 14px rgba(0,0,0,0.06)"
+    },
+    "timeline": {
+      "lineColor": "rgba(0,0,0,0.12)",
+      "lineDoneColor": "rgba(10,186,181,0.85)",
+      "pointColor": "rgba(10,186,181,1)",
+      "pointPendingColor": "rgba(0,0,0,0.18)",
+      "titleColor": "#222222",
+      "spanColor": "rgba(0,0,0,0.45)",
+      "detailsBackground": "rgba(0,0,0,0.025)",
+      "seeDetailsColor": "rgba(10,186,181,1)",
+      "fontSize": "13px",
+      "titleFontSize": "14px"
     }
   },
   "dark_mode": {
-    "icon": { "color": "#CCCCCC" },
+    "icon": {
+      "color": "#CCCCCC"
+    },
     "switch": {
       "transition": "left 0.2s cubic-bezier(0.4, 0, 0.2, 1.32), width 0.2s cubic-bezier(0.4, 0, 0.2, 1.32), height 0.2s cubic-bezier(0.4, 0, 0.2, 1.32),background-color 0.12s ease",
       "position": "relative",
@@ -430,16 +483,28 @@
         "transitionOut": "transform 0.2s cubic-bezier(0.4, 0, 1, 1), opacity 0.15s ease, inset 0.15s ease, border-radius 0.15s ease"
       },
       "content": {
-        "root": { "position": "relative", "zIndex": 1 },
+        "root": {
+          "position": "relative",
+          "zIndex": 1
+        },
         "prefixIconWrap": {
           "position": "relative",
           "zIndex": 1,
           "display": "flex",
           "alignItems": "center"
         },
-        "prefixText": { "position": "relative", "zIndex": 1 },
-        "label": { "position": "relative", "zIndex": 1 },
-        "postfixText": { "position": "relative", "zIndex": 1 },
+        "prefixText": {
+          "position": "relative",
+          "zIndex": 1
+        },
+        "label": {
+          "position": "relative",
+          "zIndex": 1
+        },
+        "postfixText": {
+          "position": "relative",
+          "zIndex": 1
+        },
         "postfixIconWrap": {
           "position": "relative",
           "zIndex": 1,
@@ -449,10 +514,19 @@
         "icon": {}
       },
       "state": {
-        "hover": { "root": {}, "background": {} },
-        "active": { "root": {}, "background": {} },
+        "hover": {
+          "root": {},
+          "background": {}
+        },
+        "active": {
+          "root": {},
+          "background": {}
+        },
         "disabled": {
-          "root": { "opacity": 0.4, "cursor": "not-allowed" },
+          "root": {
+            "opacity": 0.4,
+            "cursor": "not-allowed"
+          },
           "background": {}
         }
       }
@@ -471,10 +545,26 @@
       "blockGap": 12,
       "paragraphMargin": "0 0 0 0",
       "heading": {
-        "h1": { "fontSize": 28, "fontWeight": 700, "margin": "1.2em 0 0.4em" },
-        "h2": { "fontSize": 24, "fontWeight": 700, "margin": "1.1em 0 0.35em" },
-        "h3": { "fontSize": 20, "fontWeight": 600, "margin": "1.0em 0 0.3em" },
-        "h4": { "fontSize": 18, "fontWeight": 600, "margin": "0.9em 0 0.3em" }
+        "h1": {
+          "fontSize": 28,
+          "fontWeight": 700,
+          "margin": "1.2em 0 0.4em"
+        },
+        "h2": {
+          "fontSize": 24,
+          "fontWeight": 700,
+          "margin": "1.1em 0 0.35em"
+        },
+        "h3": {
+          "fontSize": 20,
+          "fontWeight": 600,
+          "margin": "1.0em 0 0.3em"
+        },
+        "h4": {
+          "fontSize": 18,
+          "fontWeight": 600,
+          "margin": "0.9em 0 0.3em"
+        }
       },
       "list": {
         "paddingLeft": 24,
@@ -563,6 +653,18 @@
       "border": "1px solid rgba(255, 255, 255, 0.06)",
       "shadow": "0 8px 32px rgba(0,0,0,0.45), 0 2px 8px rgba(0,0,0,0.3)",
       "shadowActive": "0 16px 48px rgba(0,0,0,0.55), 0 4px 14px rgba(0,0,0,0.35)"
+    },
+    "timeline": {
+      "lineColor": "rgba(255,255,255,0.12)",
+      "lineDoneColor": "rgba(10,186,181,0.85)",
+      "pointColor": "rgba(10,186,181,1)",
+      "pointPendingColor": "rgba(255,255,255,0.18)",
+      "titleColor": "#CCCCCC",
+      "spanColor": "rgba(255,255,255,0.45)",
+      "detailsBackground": "rgba(255,255,255,0.03)",
+      "seeDetailsColor": "rgba(10,186,181,1)",
+      "fontSize": "13px",
+      "titleFontSize": "14px"
     }
   }
 }

@@ -29,6 +29,7 @@ import ExplorerDemo from "./individual_component_demo/explorer_demo";
 import ModalDemo from "./individual_component_demo/modal_demo";
 import FlowEditorDemo from "./individual_component_demo/flow_editor_demo";
 import CarouselDemo from "./individual_component_demo/carousel_demo";
+import TimelineDemo from "./individual_component_demo/timeline_demo";
 import SettingsShowroom from "./show_room_demo/settings_showroom";
 import ChatShowroom from "./show_room_demo/chat_showroom";
 import ChatExplorerShowroom from "./show_room_demo/chat_explorer_showroom";
@@ -251,6 +252,7 @@ const Demo = () => {
             <ModalDemo />
             <FlowEditorDemo />
             <CarouselDemo />
+            <TimelineDemo />
             <OthersDemo />
             <IconDemo />
           </div>
