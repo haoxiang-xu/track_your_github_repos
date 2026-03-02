@@ -50,3 +50,10 @@ code {
   font-weight: 200 900;
   font-style: italic;
 }
+@font-face {
+  font-family: "Micro5";
+  src: url("BUILTIN_COMPONENTs/fonts/Micro5/Micro5-Regular.ttf")
+    format("truetype");
+  font-weight: 100 900;
+  font-style: normal;
+}
