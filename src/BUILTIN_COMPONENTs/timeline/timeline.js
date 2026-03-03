@@ -100,6 +100,8 @@ const TimelineNode = ({
   isExpanded,
   onToggle,
   prevStatus, // null for first item; used to color the top line segment
+  disconnect_line,
+  disconnect_gap,
   tl,
 }) => {
   const { title, span, details, point, status = "pending" } = item;
@@ -120,8 +122,12 @@ const TimelineNode = ({
     return <DotDefault status={status} tl={tl} />;
   }, [point, status, tl]);
 
+  const topDisconnectGap = disconnect_line && index !== 0 ? disconnect_gap : 0;
+  const bottomDisconnectGap =
+    disconnect_line && index !== total - 1 ? disconnect_gap : 0;
+
   /* ── top-line height: aligns point center with first title-line center ── */
-  const topLineH = Math.max(0, TITLE_CY - getPointRadius(point));
+  const topLineH = Math.max(0, TITLE_CY - getPointRadius(point) - topDisconnectGap);
 
   /* ── line colors ── */
   const topLineColor =
@@ -161,6 +167,16 @@ const TimelineNode = ({
             transition: "background 0.3s",
           }}
         />
+        {/* optional disconnection gap above point */}
+        {topDisconnectGap > 0 && (
+          <div
+            style={{
+              width: LINE_WIDTH,
+              height: topDisconnectGap,
+              flexShrink: 0,
+            }}
+          />
+        )}
         {/* point */}
         <div
           style={{
@@ -172,6 +188,16 @@ const TimelineNode = ({
         >
           {pointEl}
         </div>
+        {/* optional disconnection gap below point */}
+        {bottomDisconnectGap > 0 && (
+          <div
+            style={{
+              width: LINE_WIDTH,
+              height: bottomDisconnectGap,
+              flexShrink: 0,
+            }}
+          />
+        )}
         {/* bottom line segment — stretches to fill remaining node height */}
         <div
           style={{
@@ -309,6 +335,10 @@ const TimelineNode = ({
    expanded_indices       {number[]}  Controlled: which indices are expanded.  Opt in by passing this prop.
    default_expanded_indices {number[]} Uncontrolled initial expanded indices.  Defaults to [].
    on_expand_change       {Function}  Called with the new indices array on every toggle.
+   visible_indices        {number[]}  Restrict visible nodes to these original item indices.
+   node_filter            {Function}  (item, index, items) => boolean. Return false to hide this node.
+   disconnect_line        {boolean}   Add a gap around points so connector lines do not touch the node marker.
+   disconnect_gap         {number}    Gap size in px when disconnect_line=true. Defaults to 6.
    style                  {object}    Style override for the root container.
 
    Item shape
@@ -326,9 +356,13 @@ const Timeline = ({
   expanded_indices,
   default_expanded_indices = [],
   on_expand_change = () => {},
+  visible_indices,
+  node_filter,
+  disconnect_line = false,
+  disconnect_gap = 6,
   style,
 }) => {
-  const { theme, onThemeMode } = useContext(ConfigContext);
+  const { theme } = useContext(ConfigContext);
   const tl = useMemo(() => theme?.timeline ?? {}, [theme]);
 
   /* ── controlled / uncontrolled expanded state ── */
@@ -358,22 +392,49 @@ const Timeline = ({
     [expandedSet, isControlled, on_expand_change],
   );
 
-  if (!items.length) return null;
+  const visibleIndexSet = useMemo(() => {
+    if (!Array.isArray(visible_indices)) return null;
+    return new Set(visible_indices.filter((index) => Number.isInteger(index)));
+  }, [visible_indices]);
+
+  const visibleItems = useMemo(() => {
+    return items
+      .map((item, originalIndex) => ({ item, originalIndex }))
+      .filter(({ item, originalIndex }) => {
+        if (visibleIndexSet && !visibleIndexSet.has(originalIndex)) return false;
+        if (typeof node_filter === "function") {
+          return node_filter(item, originalIndex, items);
+        }
+        return true;
+      });
+  }, [items, node_filter, visibleIndexSet]);
+
+  const safeDisconnectGap = useMemo(() => {
+    const n = Number(disconnect_gap);
+    return Number.isFinite(n) ? Math.max(0, n) : 0;
+  }, [disconnect_gap]);
+
+  if (!visibleItems.length) return null;
 
   return (
     <div style={{ display: "flex", flexDirection: "column", ...style }}>
-      {items.map((item, i) => (
-        <TimelineNode
-          key={i}
-          item={item}
-          index={i}
-          total={items.length}
-          isExpanded={expandedSet.has(i)}
-          onToggle={() => handleToggle(i)}
-          prevStatus={i > 0 ? (items[i - 1].status ?? "pending") : null}
-          tl={tl}
-        />
-      ))}
+      {visibleItems.map(({ item, originalIndex }, i) => {
+        const prevVisibleItem = i > 0 ? visibleItems[i - 1].item : null;
+        return (
+          <TimelineNode
+            key={originalIndex}
+            item={item}
+            index={i}
+            total={visibleItems.length}
+            isExpanded={expandedSet.has(originalIndex)}
+            onToggle={() => handleToggle(originalIndex)}
+            prevStatus={prevVisibleItem ? (prevVisibleItem.status ?? "pending") : null}
+            disconnect_line={disconnect_line}
+            disconnect_gap={safeDisconnectGap}
+            tl={tl}
+          />
+        );
+      })}
     </div>
   );
 };

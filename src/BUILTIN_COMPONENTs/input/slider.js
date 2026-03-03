@@ -4,6 +4,7 @@ import React, {
   useRef,
   useContext,
   useCallback,
+  useMemo,
 } from "react";
 
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
@@ -898,4 +899,543 @@ const RangeSlider = ({
   );
 };
 
-export { Slider as default, Slider, RangeSlider };
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+/*  Gradient helpers                                                                                                            */
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+/** Parse a hex color (#RGB or #RRGGBB) → {r,g,b} 0-255 */
+const hexToRgb = (hex) => {
+  let h = hex.replace("#", "");
+  if (h.length === 3)
+    h = h
+      .split("")
+      .map((c) => c + c)
+      .join("");
+  const n = parseInt(h, 16);
+  return { r: (n >> 16) & 255, g: (n >> 8) & 255, b: n & 255 };
+};
+
+/** Parse "rgb(r,g,b)" or "rgba(r,g,b,a)" → {r,g,b} */
+const parseRgbString = (s) => {
+  const m = s.match(/rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/);
+  if (!m) return { r: 0, g: 0, b: 0 };
+  return { r: +m[1], g: +m[2], b: +m[3] };
+};
+
+/** Parse a single CSS color token → {r,g,b} */
+const parseColorToken = (c) => {
+  const t = c.trim();
+  if (t.startsWith("#")) return hexToRgb(t);
+  if (t.startsWith("rgb")) return parseRgbString(t);
+  /* named colors fallback — create a temporary element */
+  const el = document.createElement("div");
+  el.style.color = t;
+  document.body.appendChild(el);
+  const computed = getComputedStyle(el).color;
+  document.body.removeChild(el);
+  return parseRgbString(computed);
+};
+
+/**
+ * Parse either:
+ *  - A CSS gradient string "linear-gradient(to right, #f00 0%, #0f0 50%, #00f 100%)"
+ *  - An array of stops [{color, position?}] where position is 0-1
+ *  Returns: [{r,g,b, pos: 0-1}] sorted by pos
+ */
+const parseGradientStops = (gradient) => {
+  if (Array.isArray(gradient)) {
+    return gradient.map((s, i, arr) => ({
+      ...parseColorToken(s.color),
+      pos:
+        s.position !== undefined ? s.position : arr.length > 1 ? i / (arr.length - 1) : 0,
+    }));
+  }
+  if (typeof gradient !== "string") return [{ r: 0, g: 0, b: 0, pos: 0 }];
+
+  /* Strip the function wrapper — keep only the color-stop list */
+  const inner = gradient
+    .replace(/^[^(]+\(\s*/, "")
+    .replace(/\s*\)$/, "");
+
+  /* Remove direction keywords (to right, 90deg, etc.) — everything before the first color */
+  const colorPart = inner.replace(
+    /^(to\s+\w+(\s+\w+)?|[\d.]+deg|[\d.]+turn|[\d.]+rad)\s*,\s*/i,
+    "",
+  );
+
+  /* Split on commas that separate stops (not commas inside rgb()) */
+  const rawStops = [];
+  let depth = 0;
+  let current = "";
+  for (const ch of colorPart) {
+    if (ch === "(") depth++;
+    else if (ch === ")") depth--;
+    if (ch === "," && depth === 0) {
+      rawStops.push(current.trim());
+      current = "";
+    } else {
+      current += ch;
+    }
+  }
+  if (current.trim()) rawStops.push(current.trim());
+
+  const parsed = rawStops.map((raw) => {
+    /* e.g. "#ff0 17%" or "rgb(255,0,0) 50%" or "red" */
+    const pctMatch = raw.match(/([\d.]+)%\s*$/);
+    const pos = pctMatch ? parseFloat(pctMatch[1]) / 100 : undefined;
+    const colorStr = pctMatch ? raw.slice(0, pctMatch.index).trim() : raw.trim();
+    return { ...parseColorToken(colorStr), pos };
+  });
+
+  /* Fill in missing positions (CSS auto-spacing) */
+  if (parsed.length > 0) {
+    if (parsed[0].pos === undefined) parsed[0].pos = 0;
+    if (parsed[parsed.length - 1].pos === undefined) parsed[parsed.length - 1].pos = 1;
+    for (let i = 1; i < parsed.length - 1; i++) {
+      if (parsed[i].pos !== undefined) continue;
+      /* find next defined */
+      let next = i + 1;
+      while (next < parsed.length && parsed[next].pos === undefined) next++;
+      const prevPos = parsed[i - 1].pos;
+      const nextPos = parsed[next].pos;
+      const span = next - (i - 1);
+      for (let j = i; j < next; j++) {
+        parsed[j].pos = prevPos + ((nextPos - prevPos) * (j - (i - 1))) / span;
+      }
+    }
+  }
+
+  return parsed;
+};
+
+/** Interpolate between parsed stops at a ratio 0-1 → "rgb(r,g,b)" */
+const interpolateColor = (stops, ratio) => {
+  if (!stops || stops.length === 0) return "rgb(128,128,128)";
+  const t = Math.min(1, Math.max(0, ratio));
+  if (stops.length === 1) return `rgb(${stops[0].r},${stops[0].g},${stops[0].b})`;
+  /* find bracketing stops */
+  let lo = stops[0];
+  let hi = stops[stops.length - 1];
+  for (let i = 0; i < stops.length - 1; i++) {
+    if (t >= stops[i].pos && t <= stops[i + 1].pos) {
+      lo = stops[i];
+      hi = stops[i + 1];
+      break;
+    }
+  }
+  const range = hi.pos - lo.pos || 1;
+  const f = (t - lo.pos) / range;
+  const r = Math.round(lo.r + (hi.r - lo.r) * f);
+  const g = Math.round(lo.g + (hi.g - lo.g) * f);
+  const b = Math.round(lo.b + (hi.b - lo.b) * f);
+  return `rgb(${r},${g},${b})`;
+};
+
+/** Build a CSS linear-gradient string from stops */
+const stopsToGradient = (stops) => {
+  if (!stops || stops.length === 0) return "linear-gradient(to right, #888, #888)";
+  const parts = stops.map(
+    (s) => `rgb(${s.r},${s.g},${s.b}) ${(s.pos * 100).toFixed(1)}%`,
+  );
+  return `linear-gradient(to right, ${parts.join(", ")})`;
+};
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+/*  GradientSlider — line ↔ pill track with gradient & color-aware thumb                                                        */
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+const GradientSlider = ({
+  style,
+  value,
+  set_value,
+  default_value,
+  min = 0,
+  max = 100,
+  step = 1,
+  marks,
+  show_tooltip = true,
+  tooltip_format,
+  label_format,
+  prefix_icon,
+  prefix_label,
+  postfix_icon,
+  postfix_label,
+  disabled = false,
+  /* ── gradient-specific props ───────────────────────── */
+  gradient = "linear-gradient(to right, #3b82f6, #8b5cf6, #ec4899)",
+}) => {
+  const { theme, onThemeMode } = useContext(ConfigContext);
+  const isDark = onThemeMode === "dark_mode";
+  const containerRef = useRef(null);
+
+  /* ── uncontrolled fallback ─────────────────────────── */
+  const [internalValue, setInternalValue] = useState(
+    value !== undefined
+      ? value
+      : default_value !== undefined
+        ? default_value
+        : min,
+  );
+  const currentValue = value !== undefined ? value : internalValue;
+
+  useEffect(() => {
+    if (value !== undefined) setInternalValue(value);
+  }, [value]);
+
+  const doSnap = useCallback(
+    (v) => {
+      if (marks && marks.length > 0) return snapToMarks(v, marks);
+      return snapToStep(v, min, max, step);
+    },
+    [min, max, step, marks],
+  );
+
+  const handleChange = useCallback(
+    (v) => {
+      const s = doSnap(v);
+      if (set_value) set_value(s);
+      else setInternalValue(s);
+    },
+    [set_value, doSnap],
+  );
+
+  /* ── interaction state ─────────────────────────────── */
+  const [isDragging, setIsDragging] = useState(false);
+  const [isHovering, setIsHovering] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
+  const [isPressed, setIsPressed] = useState(false);
+
+  const isActivated = isHovering || isFocused || isDragging;
+
+  /* ── gradient parsing (memoised) ───────────────────── */
+  const stops = useMemo(() => parseGradientStops(gradient), [gradient]);
+  const gradientCSS = useMemo(
+    () =>
+      typeof gradient === "string" && gradient.includes("gradient")
+        ? gradient
+        : stopsToGradient(stops),
+    [gradient, stops],
+  );
+
+  /* ── style tokens ──────────────────────────────────── */
+  const sliderTheme = theme?.slider || {};
+  const W = style?.width ?? sliderTheme.width ?? 300;
+  const H = style?.height ?? sliderTheme.height ?? 32;
+  const trackThickness =
+    style?.trackThickness ?? sliderTheme.trackThickness ?? 2;
+  const labelColor =
+    style?.labelColor ??
+    sliderTheme.labelColor ??
+    (isDark ? "#CCCCCC" : "#222222");
+
+  /* gradient-specific tokens */
+  const gradientTrackActiveHeight =
+    style?.gradientTrackActiveHeight ??
+    sliderTheme.gradientTrackActiveHeight ??
+    24;
+  const gradientThumbBorderWidth =
+    style?.gradientThumbBorderWidth ??
+    sliderTheme.gradientThumbBorderWidth ??
+    2.5;
+  const gradientThumbBorderColor =
+    style?.gradientThumbBorderColor ??
+    sliderTheme.gradientThumbBorderColor ??
+    "#FFFFFF";
+
+  /* ── position math ─────────────────────────────────── */
+  const pct = max === min ? 0 : ((currentValue - min) / (max - min)) * 100;
+  const ratio = pct / 100;
+
+  /* ── thumb color from gradient ─────────────────────── */
+  const thumbColor = useMemo(
+    () => interpolateColor(stops, ratio),
+    [stops, ratio],
+  );
+
+  /* ── pointer → value ───────────────────────────────── */
+  const getValueFromX = useCallback(
+    (clientX) => {
+      if (!containerRef.current) return min;
+      const rect = containerRef.current.getBoundingClientRect();
+      const r = Math.min(
+        1,
+        Math.max(0, (clientX - rect.left) / rect.width),
+      );
+      return min + r * (max - min);
+    },
+    [min, max],
+  );
+
+  const onPointerDown = useCallback(
+    (e) => {
+      if (disabled) return;
+      e.preventDefault();
+      setIsDragging(true);
+      setIsPressed(true);
+      const cx = e.clientX ?? e.touches?.[0]?.clientX;
+      if (cx !== undefined) handleChange(getValueFromX(cx));
+    },
+    [disabled, handleChange, getValueFromX],
+  );
+
+  useEffect(() => {
+    if (!isDragging) return;
+    const onMove = (e) => {
+      const cx = e.clientX ?? e.touches?.[0]?.clientX;
+      if (cx !== undefined) handleChange(getValueFromX(cx));
+    };
+    const onUp = () => {
+      setIsDragging(false);
+      setIsPressed(false);
+    };
+    window.addEventListener("mousemove", onMove);
+    window.addEventListener("mouseup", onUp);
+    window.addEventListener("touchmove", onMove, { passive: false });
+    window.addEventListener("touchend", onUp);
+    return () => {
+      window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("mouseup", onUp);
+      window.removeEventListener("touchmove", onMove);
+      window.removeEventListener("touchend", onUp);
+    };
+  }, [isDragging, handleChange, getValueFromX]);
+
+  const onKeyDown = useCallback(
+    (e) => {
+      if (disabled) return;
+      let v = currentValue;
+      switch (e.key) {
+        case "ArrowRight":
+        case "ArrowUp":
+          v += step;
+          e.preventDefault();
+          break;
+        case "ArrowLeft":
+        case "ArrowDown":
+          v -= step;
+          e.preventDefault();
+          break;
+        case "Home":
+          v = min;
+          e.preventDefault();
+          break;
+        case "End":
+          v = max;
+          e.preventDefault();
+          break;
+        default:
+          return;
+      }
+      handleChange(v);
+    },
+    [disabled, currentValue, step, min, max, handleChange],
+  );
+
+  /* ── tooltip ───────────────────────────────────────── */
+  const tipVisible = show_tooltip && (isDragging || isHovering);
+  const tipText = tooltip_format
+    ? tooltip_format(currentValue)
+    : Math.round(currentValue);
+  const tipBg =
+    theme?.tooltip?.backgroundColor ??
+    (isDark ? "rgba(200,200,200,0.96)" : "rgba(20,20,20,0.92)");
+  const tipColor = theme?.tooltip?.color ?? (isDark ? "#111" : "#FFF");
+  const tipShadow = theme?.tooltip?.boxShadow ?? "0 4px 12px rgba(0,0,0,0.15)";
+
+  /* ── animated dimensions ───────────────────────────── */
+  /* Thumb: always visible — medium when inactive, larger when activated */
+  const inactiveThumbSize = trackThickness + 12; /* e.g. 14px when track is 2px */
+  const activeThumbSize = gradientTrackActiveHeight - 6;
+  const currentThumbSize = isActivated ? activeThumbSize : inactiveThumbSize;
+  const thumbScale = isPressed ? 1.1 : 1;
+
+  /* Pill wraps the thumb with visible padding on all sides.
+   * The thumb border (content-box) adds to its rendered size,
+   * so pill must account for the full visual thumb diameter. */
+  const pillPad = 4; /* px of visible pill around the thumb */
+  const thumbVisualSize = activeThumbSize + gradientThumbBorderWidth * 2;
+  const activePillH = thumbVisualSize + pillPad * 2;
+  const currentTrackH = isActivated ? activePillH : trackThickness;
+  const currentTrackR = currentTrackH / 2;
+
+  /*
+   * Pill spans full container width (left:0, width:W).
+   * Thumb centre is clamped to [halfPill, W - halfPill] so the pill
+   * always wraps the thumb — including at min (0%) and max (100%).
+   */
+  const halfPill = activePillH / 2;
+  const rawThumbLeft = (pct / 100) * W;
+  const thumbLeftPx = isActivated
+    ? halfPill + ratio * (W - halfPill * 2)
+    : rawThumbLeft;
+
+  /* transition curves */
+  const DECEL = "cubic-bezier(0.32, 1, 0.32, 1)";
+  const TRACK_T =
+    `height 0.36s ${DECEL}, ` +
+    `border-radius 0.36s ${DECEL}, ` +
+    `box-shadow 0.36s ${DECEL}`;
+  const slideT = isDragging
+    ? "none"
+    : `left 0.18s cubic-bezier(0.4, 0, 0.2, 1)`;
+
+  return (
+    <div style={{ display: "inline-flex", flexDirection: "column" }}>
+      <LabelRow
+        prefix_icon={prefix_icon}
+        prefix_label={prefix_label}
+        postfix_icon={postfix_icon}
+        postfix_label={postfix_label}
+        color={labelColor}
+        fontSize={style?.fontSize}
+      />
+      <div
+        ref={containerRef}
+        role="slider"
+        aria-valuemin={min}
+        aria-valuemax={max}
+        aria-valuenow={currentValue}
+        aria-label="Gradient slider"
+        tabIndex={disabled ? -1 : 0}
+        style={{
+          position: "relative",
+          width: W,
+          height: H,
+          cursor: disabled ? "not-allowed" : "pointer",
+          opacity: disabled ? 0.4 : 1,
+          touchAction: "none",
+          userSelect: "none",
+          WebkitUserSelect: "none",
+          outline: "none",
+        }}
+        onMouseDown={onPointerDown}
+        onTouchStart={onPointerDown}
+        onMouseEnter={() => !disabled && setIsHovering(true)}
+        onMouseLeave={() => setIsHovering(false)}
+        onFocus={() => !disabled && setIsFocused(true)}
+        onBlur={() => setIsFocused(false)}
+        onKeyDown={onKeyDown}
+      >
+        {/* ─── Gradient track (always visible — thin line ↔ pill) ─── */}
+        <div
+          style={{
+            position: "absolute",
+            top: "50%",
+            left: 0,
+            width: W,
+            height: currentTrackH,
+            borderRadius: currentTrackR,
+            overflow: "hidden",
+            transform: "translateY(-50%)",
+            transition: TRACK_T,
+            pointerEvents: "none",
+            boxShadow: isActivated
+              ? isDark
+                ? "inset 0 1px 3px rgba(0,0,0,0.35), 0 0 0 0.5px rgba(255,255,255,0.08)"
+                : "inset 0 1px 3px rgba(0,0,0,0.12), 0 0 0 0.5px rgba(0,0,0,0.06)"
+              : "none",
+          }}
+        >
+          {/* Gradient fill — always shown */}
+          <div
+            style={{
+              position: "absolute",
+              inset: 0,
+              background: gradientCSS,
+              borderRadius: "inherit",
+            }}
+          />
+        </div>
+
+        {/* ─── Snap marks ─── */}
+        {marks &&
+          marks.map((m) => {
+            if (m === currentValue || m === min || m === max) return null;
+            const mPct = max === min ? 0 : ((m - min) / (max - min)) * 100;
+            const mPx = (mPct / 100) * W;
+            return (
+              <div
+                key={m}
+                style={{
+                  position: "absolute",
+                  top: "50%",
+                  left: mPx,
+                  width: isActivated ? 3 : 4,
+                  height: isActivated ? 3 : 4,
+                  borderRadius: "50%",
+                  backgroundColor: gradientThumbBorderColor,
+                  transform: "translate(-50%, -50%)",
+                  transition:
+                    "width 0.24s ease, height 0.24s ease, opacity 0.24s ease",
+                  pointerEvents: "none",
+                  opacity: 0.7,
+                  zIndex: 3,
+                  boxShadow: "0 0 2px rgba(0,0,0,0.3)",
+                }}
+              />
+            );
+          })}
+
+        {/* ─── Thumb — always visible, bordered circle with gradient color ─── */}
+        <div
+          style={{
+            position: "absolute",
+            top: "50%",
+            left: thumbLeftPx,
+            width: currentThumbSize,
+            height: currentThumbSize,
+            borderRadius: "50%",
+            backgroundColor: thumbColor,
+            border: `${gradientThumbBorderWidth}px solid ${gradientThumbBorderColor}`,
+            boxShadow:
+              "0 1px 4px rgba(0,0,0,0.22), 0 0 0 0.5px rgba(0,0,0,0.08)",
+            transform: `translate(-50%, -50%) scale(${thumbScale})`,
+            transition: isDragging
+              ? `transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1), ` +
+                `width 0.32s ${DECEL}, height 0.32s ${DECEL}, ` +
+                `background-color 0.08s ease`
+              : `left 0.18s cubic-bezier(0.4,0,0.2,1), ` +
+                `transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1), ` +
+                `width 0.32s ${DECEL}, height 0.32s ${DECEL}, ` +
+                `background-color 0.15s ease`,
+            pointerEvents: "none",
+            zIndex: 4,
+          }}
+        />
+
+        {/* ─── Floating tooltip above thumb ─── */}
+        {show_tooltip && (
+          <div
+            style={{
+              position: "absolute",
+              bottom: "100%",
+              left: thumbLeftPx,
+              transform: `translateX(-50%) scale(${tipVisible ? 1 : 0.7})`,
+              transformOrigin: "center bottom",
+              opacity: tipVisible ? 1 : 0,
+              marginBottom: 6,
+              transition: isDragging
+                ? "opacity 0.2s ease, transform 0.25s cubic-bezier(0.34,1.56,0.64,1)"
+                : `left 0.18s cubic-bezier(0.4,0,0.2,1), opacity 0.2s ease, transform 0.25s cubic-bezier(0.34,1.56,0.64,1)`,
+              pointerEvents: "none",
+              backgroundColor: tipBg,
+              color: tipColor,
+              boxShadow: tipShadow,
+              padding: "3px 8px",
+              borderRadius: 5,
+              fontSize: 11,
+              fontFamily: "Jost, -apple-system, sans-serif",
+              fontWeight: 500,
+              whiteSpace: "nowrap",
+              lineHeight: "16px",
+              zIndex: 5,
+            }}
+          >
+            {tipText}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export { Slider as default, Slider, RangeSlider, GradientSlider };

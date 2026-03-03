@@ -44,25 +44,6 @@ const SpinnerDemo = () => {
       <CustomizedTooltip
         code={` 
 \`\`\`js
-<ArcSpinner />
-\`\`\` 
-          `}
-      >
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            width: 160,
-            height: 160,
-          }}
-        >
-          <ArcSpinner />
-        </div>
-      </CustomizedTooltip>
-      <CustomizedTooltip
-        code={` 
-\`\`\`js
 <ArcSpinner size={56} stroke_width={4} />
 \`\`\` 
           `}
@@ -77,25 +58,6 @@ const SpinnerDemo = () => {
           }}
         >
           <ArcSpinner size={56} stroke_width={4} />
-        </div>
-      </CustomizedTooltip>
-      <CustomizedTooltip
-        code={` 
-\`\`\`js
-<ArcSpinner size={36} stroke_width={2} />
-\`\`\` 
-          `}
-      >
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            width: 160,
-            height: 160,
-          }}
-        >
-          <ArcSpinner size={36} stroke_width={2} />
         </div>
       </CustomizedTooltip>
       {/* ── StringSpinner ── */}

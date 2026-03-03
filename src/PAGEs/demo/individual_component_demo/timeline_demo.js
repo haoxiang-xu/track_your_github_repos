@@ -6,6 +6,7 @@ import { ConfigContext } from "../../../CONTAINERs/config/context";
 
 /* { Components } --------------------------------------------------------------------------------------------------------- */
 import Timeline from "../../../BUILTIN_COMPONENTs/timeline/timeline";
+import { Slider } from "../../../BUILTIN_COMPONENTs/input/slider";
 import { CustomizedTooltip } from "../demo";
 /* { Components } --------------------------------------------------------------------------------------------------------- */
 
@@ -51,6 +52,37 @@ const DemoLabel = ({ children }) => {
   );
 };
 
+const FILTERABLE_TIMELINE_ITEMS = [
+  {
+    title: "Start",
+    span: "Workflow started",
+    status: "done",
+    point: "start",
+  },
+  {
+    title: "Node A",
+    span: "Requirements synced",
+    status: "done",
+  },
+  {
+    title: "Current node",
+    span: "Running model inference",
+    status: "active",
+    point: "loading",
+  },
+  {
+    title: "Node B",
+    span: "Waiting for approval",
+    status: "pending",
+  },
+  {
+    title: "End",
+    span: "Final output",
+    status: "pending",
+    point: "end",
+  },
+];
+
 /* ─────────────────────────────────────────────────────────────────────────── */
 
 const TimelineDemo = () => {
@@ -58,6 +90,9 @@ const TimelineDemo = () => {
 
   /* controlled demo state */
   const [controlledExpanded, setControlledExpanded] = useState([0]);
+  const [selectedNodeIndices, setSelectedNodeIndices] = useState([0, 2, 4]);
+  const [disconnectLine, setDisconnectLine] = useState(true);
+  const [disconnectGap, setDisconnectGap] = useState(8);
 
   return (
     <div
@@ -248,7 +283,172 @@ const TimelineDemo = () => {
           </DemoCard>
         </CustomizedTooltip>
 
-        {/* ══ 4. Externally controlled expansion ══════════════════════════════ */}
+        {/* ══ 4. Node visibility + line break control ═════════════════════════ */}
+        <CustomizedTooltip
+          code={`
+\`\`\`js
+const [visibleNodeIndices, setVisibleNodeIndices] = useState([0, 2, 4]); // start + current + end
+const [disconnectLine, setDisconnectLine] = useState(true);
+const [disconnectGap, setDisconnectGap] = useState(8);
+
+<Timeline
+  items={FILTERABLE_TIMELINE_ITEMS}
+  visible_indices={visibleNodeIndices}
+  disconnect_line={disconnectLine}
+  disconnect_gap={disconnectGap}
+/>
+
+<Slider
+  value={disconnectGap}
+  set_value={setDisconnectGap}
+  min={0}
+  max={20}
+  step={1}
+  disabled={!disconnectLine}
+/>
+\`\`\`
+        `}
+        >
+          <DemoCard>
+            <DemoLabel>Node filter + line break</DemoLabel>
+            <div
+              style={{
+                display: "flex",
+                flexWrap: "wrap",
+                gap: 8,
+                marginBottom: 10,
+              }}
+            >
+              {FILTERABLE_TIMELINE_ITEMS.map((item, i) => {
+                const active = selectedNodeIndices.includes(i);
+                return (
+                  <button
+                    key={`${item.title}-${i}`}
+                    onClick={() => {
+                      setSelectedNodeIndices((prev) => {
+                        const next = prev.includes(i)
+                          ? prev.filter((x) => x !== i)
+                          : [...prev, i];
+                        return next.sort((a, b) => a - b);
+                      });
+                    }}
+                    style={{
+                      padding: "3px 10px",
+                      borderRadius: 20,
+                      border: `1px solid ${active ? "rgba(10,186,181,0.7)" : "rgba(0,0,0,0.12)"}`,
+                      background: active
+                        ? "rgba(10,186,181,0.10)"
+                        : "transparent",
+                      color: active
+                        ? "rgba(10,186,181,1)"
+                        : (theme?.timeline?.spanColor ?? "rgba(0,0,0,0.45)"),
+                      fontSize: 12,
+                      cursor: "pointer",
+                      fontFamily: "inherit",
+                      transition: "all 0.18s",
+                    }}
+                  >
+                    {active ? "✓" : "○"} {item.title}
+                  </button>
+                );
+              })}
+              <button
+                onClick={() => setSelectedNodeIndices([0, 2, 4])}
+                style={{
+                  padding: "3px 10px",
+                  borderRadius: 20,
+                  border: "1px dashed rgba(10,186,181,0.45)",
+                  background: "transparent",
+                  color: "rgba(10,186,181,1)",
+                  fontSize: 12,
+                  cursor: "pointer",
+                  fontFamily: "inherit",
+                }}
+              >
+                Preset: start + current + end
+              </button>
+            </div>
+
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 10,
+                flexWrap: "wrap",
+                marginBottom: 8,
+              }}
+            >
+              <button
+                onClick={() => setDisconnectLine((prev) => !prev)}
+                style={{
+                  padding: "3px 10px",
+                  borderRadius: 20,
+                  border: `1px solid ${disconnectLine ? "rgba(10,186,181,0.7)" : "rgba(0,0,0,0.12)"}`,
+                  background: disconnectLine
+                    ? "rgba(10,186,181,0.10)"
+                    : "transparent",
+                  color: disconnectLine
+                    ? "rgba(10,186,181,1)"
+                    : (theme?.timeline?.spanColor ?? "rgba(0,0,0,0.45)"),
+                  fontSize: 12,
+                  cursor: "pointer",
+                  fontFamily: "inherit",
+                }}
+              >
+                Line break: {disconnectLine ? "ON" : "OFF"}
+              </button>
+              <span
+                style={{
+                  fontSize: 12,
+                  color: theme?.timeline?.spanColor ?? "rgba(0,0,0,0.45)",
+                  userSelect: "none",
+                  WebkitUserSelect: "none",
+                }}
+              >
+                Gap: {disconnectGap}px
+              </span>
+              <Slider
+                value={disconnectGap}
+                set_value={setDisconnectGap}
+                min={0}
+                max={20}
+                step={1}
+                disabled={!disconnectLine}
+                show_tooltip={false}
+                label_format={(value) => `${value}px`}
+                style={{
+                  width: 140,
+                  height: 20,
+                  gapWidth: 18,
+                  trackThickness: 2,
+                  thumbSize: 10,
+                  fontSize: 10,
+                }}
+              />
+            </div>
+
+            {selectedNodeIndices.length > 0 ? (
+              <Timeline
+                items={FILTERABLE_TIMELINE_ITEMS}
+                visible_indices={selectedNodeIndices}
+                disconnect_line={disconnectLine}
+                disconnect_gap={disconnectGap}
+              />
+            ) : (
+              <div
+                style={{
+                  fontSize: 12,
+                  color: theme?.timeline?.spanColor ?? "rgba(0,0,0,0.45)",
+                  lineHeight: "18px",
+                }}
+              >
+                No visible node selected.
+              </div>
+            )}
+          </DemoCard>
+        </CustomizedTooltip>
+
+        {/* ══ 5. Externally controlled expansion ══════════════════════════════ */}
         <CustomizedTooltip
           code={`
 \`\`\`js
