@@ -33,6 +33,7 @@ const Carousel = ({
   const { theme, onThemeMode } = useContext(ConfigContext);
   const isDark = onThemeMode === "dark_mode";
 
+
   /* ---- State ---- */
   const [internalIndex, setInternalIndex] = useState(0);
   const activeIndex =
