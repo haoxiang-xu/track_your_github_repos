@@ -1,6 +1,10 @@
 /* { Containers } -------------------------------------------------------------------------------------------------------------- */
 import ConfigContainer from "./CONTAINERs/config/container";
-import { Router, Routes, Route } from "./BUILTIN_COMPONENTs/mini_react/mini_router";
+import {
+  Router,
+  Routes,
+  Route,
+} from "./BUILTIN_COMPONENTs/mini_react/mini_router";
 /* { Containers } -------------------------------------------------------------------------------------------------------------- */
 
 /* { Demos ( remove during production ) } -------------------------------------------------------------------------------------- */
@@ -12,9 +16,9 @@ const App = () => {
     <ConfigContainer>
       <Router>
         <Routes>
-          {/* { Demos ( remove during production ) } --------------------------------------------------------------------------- */}
+          {/* { Demos ( remove during production ) } --------------------------------------------------------------------- */}
           <Route path="/mini" element={<DemoPage />} />
-          {/* { Demos ( remove during production ) } --------------------------------------------------------------------------- */}
+          {/* { Demos ( remove during production ) } --------------------------------------------------------------------- */}
         </Routes>
       </Router>
     </ConfigContainer>

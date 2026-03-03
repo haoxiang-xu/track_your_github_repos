@@ -2,6 +2,8 @@
   "name": "mini_ui",
   "version": "0.1.0",
   "private": true,
+  "main": "public/electron.js",
+  "homepage": "./",
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
     "@dnd-kit/modifiers": "^9.0.0",
@@ -24,8 +26,22 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "cross-env BROWSER=none PORT=2907 react-scripts start",
-    "build": "react-scripts build",
+    "start": "npm run start:web",
+    "start:web": "cross-env BROWSER=none PORT=2907 react-scripts start",
+    "start:electron": "concurrently -k \"npm run start:web\" \"npm run electron:start\"",
+    "electron:start": "electron .",
+    "react-start": "npm run start:web",
+    "electron-start": "npm run start:electron",
+    "build": "npm run build:web",
+    "build:web": "react-scripts build",
+    "build:electron": "npm run build:web && electron-builder",
+    "build:electron:mac": "npm run build:web && electron-builder --mac",
+    "build:electron:win": "npm run build:web && electron-builder --win",
+    "build:electron:linux": "npm run build:web && electron-builder --linux",
+    "pack": "npm run build:electron",
+    "pack:mac": "npm run build:electron:mac",
+    "pack:win": "npm run build:electron:win",
+    "pack:linux": "npm run build:electron:linux",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
@@ -46,5 +62,41 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "build": {
+    "appId": "com.red.miniui",
+    "productName": "Mini UI",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "build/**/*",
+      "public/electron.js",
+      "public/preload.js",
+      "public/favicon.ico",
+      "public/icon.icns",
+      "public/logo512.png"
+    ],
+    "mac": {
+      "target": "dmg",
+      "icon": "public/icon.icns"
+    },
+    "win": {
+      "target": "nsis",
+      "icon": "public/favicon.ico"
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb"
+      ],
+      "icon": "public/logo512.png",
+      "category": "Utility"
+    }
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1",
+    "electron": "^40.6.0",
+    "electron-builder": "^26.8.1"
   }
 }

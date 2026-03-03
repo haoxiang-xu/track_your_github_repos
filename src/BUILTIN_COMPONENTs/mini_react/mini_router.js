@@ -19,6 +19,7 @@ const isElectronRuntime = () => {
     return false;
   }
 
+  const hasPreloadBridge = window.runtime?.isElectron === true;
   const userAgent =
     typeof navigator !== "undefined" ? navigator.userAgent || "" : "";
   const hasElectronUserAgent = userAgent.indexOf("Electron") >= 0;
@@ -28,7 +29,7 @@ const isElectronRuntime = () => {
     window.process.versions &&
     window.process.versions.electron;
 
-  return Boolean(hasElectronUserAgent || hasElectronProcess);
+  return Boolean(hasPreloadBridge || hasElectronUserAgent || hasElectronProcess);
 };
 
 const resolveRouterMode = (mode = ROUTER_MODE.AUTO) => {

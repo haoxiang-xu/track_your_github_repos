@@ -481,7 +481,7 @@ const SideMenuClose = (props) => (
     viewBox="0 0 24 24"
     fill="currentColor"
   >
-    <path d="M21 3C21.5523 3 22 3.44772 22 4V20C22 20.5523 21.5523 21 21 21H3C2.44772 21 2 20.5523 2 20V4C2 3.44772 2.44772 3 3 3H21ZM20 5H4V19H20V5ZM13 7V17H11V7H13Z"></path>
+    <path d="M21 3C21.5523 3 22 3.44772 22 4V20C22 20.5523 21.5523 21 21 21H3C2.44772 21 2 20.5523 2 20V4C2 3.44772 2.44772 3 3 3H21ZM20 5H4V19H20V5ZM13"></path>
   </svg>
 );
 const SideMenuLeft = (props) => (
@@ -568,6 +568,38 @@ const User = (props) => (
     fill="currentColor"
   >
     <path d="M4 22C4 17.5817 7.58172 14 12 14C16.4183 14 20 17.5817 20 22H18C18 18.6863 15.3137 16 12 16C8.68629 16 6 18.6863 6 22H4ZM12 13C8.685 13 6 10.315 6 7C6 3.685 8.685 1 12 1C15.315 1 18 3.685 18 7C18 10.315 15.315 13 12 13ZM12 11C14.21 11 16 9.21 16 7C16 4.79 14.21 3 12 3C9.79 3 8 4.79 8 7C8 9.21 9.79 11 12 11Z"></path>
+  </svg>
+);
+const WindowsCloseButton = (props) => (
+  <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path
+      d="M3.5 3.5L8 8M12.5 12.5L8 8M8 8L12.5 3.5M8 8L3.5 12.5"
+      stroke="currentColor"
+      stroke-linecap="round"
+    />
+  </svg>
+);
+const WindowsMaximizeButton = (props) => (
+  <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path
+      d="M3 12V4C3 3.44772 3.44772 3 4 3H12C12.5523 3 13 3.44772 13 4V12C13 12.5523 12.5523 13 12 13H4C3.44772 13 3 12.5523 3 12Z"
+      stroke="currentColor"
+      stroke-linecap="round"
+    />
+  </svg>
+);
+const WindowsMinimizeButton = (props) => (
+  <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M3 8H13" stroke="currentColor" stroke-linecap="round" />
+  </svg>
+);
+const WindowsRestoreButton = (props) => (
+  <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path
+      d="M3 10V6C3 5.44772 3.44772 5 4 5H12C12.5523 5 13 5.44772 13 6V10C13 10.5523 12.5523 11 12 11H4C3.44772 11 3 10.5523 3 10Z"
+      stroke="currentColor"
+      stroke-linecap="round"
+    />
   </svg>
 );
 
@@ -675,6 +707,10 @@ const UISVGs = {
   sun: Sun,
   tool: Tool,
   user: User,
+  windows_close_button: WindowsCloseButton,
+  windows_maximize_button: WindowsMaximizeButton,
+  windows_minimize_button: WindowsMinimizeButton,
+  windows_restore_button: WindowsRestoreButton,
 };
 
 export { fileTypeSVGs, LogoSVGs, UISVGs };

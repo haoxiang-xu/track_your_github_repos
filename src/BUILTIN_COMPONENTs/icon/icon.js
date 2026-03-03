@@ -12,7 +12,7 @@ const Icon = ({ src, color, ...props }) => {
   const { theme } = useContext(ConfigContext);
 
   const [component, setComponent] = useState(
-    <div className="mini-ui-img-icon" {...props} />
+    <div className="mini-ui-img-icon" {...props} />,
   );
 
   const fetch_icon = useCallback(async () => {
@@ -24,7 +24,8 @@ const Icon = ({ src, color, ...props }) => {
           <SVG
             className="mini-ui-svg-icon"
             fill={color ? color : theme?.icon?.color}
-          ></SVG>
+            style={{ width: "100%", height: "100%", display: "block" }}
+          ></SVG>,
         );
       } else if (src in LogoSVGs) {
         const SVG = await LogoSVGs[src];
@@ -32,7 +33,8 @@ const Icon = ({ src, color, ...props }) => {
           <SVG
             className="mini-ui-svg-icon"
             fill={color ? color : theme?.icon?.color}
-          ></SVG>
+            style={{ width: "100%", height: "100%", display: "block" }}
+          ></SVG>,
         );
       } else if (src in fileTypeSVGs) {
         svg = await fileTypeSVGs[src]();
@@ -46,7 +48,7 @@ const Icon = ({ src, color, ...props }) => {
               height: "100%",
               width: "100%",
             }}
-          />
+          />,
         );
       } else {
         svg = await import(`./SVGs/${src}.svg`);
@@ -60,13 +62,13 @@ const Icon = ({ src, color, ...props }) => {
               height: "100%",
               width: "100%",
             }}
-          />
+          />,
         );
       }
     } catch (error) {
       console.error(
         "[Error occurred while fetching SVG file BUILTIN_COMPONENTs/icon/icon.js]:",
-        error
+        error,
       );
     }
   }, [src, theme, color]);
@@ -97,7 +99,7 @@ const Icon = ({ src, color, ...props }) => {
               height: "100%",
               width: "100%",
             }}
-          />
+          />,
         );
       } else {
         fetch_icon();
@@ -105,12 +107,24 @@ const Icon = ({ src, color, ...props }) => {
     } catch (error) {
       console.error(
         "[Error occurred while setting icon source BUILTIN_COMPONENTs/icon/icon.js]:",
-        error
+        error,
       );
     }
   }, [src, theme, fetch_icon]);
 
-  return <div style={{ ...props.style, color: color }}>{component}</div>;
+  return (
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        ...props.style,
+        color: color,
+      }}
+    >
+      {component}
+    </div>
+  );
 };
 
 export default Icon;

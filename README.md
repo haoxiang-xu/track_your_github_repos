@@ -17,6 +17,7 @@
 - [Prerequisites](#prerequisites)
   - [Setup a Node.js environment with version 23.0.0](#setup-a-nodejs-environment-with-version-2300)
   - [Setup npm version 11.1.0](#setup-npm)
+- [Run Web / Electron](#run-web--electron)
 
 ## Prerequisites <a id="prerequisites"></a>
 
@@ -49,3 +50,45 @@
 [node-url]: https://nodejs.org/en/download/
 [npm-shield]: https://img.shields.io/badge/npm-11.1.0-CB3837?style=for-the-badge&logo=npm&logoColor=red&labelColor=EBDBE2&color=CB3837
 [npm-url]: https://www.npmjs.com/package/npm
+
+## Run Web / Electron <a id="run-web--electron"></a>
+
+- Install dependencies:
+
+  ```bash
+  npm install
+  ```
+
+- Start React Web app:
+
+  ```bash
+  npm start
+  ```
+
+- Start Electron app in development mode (starts CRA + Electron together):
+
+  ```bash
+  npm run start:electron
+  ```
+
+- You can also use the explicit web command:
+
+  ```bash
+  npm run start:web
+  ```
+
+- Build React Web bundle:
+
+  ```bash
+  npm run build
+  # or: npm run build:web
+  ```
+
+- Build Electron desktop packages:
+
+  ```bash
+  npm run build:electron
+  npm run build:electron:mac
+  npm run build:electron:win
+  npm run build:electron:linux
+  ```
