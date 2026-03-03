@@ -947,15 +947,17 @@ const parseGradientStops = (gradient) => {
     return gradient.map((s, i, arr) => ({
       ...parseColorToken(s.color),
       pos:
-        s.position !== undefined ? s.position : arr.length > 1 ? i / (arr.length - 1) : 0,
+        s.position !== undefined
+          ? s.position
+          : arr.length > 1
+            ? i / (arr.length - 1)
+            : 0,
     }));
   }
   if (typeof gradient !== "string") return [{ r: 0, g: 0, b: 0, pos: 0 }];
 
   /* Strip the function wrapper — keep only the color-stop list */
-  const inner = gradient
-    .replace(/^[^(]+\(\s*/, "")
-    .replace(/\s*\)$/, "");
+  const inner = gradient.replace(/^[^(]+\(\s*/, "").replace(/\s*\)$/, "");
 
   /* Remove direction keywords (to right, 90deg, etc.) — everything before the first color */
   const colorPart = inner.replace(
@@ -983,14 +985,17 @@ const parseGradientStops = (gradient) => {
     /* e.g. "#ff0 17%" or "rgb(255,0,0) 50%" or "red" */
     const pctMatch = raw.match(/([\d.]+)%\s*$/);
     const pos = pctMatch ? parseFloat(pctMatch[1]) / 100 : undefined;
-    const colorStr = pctMatch ? raw.slice(0, pctMatch.index).trim() : raw.trim();
+    const colorStr = pctMatch
+      ? raw.slice(0, pctMatch.index).trim()
+      : raw.trim();
     return { ...parseColorToken(colorStr), pos };
   });
 
   /* Fill in missing positions (CSS auto-spacing) */
   if (parsed.length > 0) {
     if (parsed[0].pos === undefined) parsed[0].pos = 0;
-    if (parsed[parsed.length - 1].pos === undefined) parsed[parsed.length - 1].pos = 1;
+    if (parsed[parsed.length - 1].pos === undefined)
+      parsed[parsed.length - 1].pos = 1;
     for (let i = 1; i < parsed.length - 1; i++) {
       if (parsed[i].pos !== undefined) continue;
       /* find next defined */
@@ -1012,7 +1017,8 @@ const parseGradientStops = (gradient) => {
 const interpolateColor = (stops, ratio) => {
   if (!stops || stops.length === 0) return "rgb(128,128,128)";
   const t = Math.min(1, Math.max(0, ratio));
-  if (stops.length === 1) return `rgb(${stops[0].r},${stops[0].g},${stops[0].b})`;
+  if (stops.length === 1)
+    return `rgb(${stops[0].r},${stops[0].g},${stops[0].b})`;
   /* find bracketing stops */
   let lo = stops[0];
   let hi = stops[stops.length - 1];
@@ -1033,7 +1039,8 @@ const interpolateColor = (stops, ratio) => {
 
 /** Build a CSS linear-gradient string from stops */
 const stopsToGradient = (stops) => {
-  if (!stops || stops.length === 0) return "linear-gradient(to right, #888, #888)";
+  if (!stops || stops.length === 0)
+    return "linear-gradient(to right, #888, #888)";
   const parts = stops.map(
     (s) => `rgb(${s.r},${s.g},${s.b}) ${(s.pos * 100).toFixed(1)}%`,
   );
@@ -1156,10 +1163,7 @@ const GradientSlider = ({
     (clientX) => {
       if (!containerRef.current) return min;
       const rect = containerRef.current.getBoundingClientRect();
-      const r = Math.min(
-        1,
-        Math.max(0, (clientX - rect.left) / rect.width),
-      );
+      const r = Math.min(1, Math.max(0, (clientX - rect.left) / rect.width));
       return min + r * (max - min);
     },
     [min, max],
@@ -1243,7 +1247,8 @@ const GradientSlider = ({
 
   /* ── animated dimensions ───────────────────────────── */
   /* Thumb: always visible — medium when inactive, larger when activated */
-  const inactiveThumbSize = trackThickness + 12; /* e.g. 14px when track is 2px */
+  const inactiveThumbSize =
+    trackThickness + 12; /* e.g. 14px when track is 2px */
   const activeThumbSize = gradientTrackActiveHeight - 6;
   const currentThumbSize = isActivated ? activeThumbSize : inactiveThumbSize;
   const thumbScale = isPressed ? 1.1 : 1;

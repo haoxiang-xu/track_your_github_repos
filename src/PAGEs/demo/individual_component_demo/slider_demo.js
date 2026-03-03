@@ -5,7 +5,11 @@ import { ConfigContext } from "../../../CONTAINERs/config/context";
 /* { Contexts } -------------------------------------------------------------------------------------------------------------- */
 
 /* { Components } ------------------------------------------------------------------------------------------------------------ */
-import { Slider, RangeSlider, GradientSlider } from "../../../BUILTIN_COMPONENTs/input/slider";
+import {
+  Slider,
+  RangeSlider,
+  GradientSlider,
+} from "../../../BUILTIN_COMPONENTs/input/slider";
 import { CustomizedTooltip } from "../demo";
 /* { Components } ------------------------------------------------------------------------------------------------------------ */
 
