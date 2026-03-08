@@ -93,7 +93,6 @@ const BASE_FRUSTUM   = 1.4;   /* half-height of the initial camera view */
 const ZOOM_MIN       = 0.25;
 const ZOOM_MAX       = 12;
 const ENTRANCE_MS    = 650;
-const GRID_DIVISIONS = 10;
 
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 /*  Component                                                              */
@@ -132,7 +131,7 @@ function Scatter({
 
   /* ── State ────────────────────────────────────────────────────────── */
   const [hovered_idx, set_hovered_idx] = useState(-1);
-  const [selected_id, set_selected_id] = useState(null);
+  const [, set_selected_id] = useState(null);
   const [tooltip, set_tooltip]         = useState(null); /* { x, y, point } */
 
   /* ── Refs ─────────────────────────────────────────────────────────── */
@@ -327,12 +326,6 @@ function Scatter({
   /* ═══════════════════════════════════════════════════════════════════ */
   /*  Camera frustum helpers                                             */
   /* ═══════════════════════════════════════════════════════════════════ */
-
-  const get_frustum = useCallback(() => {
-    const c = camera_ref.current;
-    if (!c) return null;
-    return { left: c.left, right: c.right, top: c.top, bottom: c.bottom };
-  }, []);
 
   const apply_zoom = useCallback((next_zoom, pivot_sx, pivot_sy) => {
     const camera  = camera_ref.current;
@@ -538,19 +531,6 @@ function Scatter({
   /* ═══════════════════════════════════════════════════════════════════ */
   /*  Grid lines (SVG overlay, theme-aware)                             */
   /* ═══════════════════════════════════════════════════════════════════ */
-
-  const grid_lines = useMemo(() => {
-    const lines = [];
-    const step  = (BASE_FRUSTUM * 2) / GRID_DIVISIONS;
-    const start = -BASE_FRUSTUM;
-
-    for (let i = 0; i <= GRID_DIVISIONS; i++) {
-      const v = start + i * step;
-      lines.push({ type: "h", v });
-      lines.push({ type: "v", v });
-    }
-    return lines;
-  }, []);
 
   /* ═══════════════════════════════════════════════════════════════════ */
   /*  Render                                                             */

@@ -1279,10 +1279,6 @@ const GradientSlider = ({
     `height 0.36s ${DECEL}, ` +
     `border-radius 0.36s ${DECEL}, ` +
     `box-shadow 0.36s ${DECEL}`;
-  const slideT = isDragging
-    ? "none"
-    : `left 0.18s cubic-bezier(0.4, 0, 0.2, 1)`;
-
   return (
     <div style={{ display: "inline-flex", flexDirection: "column" }}>
       <LabelRow
