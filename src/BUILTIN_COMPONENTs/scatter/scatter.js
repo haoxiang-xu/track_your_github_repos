@@ -131,6 +131,7 @@ function Scatter({
 
   /* ── State ────────────────────────────────────────────────────────── */
   const [hovered_idx, set_hovered_idx] = useState(-1);
+  const hovered_idx_ref                = useRef(-1);   /* always-current mirror */
   const [, set_selected_id] = useState(null);
   const [tooltip, set_tooltip]         = useState(null); /* { x, y, point } */
 
@@ -154,6 +155,7 @@ function Scatter({
   const norm_ref      = useRef(norm_points);
 
   useEffect(() => { norm_ref.current = norm_points; }, [norm_points]);
+  useEffect(() => { hovered_idx_ref.current = hovered_idx; }, [hovered_idx]);
 
   /* ═══════════════════════════════════════════════════════════════════ */
   /*  Three.js initialization                                            */
@@ -428,8 +430,8 @@ function Scatter({
       if (canvas_ref.current) canvas_ref.current.style.cursor = "grab";
 
       if (was_click) {
-        /* click: select hovered point */
-        const hi = hovered_idx;
+        /* click: select hovered point — read ref so value is always current */
+        const hi = hovered_idx_ref.current;
         if (hi >= 0 && norm_ref.current[hi]) {
           const pt = norm_ref.current[hi];
           set_selected_id((prev) => (prev === pt.id ? null : pt.id));
@@ -447,7 +449,7 @@ function Scatter({
       window.removeEventListener("mousemove", on_move);
       window.removeEventListener("mouseup",   on_up);
     };
-  }, [hovered_idx, on_point_click]);
+  }, [on_point_click]);
 
   /* ═══════════════════════════════════════════════════════════════════ */
   /*  Hover detection                                                    */
