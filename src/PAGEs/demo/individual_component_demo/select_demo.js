@@ -22,6 +22,9 @@ const SelectDemo = () => {
   const [phone, setPhone] = useState("");
   const [country, setCountry] = useState("US");
   const [groupedVal, setGroupedVal] = useState(null);
+  const [multiVal, setMultiVal] = useState(["apple", "cherry"]);
+  const [multiVal2, setMultiVal2] = useState([]);
+  const [multiGroupVal, setMultiGroupVal] = useState(["rice"]);
   const [groupedOptions, setGroupedOptions] = useState([
     {
       group: "Fruits",
@@ -148,6 +151,87 @@ const SelectDemo = () => {
     { label: "Sao Paulo", value: "sao_paulo", icon: "map" },
     { label: "Cape Town", value: "cape_town", icon: "map" },
   ];
+
+  /* ── options with descriptions ── */
+  const frameworkOptions = [
+    {
+      label: "React",
+      value: "react",
+      icon: "code",
+      description: "A JavaScript library for building user interfaces",
+    },
+    {
+      label: "Vue",
+      value: "vue",
+      icon: "code",
+      description: "The progressive JavaScript framework",
+    },
+    {
+      label: "Angular",
+      value: "angular",
+      icon: "code",
+      description: "Platform for building mobile & desktop web apps",
+      disabled: true,
+    },
+    {
+      label: "Svelte",
+      value: "svelte",
+      icon: "code",
+      description: "Cybernetically enhanced web apps",
+    },
+  ];
+
+  /* ── multi-select fruit options ── */
+  const fruitOptions = [
+    { label: "Apple", value: "apple", icon: "apple" },
+    { label: "Banana", value: "banana" },
+    { label: "Cherry", value: "cherry" },
+    { label: "Grape", value: "grape" },
+    { label: "Mango", value: "mango" },
+    { label: "Peach", value: "peach", disabled: true },
+  ];
+
+  /* ── multi-select grouped options ── */
+  const [multiGroupOptions, setMultiGroupOptions] = useState([
+    {
+      group: "Frontend",
+      icon: "code",
+      collapsed: false,
+      options: [
+        { label: "React", value: "react" },
+        { label: "Vue", value: "vue" },
+        { label: "Svelte", value: "svelte" },
+      ],
+    },
+    {
+      group: "Backend",
+      collapsed: false,
+      options: [
+        { label: "Node.js", value: "nodejs" },
+        { label: "Django", value: "django" },
+        { label: "Rails", value: "rails", disabled: true },
+      ],
+    },
+    {
+      group: "Database",
+      collapsed: true,
+      options: [
+        { label: "PostgreSQL", value: "postgres" },
+        { label: "MongoDB", value: "mongodb" },
+        { label: "Redis", value: "redis" },
+      ],
+    },
+  ]);
+
+  const handleMultiGroupToggle = (groupLabel) => {
+    setMultiGroupOptions((prev) =>
+      prev.map((item) =>
+        item.group === groupLabel
+          ? { ...item, collapsed: !item.collapsed }
+          : item,
+      ),
+    );
+  };
 
   return (
     <div
@@ -349,6 +433,180 @@ const SelectDemo = () => {
         placeholder="Food"
         search_placeholder="Filter..."
         dropdown_style={{ maxHeight: 300 }}
+      />
+
+      {/* ── Option Descriptions ── */}
+      <span
+        style={{
+          width: "100%",
+          textAlign: "left",
+          fontSize: "32px",
+          fontFamily: "Jost",
+          color: theme?.color || "black",
+          marginTop: 16,
+          userSelect: "none",
+        }}
+      >
+        Option Descriptions
+      </span>
+      <SinkingSelect
+        options={frameworkOptions}
+        filter_mode="panel"
+        placeholder="Select framework..."
+        search_placeholder="Search..."
+        style={{ width: 300 }}
+        dropdown_style={{ maxHeight: 300 }}
+      />
+      <Select
+        options={frameworkOptions}
+        placeholder="Framework"
+        icon="code"
+        search_placeholder="Search..."
+        dropdown_style={{ maxHeight: 300 }}
+      />
+
+      {/* ── Multi Select ── */}
+      <span
+        style={{
+          width: "100%",
+          textAlign: "left",
+          fontSize: "32px",
+          fontFamily: "Jost",
+          color: theme?.color || "black",
+          marginTop: 16,
+          userSelect: "none",
+        }}
+      >
+        Multi Select
+      </span>
+      <Select
+        options={fruitOptions}
+        value={multiVal}
+        set_value={setMultiVal}
+        multi
+        placeholder="Pick fruits..."
+        search_placeholder="Filter fruits..."
+        dropdown_style={{ maxHeight: 260 }}
+      />
+      <Select
+        options={fruitOptions}
+        value={multiVal2}
+        set_value={setMultiVal2}
+        multi
+        multi_label="fruits"
+        placeholder="Pick fruits..."
+        filterable={false}
+      />
+      <Select
+        options={fruitOptions}
+        value={multiVal2}
+        set_value={setMultiVal2}
+        multi
+        multi_label={(count) => `${count} fruit${count > 1 ? "s" : ""} chosen`}
+        placeholder="Custom label..."
+        icon="apple"
+        filterable={false}
+      />
+
+      {/* ── Multi + Grouped ── */}
+      <span
+        style={{
+          width: "100%",
+          textAlign: "left",
+          fontSize: "32px",
+          fontFamily: "Jost",
+          color: theme?.color || "black",
+          marginTop: 16,
+          userSelect: "none",
+        }}
+      >
+        Multi + Grouped
+      </span>
+      <Select
+        options={multiGroupOptions}
+        value={multiGroupVal}
+        set_value={setMultiGroupVal}
+        multi
+        multi_label="selected"
+        on_group_toggle={handleMultiGroupToggle}
+        placeholder="Pick stack..."
+        search_placeholder="Filter..."
+        dropdown_style={{ maxHeight: 320 }}
+      />
+
+      {/* ── Icon & Custom Trigger / Footer ── */}
+      <span
+        style={{
+          width: "100%",
+          textAlign: "left",
+          fontSize: "32px",
+          fontFamily: "Jost",
+          color: theme?.color || "black",
+          marginTop: 16,
+          userSelect: "none",
+        }}
+      >
+        Icon, Custom Trigger & Footer
+      </span>
+      <Select
+        options={simpleOptions}
+        value={simple}
+        set_value={setSimple}
+        icon="setting"
+        placeholder="Priority"
+        filterable={false}
+      />
+      <Select
+        options={cityOptions}
+        value={city}
+        set_value={setCity}
+        placeholder="City"
+        search_placeholder="Filter cities..."
+        dropdown_style={{ maxHeight: 220 }}
+        dropdown_footer={
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 6,
+              padding: "4px 4px",
+              fontSize: 13,
+              fontFamily: "Jost",
+              color: "rgba(10, 133, 255, 1)",
+              cursor: "pointer",
+              userSelect: "none",
+            }}
+            onClick={() => setCity(null)}
+          >
+            ✕ Clear selection
+          </div>
+        }
+      />
+      <Select
+        options={houseOptions}
+        value={house}
+        set_value={setHouse}
+        filterable={false}
+        custom_trigger={
+          <div
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 8,
+              padding: "8px 16px",
+              borderRadius: 8,
+              backgroundColor: "rgba(10, 133, 255, 0.12)",
+              color: "rgba(10, 133, 255, 1)",
+              fontFamily: "Jost",
+              fontSize: 15,
+              fontWeight: 500,
+              cursor: "pointer",
+              userSelect: "none",
+            }}
+          >
+            ♠ Choose suit
+          </div>
+        }
       />
     </div>
   );
