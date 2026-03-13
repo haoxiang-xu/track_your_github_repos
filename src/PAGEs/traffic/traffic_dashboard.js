@@ -9,6 +9,15 @@ import {
 import { ConfigContext } from "../../CONTAINERs/config/context";
 import { useIndexedStorage } from "../../BUILTIN_COMPONENTs/mini_react/mini_storage";
 import { fetchUser, fetchAllTraffic } from "./services/github_api";
+import {
+  getRangeDelta,
+  getRangeDeltaLabel,
+  hasRepoTrafficData,
+  isRepoTrafficStale,
+  mergeTimeSeries,
+  normalizeRange,
+  sumSeriesField,
+} from "./services/traffic_data";
 
 import RepoSelector from "./components/repo_selector";
 import TrafficChart from "./components/traffic_chart";
@@ -19,7 +28,6 @@ import SegmentedButton from "../../BUILTIN_COMPONENTs/input/segmented_button";
 import Button from "../../BUILTIN_COMPONENTs/input/button";
 import { Input } from "../../BUILTIN_COMPONENTs/input/input";
 import Select from "../../BUILTIN_COMPONENTs/select/select";
-import { SemiSwitch } from "../../BUILTIN_COMPONENTs/input/switch";
 import Modal from "../../BUILTIN_COMPONENTs/modal/modal";
 import Icon from "../../BUILTIN_COMPONENTs/icon/icon";
 import ArcSpinner from "../../BUILTIN_COMPONENTs/spinner/arc_spinner";
@@ -29,16 +37,7 @@ import ArcSpinner from "../../BUILTIN_COMPONENTs/spinner/arc_spinner";
    ──────────────────────────────────────────────────────── */
 
 const RANGE_OPTIONS = ["7d", "14d", "30d", "90d", "All"];
-
-/* helper: merge incoming traffic into stored data */
-function mergeTimeSeries(stored = [], incoming = []) {
-  const map = new Map();
-  for (const entry of stored) map.set(entry.timestamp, entry);
-  for (const entry of incoming) map.set(entry.timestamp, entry);
-  return Array.from(map.values()).sort(
-    (a, b) => new Date(a.timestamp) - new Date(b.timestamp),
-  );
-}
+const CACHE_TTL_MS = 60 * 60 * 1000;
 
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
    SettingsRow — a single label + control row (PuPu pattern)
@@ -548,15 +547,17 @@ const TrafficDashboard = () => {
   const fontFamily = theme?.font?.fontFamily || "Jost, sans-serif";
 
   /* ── persistent state ── */
-  const [pat, setPat] = useIndexedStorage("github_pat", "");
-  const [selectedRepos, setSelectedRepos] = useIndexedStorage(
+  const [pat, setPat, { isLoading: patLoading }] = useIndexedStorage(
+    "github_pat",
+    "",
+  );
+  const [selectedRepos, setSelectedRepos, { isLoading: selectedReposLoading }] =
+    useIndexedStorage(
     "github_selected_repos",
     [],
   );
-  const [allTrafficData, setAllTrafficData] = useIndexedStorage(
-    "github_traffic_data",
-    {},
-  );
+  const [allTrafficData, setAllTrafficData, { isLoading: trafficDataLoading }] =
+    useIndexedStorage("github_traffic_data", {});
 
   /* ── ephemeral state ── */
   const [user, setUser] = useState(null);
@@ -566,10 +567,15 @@ const TrafficDashboard = () => {
   const [activeRepo, setActiveRepo] = useState(null);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [repoLoadingState, setRepoLoadingState] = useState({});
+  const inFlightFetchesRef = useRef(new Map());
+  const storageReady =
+    !patLoading && !selectedReposLoading && !trafficDataLoading;
 
   /* ── auto-reconnect on load if PAT exists ── */
   const reconnected = useRef(false);
   useEffect(() => {
+    if (patLoading) return;
     if (pat && !user && !reconnected.current) {
       reconnected.current = true;
       fetchUser(pat)
@@ -578,93 +584,155 @@ const TrafficDashboard = () => {
           /* stale token – do nothing */
         });
     }
-  }, [pat, user]);
+  }, [pat, patLoading, user]);
 
-  /* Auto-select first repo if none active */
+  /* Auto-select first repo if none active or if the previous one was removed */
   useEffect(() => {
-    if (!activeRepo && selectedRepos?.length > 0) {
+    if (!selectedRepos?.length) {
+      if (activeRepo) setActiveRepo(null);
+      return;
+    }
+
+    if (!activeRepo || !selectedRepos.includes(activeRepo)) {
       setActiveRepo(selectedRepos[0]);
     }
   }, [selectedRepos, activeRepo]);
 
+  const fetchRepoTraffic = useCallback(
+    async (fullName) => {
+      if (!pat || !fullName) return null;
+
+      const inFlight = inFlightFetchesRef.current.get(fullName);
+      if (inFlight) return inFlight;
+
+      const [owner, repo] = fullName.split("/");
+
+      const request = (async () => {
+        setRepoLoadingState((prev) => ({ ...prev, [fullName]: true }));
+
+        try {
+          const traffic = await fetchAllTraffic(pat, owner, repo);
+
+          setAllTrafficData((prev) => {
+            const next = { ...(prev || {}) };
+            const previousData = next[fullName] || {};
+
+            next[fullName] = {
+              views: mergeTimeSeries(
+                previousData.views || [],
+                traffic.views?.views || [],
+              ),
+              clones: mergeTimeSeries(
+                previousData.clones || [],
+                traffic.clones?.clones || [],
+              ),
+              referrers: traffic.referrers || [],
+              paths: traffic.paths || [],
+              lastFetched: new Date().toISOString(),
+            };
+
+            return next;
+          });
+
+          return traffic;
+        } catch (e) {
+          console.warn(`Failed to fetch traffic for ${fullName}:`, e);
+          throw e;
+        } finally {
+          inFlightFetchesRef.current.delete(fullName);
+          setRepoLoadingState((prev) => {
+            if (!prev[fullName]) return prev;
+            const next = { ...prev };
+            delete next[fullName];
+            return next;
+          });
+        }
+      })();
+
+      inFlightFetchesRef.current.set(fullName, request);
+      return request;
+    },
+    [pat, setAllTrafficData],
+  );
+
   /* ── fetch all traffic data ── */
   const handleRefresh = useCallback(async () => {
     if (!pat || !selectedRepos?.length) return;
+
     setLoading(true);
-    const newData = { ...allTrafficData };
-    for (let i = 0; i < selectedRepos.length; i++) {
-      const fullName = selectedRepos[i];
-      const [owner, repo] = fullName.split("/");
-      setFetchProgress(`${i + 1}/${selectedRepos.length}  ${repo}`);
-      try {
-        const traffic = await fetchAllTraffic(pat, owner, repo);
-        const prev = newData[fullName] || {};
-        newData[fullName] = {
-          views: mergeTimeSeries(prev.views || [], traffic.views?.views || []),
-          clones: mergeTimeSeries(
-            prev.clones || [],
-            traffic.clones?.clones || [],
-          ),
-          referrers: traffic.referrers || [],
-          paths: traffic.paths || [],
-          lastFetched: new Date().toISOString(),
-        };
-      } catch (e) {
-        console.warn(`Failed to fetch traffic for ${fullName}:`, e);
+    try {
+      for (let i = 0; i < selectedRepos.length; i++) {
+        const fullName = selectedRepos[i];
+        const [, repo] = fullName.split("/");
+        setFetchProgress(`${i + 1}/${selectedRepos.length}  ${repo}`);
+
+        try {
+          await fetchRepoTraffic(fullName);
+        } catch (_error) {
+          /* keep refreshing the remaining repos */
+        }
       }
+    } finally {
+      setLoading(false);
+      setFetchProgress("");
     }
-    setAllTrafficData(newData);
-    setLoading(false);
-    setFetchProgress("");
-  }, [pat, selectedRepos, allTrafficData, setAllTrafficData]);
+  }, [pat, selectedRepos, fetchRepoTraffic]);
+
+  useEffect(() => {
+    if (!storageReady || !pat || !user || !activeRepo) return;
+
+    const cachedRepoData = allTrafficData?.[activeRepo];
+    const needsInitialFetch = !hasRepoTrafficData(cachedRepoData);
+    const needsBackgroundRefresh = isRepoTrafficStale(
+      cachedRepoData,
+      CACHE_TTL_MS,
+    );
+
+    if (needsInitialFetch || needsBackgroundRefresh) {
+      fetchRepoTraffic(activeRepo).catch(() => {
+        /* keep showing cached data / placeholder */
+      });
+    }
+  }, [storageReady, pat, user, activeRepo, allTrafficData, fetchRepoTraffic]);
 
   /* ── active repo data ── */
   const repoData = useMemo(() => {
     if (!activeRepo || !allTrafficData) return null;
     return allTrafficData[activeRepo] || null;
   }, [activeRepo, allTrafficData]);
+  const normalizedRange = useMemo(() => normalizeRange(range), [range]);
+  const activeRepoLoading = Boolean(activeRepo && repoLoadingState[activeRepo]);
+  const hasActiveRepoData = hasRepoTrafficData(repoData);
+  const deltaLabel = useMemo(
+    () => getRangeDeltaLabel(normalizedRange),
+    [normalizedRange],
+  );
 
   /* ── compute stats ── */
   const stats = useMemo(() => {
     if (!repoData)
       return { totalViews: 0, uniqueViews: 0, totalClones: 0, uniqueClones: 0 };
-    const sumField = (arr, key) =>
-      (arr || []).reduce((s, d) => s + (d[key] || 0), 0);
     return {
-      totalViews: sumField(repoData.views, "count"),
-      uniqueViews: sumField(repoData.views, "uniques"),
-      totalClones: sumField(repoData.clones, "count"),
-      uniqueClones: sumField(repoData.clones, "uniques"),
+      totalViews: sumSeriesField(repoData.views, "count", normalizedRange),
+      uniqueViews: sumSeriesField(repoData.views, "uniques", normalizedRange),
+      totalClones: sumSeriesField(repoData.clones, "count", normalizedRange),
+      uniqueClones: sumSeriesField(
+        repoData.clones,
+        "uniques",
+        normalizedRange,
+      ),
     };
-  }, [repoData]);
+  }, [repoData, normalizedRange]);
 
-  /* ── delta (last 14d vs prev 14d) ── */
+  /* ── delta (current range vs previous same-length range) ── */
   const deltas = useMemo(() => {
-    if (!repoData?.views?.length) return {};
-    const now = new Date();
-    const d14 = new Date(now);
-    d14.setDate(d14.getDate() - 14);
-    const d28 = new Date(now);
-    d28.setDate(d28.getDate() - 28);
-
-    const sumRange = (arr, key, from, to) =>
-      (arr || [])
-        .filter((d) => {
-          const t = new Date(d.timestamp);
-          return t >= from && t < to;
-        })
-        .reduce((s, d) => s + (d[key] || 0), 0);
-
-    const viewsRecent = sumRange(repoData.views, "count", d14, now);
-    const viewsPrev = sumRange(repoData.views, "count", d28, d14);
-    const clonesRecent = sumRange(repoData.clones, "count", d14, now);
-    const clonesPrev = sumRange(repoData.clones, "count", d28, d14);
+    if (!repoData) return {};
 
     return {
-      viewsDelta: viewsPrev ? viewsRecent - viewsPrev : null,
-      clonesDelta: clonesPrev ? clonesRecent - clonesPrev : null,
+      viewsDelta: getRangeDelta(repoData.views, "count", normalizedRange),
+      clonesDelta: getRangeDelta(repoData.clones, "count", normalizedRange),
     };
-  }, [repoData]);
+  }, [repoData, normalizedRange]);
 
   /* ── colors ── */
   const baseColor = isDark ? "#e0e0e0" : "#1a1a1a";
@@ -919,7 +987,7 @@ const TrafficDashboard = () => {
                 style={{ fontSize: 13, marginTop: 8 }}
               />
             </div>
-          ) : !repoData ? (
+          ) : !activeRepo ? (
             <div
               style={{
                 display: "flex",
@@ -932,7 +1000,7 @@ const TrafficDashboard = () => {
               }}
             >
               <div style={{ fontSize: 14, color: mutedColor }}>
-                Select repos and click "Fetch Traffic" to start
+                Select repos to start
               </div>
             </div>
           ) : (
@@ -951,7 +1019,7 @@ const TrafficDashboard = () => {
                   label="Views"
                   value={stats.totalViews}
                   delta={deltas.viewsDelta}
-                  deltaLabel="vs prev 14d"
+                  deltaLabel={deltaLabel}
                   icon="👁"
                 />
                 <StatCard
@@ -963,7 +1031,7 @@ const TrafficDashboard = () => {
                   label="Clones"
                   value={stats.totalClones}
                   delta={deltas.clonesDelta}
-                  deltaLabel="vs prev 14d"
+                  deltaLabel={deltaLabel}
                   icon="📦"
                 />
                 <StatCard
@@ -983,10 +1051,11 @@ const TrafficDashboard = () => {
                 }}
               >
                 <TrafficChart
-                  data={repoData.views}
+                  data={repoData?.views || []}
                   title="Page Views"
-                  range={range === "All" ? "all" : range.toLowerCase()}
+                  range={normalizedRange}
                   height={240}
+                  isLoading={activeRepoLoading}
                 />
               </div>
 
@@ -999,12 +1068,13 @@ const TrafficDashboard = () => {
                 }}
               >
                 <TrafficChart
-                  data={repoData.clones}
+                  data={repoData?.clones || []}
                   title="Git Clones"
-                  range={range === "All" ? "all" : range.toLowerCase()}
+                  range={normalizedRange}
                   height={240}
                   color1={isDark ? "#86efac" : "#22c55e"}
                   color2={isDark ? "#fbbf24" : "#d97706"}
+                  isLoading={activeRepoLoading}
                 />
               </div>
 
@@ -1024,7 +1094,7 @@ const TrafficDashboard = () => {
                     padding: 22,
                   }}
                 >
-                  <ReferrersTable data={repoData.referrers} />
+                  <ReferrersTable data={repoData?.referrers || []} />
                 </div>
                 <div
                   style={{
@@ -1034,12 +1104,12 @@ const TrafficDashboard = () => {
                     padding: 22,
                   }}
                 >
-                  <PopularPathsTable data={repoData.paths} />
+                  <PopularPathsTable data={repoData?.paths || []} />
                 </div>
               </div>
 
               {/* last fetched note */}
-              {repoData.lastFetched && (
+              {repoData?.lastFetched && hasActiveRepoData && (
                 <div
                   style={{
                     fontSize: 11,

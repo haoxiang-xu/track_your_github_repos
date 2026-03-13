@@ -1,33 +1,13 @@
 /* ─────────────────────────────────────────────────────────
    Traffic data accumulation & persistence layer.
-   
+
    Uses useIndexedStorage to keep historical traffic data
    in IndexedDB so it survives past the 14-day GitHub window.
    ──────────────────────────────────────────────────────── */
 
 import { useCallback, useRef } from "react";
 import { useIndexedStorage } from "../../BUILTIN_COMPONENTs/mini_react/mini_storage";
-
-/* ── merge helper ───────────────────────────────────────── */
-
-/**
- * Merge a fresh 14-day array from GitHub into an existing historical array.
- * Each entry has { timestamp (ISO string), count, uniques }.
- * We de-duplicate by timestamp and keep the newest value for each date.
- */
-function mergeTimeSeries(stored = [], incoming = []) {
-  const map = new Map();
-  for (const entry of stored) {
-    map.set(entry.timestamp, entry);
-  }
-  for (const entry of incoming) {
-    // GitHub always gives the latest value for each day — overwrite
-    map.set(entry.timestamp, entry);
-  }
-  return Array.from(map.values()).sort(
-    (a, b) => new Date(a.timestamp) - new Date(b.timestamp),
-  );
-}
+import { mergeTimeSeries } from "./traffic_data";
 
 /* ── hook ────────────────────────────────────────────────── */
 
