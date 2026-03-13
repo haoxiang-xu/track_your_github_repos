@@ -1,7 +1,8 @@
-import { useContext, useMemo } from "react";
+import { useContext, useId, useMemo } from "react";
 import {
   AreaChart,
   Area,
+  Line,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -196,6 +197,7 @@ const TrafficChart = ({
   const { theme, onThemeMode } = useContext(ConfigContext);
   const isDark = onThemeMode === "dark_mode";
   const fontFamily = theme?.font?.fontFamily || "Jost, sans-serif";
+  const gradientScope = useId().replace(/:/g, "");
 
   /* ── palette ─────────────────────────────────────────── */
   const totalColor = color1 || (isDark ? "#93c5fd" : "#3b82f6");
@@ -203,6 +205,8 @@ const TrafficChart = ({
   const axisColor = isDark ? "rgba(255,255,255,0.18)" : "rgba(0,0,0,0.12)";
   const labelColor = isDark ? "rgba(255,255,255,0.4)" : "rgba(0,0,0,0.35)";
   const baseColor = isDark ? "#e0e0e0" : "#1a1a1a";
+  const totalGradientId = `traffic-total-${gradientScope}`;
+  const uniqueGradientId = `traffic-unique-${gradientScope}`;
 
   /* ── filter by range ─────────────────────────────────── */
   const chartData = useMemo(
@@ -245,13 +249,7 @@ const TrafficChart = ({
               margin={{ top: 4, right: 4, bottom: 0, left: -20 }}
             >
               <defs>
-                <linearGradient
-                  id={`grad-total-${title}`}
-                  x1="0"
-                  y1="0"
-                  x2="0"
-                  y2="1"
-                >
+                <linearGradient id={totalGradientId} x1="0" y1="0" x2="0" y2="1">
                   <stop offset="0%" stopColor={totalColor} stopOpacity={0.25} />
                   <stop
                     offset="100%"
@@ -260,7 +258,7 @@ const TrafficChart = ({
                   />
                 </linearGradient>
                 <linearGradient
-                  id={`grad-unique-${title}`}
+                  id={uniqueGradientId}
                   x1="0"
                   y1="0"
                   x2="0"
@@ -315,10 +313,34 @@ const TrafficChart = ({
                 type="monotone"
                 dataKey="count"
                 name="Total"
+                stroke="none"
+                fill={`url(#${totalGradientId})`}
+                fillOpacity={1}
+                dot={false}
+                activeDot={false}
+                tooltipType="none"
+                isAnimationActive={false}
+              />
+              <Area
+                type="monotone"
+                dataKey="uniques"
+                name="Unique"
+                stroke="none"
+                fill={`url(#${uniqueGradientId})`}
+                fillOpacity={1}
+                dot={false}
+                activeDot={false}
+                tooltipType="none"
+                isAnimationActive={false}
+              />
+              <Line
+                type="monotone"
+                dataKey="count"
+                name="Total"
                 stroke={totalColor}
                 strokeWidth={2}
-                fill={`url(#grad-total-${title})`}
                 dot={false}
+                isAnimationActive={false}
                 activeDot={{
                   r: 4,
                   fill: totalColor,
@@ -326,14 +348,14 @@ const TrafficChart = ({
                   strokeWidth: 2,
                 }}
               />
-              <Area
+              <Line
                 type="monotone"
                 dataKey="uniques"
                 name="Unique"
                 stroke={uniqueColor}
                 strokeWidth={2}
-                fill={`url(#grad-unique-${title})`}
                 dot={false}
+                isAnimationActive={false}
                 activeDot={{
                   r: 4,
                   fill: uniqueColor,

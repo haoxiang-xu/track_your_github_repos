@@ -8,10 +8,7 @@ import {
 } from "react";
 import { ConfigContext } from "../../CONTAINERs/config/context";
 import { useIndexedStorage } from "../../BUILTIN_COMPONENTs/mini_react/mini_storage";
-import {
-  fetchAllTraffic,
-  fetchUser,
-} from "./services/github_api";
+import { fetchAllTraffic, fetchUser } from "./services/github_api";
 import {
   getRangeDelta,
   getRangeDeltaLabel,
@@ -65,7 +62,7 @@ const TrafficDashboard = () => {
   const [fetchProgress, setFetchProgress] = useState("");
   const [range, setRange] = useState("All");
   const [activeRepo, setActiveRepo] = useState(null);
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const { sidebarOpen, setSidebarOpen } = useContext(ConfigContext);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [repoLoadingState, setRepoLoadingState] = useState({});
   const inFlightFetchesRef = useRef(new Map());
@@ -245,11 +242,7 @@ const TrafficDashboard = () => {
       totalViews: sumSeriesField(repoData.views, "count", normalizedRange),
       uniqueViews: sumSeriesField(repoData.views, "uniques", normalizedRange),
       totalClones: sumSeriesField(repoData.clones, "count", normalizedRange),
-      uniqueClones: sumSeriesField(
-        repoData.clones,
-        "uniques",
-        normalizedRange,
-      ),
+      uniqueClones: sumSeriesField(repoData.clones, "uniques", normalizedRange),
     };
   }, [normalizedRange, repoData]);
 
@@ -264,29 +257,6 @@ const TrafficDashboard = () => {
     };
   }, [normalizedRange, repoData]);
 
-  const localDataSummary = useMemo(() => {
-    const repoEntries = Object.values(allTrafficData || {});
-    const lastFetched = repoEntries.reduce((latest, entry) => {
-      if (!entry?.lastFetched) {
-        return latest;
-      }
-
-      if (!latest) {
-        return entry.lastFetched;
-      }
-
-      return new Date(entry.lastFetched).getTime() >
-        new Date(latest).getTime()
-        ? entry.lastFetched
-        : latest;
-    }, null);
-
-    return {
-      trackedRepoCount: repoEntries.length,
-      lastFetched,
-    };
-  }, [allTrafficData]);
-
   const handleClearLocalData = useCallback(() => {
     setSelectedRepos([]);
     setAllTrafficData({});
@@ -296,21 +266,12 @@ const TrafficDashboard = () => {
     setRepoLoadingState({});
   }, [setAllTrafficData, setSelectedRepos]);
 
-  const baseColor = isDark ? "rgba(255,255,255,0.92)" : "#151821";
-  const mutedColor = isDark ? "rgba(255,255,255,0.52)" : "rgba(21,24,33,0.56)";
+  const baseColor = isDark ? "rgba(255,255,255,0.92)" : "#232323";
+  const mutedColor = isDark ? "rgba(255,255,255,0.52)" : "rgba(29, 29, 29, 0.56)";
   const subtleColor = isDark ? "rgba(255,255,255,0.34)" : "rgba(21,24,33,0.34)";
   const sidebarBorder = isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.08)";
-  const pageBackground = isDark
-    ? "radial-gradient(circle at top left, rgba(84,103,255,0.18), transparent 26%), linear-gradient(180deg, #090a0d 0%, #101217 100%)"
-    : "radial-gradient(circle at top left, rgba(125,140,255,0.18), transparent 24%), linear-gradient(180deg, #f7f8fb 0%, #edf1f7 100%)";
-  const chromeSurface = isDark ? "rgba(255,255,255,0.035)" : "rgba(255,255,255,0.72)";
-  const chromeBlur = "blur(20px)";
-  const cardBg = isDark ? "rgba(255,255,255,0.045)" : "rgba(255,255,255,0.82)";
-  const cardBorder = isDark ? "rgba(255,255,255,0.08)" : "rgba(17,24,39,0.08)";
-  const cardShadow = isDark
-    ? "0 24px 48px rgba(0,0,0,0.22)"
-    : "0 18px 40px rgba(50,60,90,0.10)";
-  const topBarBg = isDark ? "rgba(11,12,16,0.62)" : "rgba(255,255,255,0.58)";
+  const pageBackground = isDark ? "#181818" : "#f5f5f5";
+  const sidebarBg = isDark ? "#151515" : "rgb(245, 245, 245)";
 
   return (
     <div
@@ -331,116 +292,49 @@ const TrafficDashboard = () => {
           transition: "width 0.28s ease, min-width 0.28s ease",
           overflow: "hidden",
           borderRight: sidebarOpen ? `1px solid ${sidebarBorder}` : "none",
-          backgroundColor: chromeSurface,
-          backdropFilter: chromeBlur,
-          WebkitBackdropFilter: chromeBlur,
+          backgroundColor: sidebarBg,
           display: "flex",
           flexDirection: "column",
         }}
       >
-        <div style={{ padding: "26px 24px 18px" }}>
-          <div
-            style={{
-              fontSize: 11,
-              textTransform: "uppercase",
-              letterSpacing: "0.14em",
-              color: subtleColor,
-            }}
-          >
-            Desktop Tracker
-          </div>
-          <div
-            style={{
-              marginTop: 8,
-              fontSize: 28,
-              lineHeight: 1.05,
-              fontWeight: 600,
-              fontFamily: "NunitoSans, sans-serif",
-            }}
-          >
-            Repo Traffic
-          </div>
-          <div
-            style={{
-              marginTop: 10,
-              fontSize: 13,
-              lineHeight: 1.55,
-              color: mutedColor,
-              maxWidth: 260,
-            }}
-          >
-            Local-first GitHub traffic history that keeps accumulating beyond
-            GitHub&apos;s 14-day window.
-          </div>
-        </div>
-
         <div
           style={{
-            padding: "0 16px 16px",
+            padding: "50px 16px 0 16px",
             flex: 1,
             overflow: "hidden",
             display: "flex",
             flexDirection: "column",
+            gap: 10,
           }}
         >
           <div
             style={{
-              padding: 14,
-              borderRadius: 16,
-              border: `1px solid ${cardBorder}`,
-              backgroundColor: cardBg,
-              boxShadow: cardShadow,
               display: "flex",
-              flexDirection: "column",
-              gap: 14,
-              minHeight: 0,
-              flex: 1,
+              alignItems: "center",
+              justifyContent: "space-between",
+              padding: "0 4px",
             }}
           >
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                gap: 12,
-              }}
-            >
-              <div>
-                <div
-                  style={{
-                    fontSize: 12,
-                    textTransform: "uppercase",
-                    letterSpacing: "0.08em",
-                    color: subtleColor,
-                  }}
-                >
-                  Repositories
-                </div>
-                <div style={{ marginTop: 4, fontSize: 13, color: mutedColor }}>
-                  {user
-                    ? `${selectedRepos.length} selected, ${localDataSummary.trackedRepoCount} cached`
-                    : "Connect GitHub to browse repositories"}
-                </div>
+            <span style={{ fontSize: 13, color: mutedColor }}>
+              {user ? `${selectedRepos.length} selected` : "Connect GitHub"}
+            </span>
+            {loading ? (
+              <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                <ArcSpinner style={{ width: 16, height: 16 }} />
+                <span style={{ fontSize: 11, color: mutedColor }}>
+                  {fetchProgress || "Updating"}
+                </span>
               </div>
+            ) : null}
+          </div>
 
-              {loading ? (
-                <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                  <ArcSpinner style={{ width: 16, height: 16 }} />
-                  <span style={{ fontSize: 11, color: mutedColor }}>
-                    {fetchProgress || "Updating"}
-                  </span>
-                </div>
-              ) : null}
-            </div>
-
-            <div style={{ minHeight: 0, flex: 1 }}>
-              <RepoSelector
-                pat={pat}
-                user={user}
-                selectedRepos={selectedRepos || []}
-                setSelectedRepos={setSelectedRepos}
-              />
-            </div>
+          <div style={{ minHeight: 0, flex: 1 }}>
+            <RepoSelector
+              pat={pat}
+              user={user}
+              selectedRepos={selectedRepos || []}
+              setSelectedRepos={setSelectedRepos}
+            />
           </div>
         </div>
 
@@ -493,15 +387,12 @@ const TrafficDashboard = () => {
         }}
       >
         <div
+          className="scrollable"
           style={{
-            padding: "22px 28px 20px",
-            borderBottom: `1px solid ${sidebarBorder}`,
-            backgroundColor: topBarBg,
-            backdropFilter: chromeBlur,
-            WebkitBackdropFilter: chromeBlur,
-            display: "flex",
-            flexDirection: "column",
-            gap: 18,
+            flex: 1,
+            minHeight: 0,
+            overflowY: "auto",
+            padding: "50px 28px 28px 28px",
           }}
         >
           <div
@@ -510,40 +401,15 @@ const TrafficDashboard = () => {
               alignItems: "center",
               gap: 14,
               flexWrap: "wrap",
+              marginBottom: 14,
             }}
           >
-            <Button
-              prefix_icon={sidebarOpen ? "side_menu_close" : "side_menu_left"}
-              onClick={() => setSidebarOpen((value) => !value)}
-              style={{
-                paddingVertical: 6,
-                paddingHorizontal: 6,
-                borderRadius: 6,
-                opacity: 0.62,
-                content: {
-                  icon: { width: 18, height: 18 },
-                },
-              }}
-            />
-
             <div style={{ minWidth: 0, flex: 1 }}>
               <div
                 style={{
-                  fontSize: 11,
-                  textTransform: "uppercase",
-                  letterSpacing: "0.14em",
-                  color: subtleColor,
-                }}
-              >
-                Overview
-              </div>
-              <div
-                style={{
-                  marginTop: 6,
-                  fontSize: 26,
-                  lineHeight: 1.05,
-                  fontWeight: 600,
-                  fontFamily: "NunitoSans, sans-serif",
+                  fontSize: 20,
+                  lineHeight: 1.2,
+                  fontWeight: 500,
                 }}
               >
                 {activeRepo
@@ -551,11 +417,6 @@ const TrafficDashboard = () => {
                   : user
                     ? "Select a repository"
                     : "Connect GitHub to begin"}
-              </div>
-              <div style={{ marginTop: 8, fontSize: 13, color: mutedColor }}>
-                {user
-                  ? `Last sync: ${formatTimestamp(localDataSummary.lastFetched)}`
-                  : "Your GitHub token stays on this device."}
               </div>
             </div>
 
@@ -568,7 +429,14 @@ const TrafficDashboard = () => {
           </div>
 
           {selectedRepos?.length > 0 ? (
-            <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+            <div
+              style={{
+                display: "flex",
+                gap: 6,
+                flexWrap: "wrap",
+                marginBottom: 18,
+              }}
+            >
               {selectedRepos.map((repoName) => {
                 const isActive = repoName === activeRepo;
                 const label = repoName.split("/")[1];
@@ -578,20 +446,19 @@ const TrafficDashboard = () => {
                     key={repoName}
                     onClick={() => setActiveRepo(repoName)}
                     style={{
-                      border: `1px solid ${isActive ? "transparent" : cardBorder}`,
+                      border: "1px solid transparent",
                       backgroundColor: isActive
                         ? isDark
-                          ? "rgba(147,197,253,0.18)"
-                          : "rgba(59,130,246,0.12)"
-                        : cardBg,
+                          ? "rgba(255,255,255,0.1)"
+                          : "rgba(0,0,0,0.08)"
+                        : "transparent",
                       borderRadius: 999,
-                      padding: "7px 14px",
+                      padding: "6px 14px",
                       color: isActive ? baseColor : mutedColor,
                       fontFamily,
                       fontSize: 13,
                       fontWeight: isActive ? 500 : 400,
                       cursor: "pointer",
-                      boxShadow: isActive ? cardShadow : "none",
                     }}
                   >
                     {label}
@@ -600,17 +467,6 @@ const TrafficDashboard = () => {
               })}
             </div>
           ) : null}
-        </div>
-
-        <div
-          className="scrollable"
-          style={{
-            flex: 1,
-            minHeight: 0,
-            overflowY: "auto",
-            padding: 28,
-          }}
-        >
           {!user ? (
             <div
               style={{
@@ -624,29 +480,13 @@ const TrafficDashboard = () => {
                 style={{
                   width: "min(520px, 100%)",
                   padding: "28px 30px",
-                  borderRadius: 20,
-                  border: `1px solid ${cardBorder}`,
-                  backgroundColor: cardBg,
-                  boxShadow: cardShadow,
                 }}
               >
                 <div
                   style={{
-                    fontSize: 12,
-                    textTransform: "uppercase",
-                    letterSpacing: "0.14em",
-                    color: subtleColor,
-                  }}
-                >
-                  Getting Started
-                </div>
-                <div
-                  style={{
-                    marginTop: 10,
-                    fontSize: 30,
-                    lineHeight: 1.05,
-                    fontWeight: 600,
-                    fontFamily: "NunitoSans, sans-serif",
+                    fontSize: 26,
+                    lineHeight: 1.15,
+                    fontWeight: 500,
                   }}
                 >
                   Track repository traffic locally.
@@ -659,9 +499,9 @@ const TrafficDashboard = () => {
                     color: mutedColor,
                   }}
                 >
-                  Connect a GitHub Personal Access Token, choose the repositories
-                  you want to watch, then keep accumulating views and clones on
-                  this device over time.
+                  Connect a GitHub Personal Access Token, choose the
+                  repositories you want to watch, then keep accumulating views
+                  and clones on this device over time.
                 </div>
                 <div style={{ marginTop: 18 }}>
                   <Button
@@ -686,10 +526,6 @@ const TrafficDashboard = () => {
                 style={{
                   width: "min(420px, 100%)",
                   padding: "24px 26px",
-                  borderRadius: 18,
-                  border: `1px solid ${cardBorder}`,
-                  backgroundColor: cardBg,
-                  boxShadow: cardShadow,
                   textAlign: "center",
                 }}
               >
@@ -745,43 +581,23 @@ const TrafficDashboard = () => {
                 />
               </div>
 
-              <div
-                style={{
-                  backgroundColor: cardBg,
-                  border: `1px solid ${cardBorder}`,
-                  borderRadius: 18,
-                  padding: "24px 24px 16px",
-                  boxShadow: cardShadow,
-                }}
-              >
-                <TrafficChart
-                  data={repoData?.views || []}
-                  title="Page Views"
-                  range={normalizedRange}
-                  height={250}
-                  isLoading={activeRepoLoading}
-                />
-              </div>
+              <TrafficChart
+                data={repoData?.views || []}
+                title="Page Views"
+                range={normalizedRange}
+                height={250}
+                isLoading={activeRepoLoading}
+              />
 
-              <div
-                style={{
-                  backgroundColor: cardBg,
-                  border: `1px solid ${cardBorder}`,
-                  borderRadius: 18,
-                  padding: "24px 24px 16px",
-                  boxShadow: cardShadow,
-                }}
-              >
-                <TrafficChart
-                  data={repoData?.clones || []}
-                  title="Git Clones"
-                  range={normalizedRange}
-                  height={250}
-                  color1={isDark ? "#86efac" : "#16a34a"}
-                  color2={isDark ? "#fbbf24" : "#d97706"}
-                  isLoading={activeRepoLoading}
-                />
-              </div>
+              <TrafficChart
+                data={repoData?.clones || []}
+                title="Git Clones"
+                range={normalizedRange}
+                height={250}
+                color1={isDark ? "#86efac" : "#16a34a"}
+                color2={isDark ? "#fbbf24" : "#d97706"}
+                isLoading={activeRepoLoading}
+              />
 
               <div
                 style={{
@@ -790,29 +606,8 @@ const TrafficDashboard = () => {
                   gap: 20,
                 }}
               >
-                <div
-                  style={{
-                    backgroundColor: cardBg,
-                    border: `1px solid ${cardBorder}`,
-                    borderRadius: 18,
-                    padding: 22,
-                    boxShadow: cardShadow,
-                  }}
-                >
-                  <ReferrersTable data={repoData?.referrers || []} />
-                </div>
-
-                <div
-                  style={{
-                    backgroundColor: cardBg,
-                    border: `1px solid ${cardBorder}`,
-                    borderRadius: 18,
-                    padding: 22,
-                    boxShadow: cardShadow,
-                  }}
-                >
-                  <PopularPathsTable data={repoData?.paths || []} />
-                </div>
+                <ReferrersTable data={repoData?.referrers || []} />
+                <PopularPathsTable data={repoData?.paths || []} />
               </div>
 
               {repoData?.lastFetched && hasActiveRepoData ? (

@@ -24,11 +24,16 @@ import available_themes from "../../BUILTIN_COMPONENTs/theme/theme_manifest";
 /* { Data } ------------------------------------------------------------------------------------------------------------------ */
 
 const ConfigContainer = ({ children }) => {
+  /* { SIDEBAR } ========================================================================================================= */
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  /* { SIDEBAR } ========================================================================================================= */
+
   /* { STYLE } =========================================================================================================== */
   /* { global theme } ---------------------------------------------------------------------------------------------------- */
   const system_theme = useSystemTheme();
   const [theme, setTheme] = useState(null);
-  const [syncWithSystemThemeState, setSyncWithSystemThemeState] = useState(true);
+  const [syncWithSystemThemeState, setSyncWithSystemThemeState] =
+    useState(true);
   const [onThemeModeState, setOnThemeModeState] = useState(
     system_theme === "dark_mode" ? "dark_mode" : "light_mode",
   );
@@ -121,6 +126,9 @@ const ConfigContainer = ({ children }) => {
   return (
     <ConfigContext.Provider
       value={{
+        /* { SIDEBAR } ======================================== */
+        sidebarOpen,
+        setSidebarOpen,
         /* { STYLE } ========================================== */
         syncWithSystemTheme: syncWithSystemThemeState,
         setSyncWithSystemTheme,
@@ -149,7 +157,7 @@ const ConfigContainer = ({ children }) => {
         <div
           style={{
             position: "absolute",
-            top: runtime_platform === "electron" ? TOP_BAR_HEIGHT : 0,
+            top: 0,
             left: 0,
             right: 0,
             bottom: 0,

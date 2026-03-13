@@ -11,6 +11,7 @@ jest.mock("recharts", () => {
     ),
     AreaChart: ({ children }) => <svg data-testid="area-chart">{children}</svg>,
     Area: () => <g data-testid="area-series" />,
+    Line: () => <g data-testid="line-series" />,
     XAxis: () => null,
     YAxis: () => null,
     CartesianGrid: () => null,
@@ -46,6 +47,7 @@ describe("TrafficChart", () => {
     });
 
     expect(screen.getByTestId("area-chart")).toBeInTheDocument();
+    expect(screen.getAllByTestId("line-series")).toHaveLength(2);
     expect(
       screen.getByTestId("traffic-chart-loading-overlay"),
     ).toBeInTheDocument();

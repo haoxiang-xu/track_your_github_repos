@@ -23,8 +23,8 @@ const hasElectronWindowControls = () => {
   }
   return Boolean(
     window.runtime?.isElectron === true &&
-      window.windowStateAPI &&
-      typeof window.windowStateAPI.windowStateEventHandler === "function",
+    window.windowStateAPI &&
+    typeof window.windowStateAPI.windowStateEventHandler === "function",
   );
 };
 const WINDOWS_CONTROL_ICONS = {
@@ -34,7 +34,8 @@ const WINDOWS_CONTROL_ICONS = {
   restore: "windows_restore_button",
 };
 const TitleBar = () => {
-  const { theme, onThemeMode } = useContext(ConfigContext);
+  const { theme, onThemeMode, sidebarOpen, setSidebarOpen } =
+    useContext(ConfigContext);
   const [windowIsMaximized, setWindowIsMaximized] = useState(false);
 
   const isElectron = hasElectronWindowControls();
@@ -76,7 +77,6 @@ const TitleBar = () => {
   const topBarBackground = theme?.backgroundColor || "rgba(22, 22, 24, 0.86)";
   const topBarForeground = theme?.color || "rgba(255, 255, 255, 0.92)";
   const isDark = onThemeMode === "dark_mode";
-  const gradientBackground = `linear-gradient(180deg, ${topBarBackground} 30%, transparent 100%)`;
 
   const controlButtonStyle = (action) => {
     const onCloseButton = action === "close";
@@ -145,45 +145,32 @@ const TitleBar = () => {
         right: 0,
         height: TOP_BAR_HEIGHT,
         zIndex: 2048,
-        background: gradientBackground,
+        background: "transparent",
         color: topBarForeground,
-        WebkitBackdropFilter: "blur(20px)",
         WebkitAppRegion: "drag",
         userSelect: "none",
         WebkitUserSelect: "none",
+        pointerEvents: "none",
       }}
     >
-      <div
+      <Button
+        prefix_icon={sidebarOpen ? "side_menu_close" : "side_menu_left"}
         style={{
           position: "absolute",
           top: "50%",
-          left: isDarwin ? 96 : 16,
-          transform: "translateY(-50%)",
-          opacity: 0.84,
-          fontFamily: "Jost, sans-serif",
-          fontSize: 12,
-          letterSpacing: "0.08em",
-          textTransform: "uppercase",
-          pointerEvents: "none",
+          transform: "translate(-50%, -50%)",
+          left: isDarwin ? 90 : 14,
+          color: topBarForeground,
+          fontSize: 14,
+          marginLeft: 12,
+          WebkitAppRegion: "no-drag",
+          pointerEvents: "auto",
         }}
-      >
-        Repo Traffic
-      </div>
-
-      <div
-        style={{
-          position: "absolute",
-          top: "50%",
-          left: isDarwin ? 196 : 112,
-          transform: "translateY(-50%)",
-          opacity: 0.44,
-          fontFamily: "NunitoSans, sans-serif",
-          fontSize: 11,
-          pointerEvents: "none",
+        onClick={(e) => {
+          e.stopPropagation();
+          setSidebarOpen((prev) => !prev);
         }}
-      >
-        desktop
-      </div>
+      />
 
       {!isDarwin ? (
         <div
@@ -195,6 +182,7 @@ const TitleBar = () => {
             display: "flex",
             gap: 6,
             WebkitAppRegion: "no-drag",
+            pointerEvents: "auto",
           }}
         >
           <Button
