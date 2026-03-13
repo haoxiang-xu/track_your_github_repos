@@ -1,15 +1,97 @@
-const { app, BrowserWindow, shell, ipcMain } = require("electron");
+const { app, BrowserWindow, shell, ipcMain, safeStorage } = require("electron");
+const fs = require("fs");
 const path = require("path");
 
 const DEV_SERVER_URL =
-  process.env.ELECTRON_START_URL || "http://localhost:2907/#/mini";
-const PROD_ENTRY_HASH = "/mini";
+  process.env.ELECTRON_START_URL || "http://localhost:60312/#";
+const PROD_ENTRY_HASH = "/";
 const DEV_SERVER_RETRY_MS = 1200;
 const DARWIN_TRAFFIC_LIGHT_X = 14;
 const DARWIN_TRAFFIC_LIGHT_Y = 18;
+const GITHUB_TOKEN_FILENAME = "github-token.json";
+const DEV_SERVER_ORIGIN = (() => {
+  try {
+    return new URL(DEV_SERVER_URL).origin;
+  } catch (_error) {
+    return "http://localhost:60312";
+  }
+})();
 
 let mainWindow = null;
 let darwinTrafficLightSyncTimeout = null;
+
+const resolveGithubTokenFilePath = () =>
+  path.join(app.getPath("userData"), GITHUB_TOKEN_FILENAME);
+
+const readGithubTokenPayload = () => {
+  try {
+    const rawValue = fs.readFileSync(resolveGithubTokenFilePath(), "utf-8");
+    return JSON.parse(rawValue);
+  } catch (_error) {
+    return null;
+  }
+};
+
+const writeGithubTokenPayload = (payload) => {
+  const filePath = resolveGithubTokenFilePath();
+  fs.mkdirSync(path.dirname(filePath), { recursive: true });
+  fs.writeFileSync(filePath, JSON.stringify(payload));
+};
+
+const clearGithubToken = () => {
+  try {
+    fs.unlinkSync(resolveGithubTokenFilePath());
+  } catch (_error) {
+    // Ignore missing token files.
+  }
+};
+
+const readGithubToken = () => {
+  const payload = readGithubTokenPayload();
+  if (!payload || typeof payload.value !== "string") {
+    return "";
+  }
+
+  if (!payload.encrypted) {
+    return payload.value;
+  }
+
+  try {
+    if (!safeStorage.isEncryptionAvailable()) {
+      return "";
+    }
+    return safeStorage.decryptString(Buffer.from(payload.value, "base64"));
+  } catch (_error) {
+    return "";
+  }
+};
+
+const storeGithubToken = (token) => {
+  const normalizedToken = typeof token === "string" ? token.trim() : "";
+  if (!normalizedToken) {
+    clearGithubToken();
+    return "";
+  }
+
+  try {
+    if (safeStorage.isEncryptionAvailable()) {
+      const encryptedValue = safeStorage.encryptString(normalizedToken);
+      writeGithubTokenPayload({
+        encrypted: true,
+        value: encryptedValue.toString("base64"),
+      });
+      return normalizedToken;
+    }
+  } catch (_error) {
+    // Fall back to plaintext storage on runtimes without encryption support.
+  }
+
+  writeGithubTokenPayload({
+    encrypted: false,
+    value: normalizedToken,
+  });
+  return normalizedToken;
+};
 
 const emitWindowState = () => {
   if (!mainWindow || mainWindow.isDestroyed()) {
@@ -61,7 +143,7 @@ const scheduleDarwinTrafficLightSync = () => {
 
 const createWindowOptions = () => {
   const baseWindowOptions = {
-    title: "Mini UI",
+    title: "Repo Traffic",
     width: 1280,
     height: 820,
     minWidth: 980,
@@ -147,7 +229,7 @@ const createMainWindow = () => {
 
   mainWindow.webContents.on("will-navigate", (event, url) => {
     const isLocalAppUrl =
-      url.startsWith("file://") || url.startsWith("http://localhost:2907");
+      url.startsWith("file://") || url.startsWith(DEV_SERVER_ORIGIN);
     if (!isLocalAppUrl) {
       event.preventDefault();
       shell.openExternal(url);
@@ -216,6 +298,15 @@ ipcMain.on("window-state-event-handler", (_event, action) => {
     default:
       break;
   }
+});
+
+ipcMain.handle("github-token:get", () => readGithubToken());
+
+ipcMain.handle("github-token:set", (_event, token) => storeGithubToken(token));
+
+ipcMain.handle("github-token:clear", () => {
+  clearGithubToken();
+  return true;
 });
 
 app.whenReady().then(() => {

@@ -1,14 +1,17 @@
 import {
-  useContext,
-  useState,
   useCallback,
+  useContext,
   useEffect,
   useMemo,
   useRef,
+  useState,
 } from "react";
 import { ConfigContext } from "../../CONTAINERs/config/context";
 import { useIndexedStorage } from "../../BUILTIN_COMPONENTs/mini_react/mini_storage";
-import { fetchUser, fetchAllTraffic } from "./services/github_api";
+import {
+  fetchAllTraffic,
+  fetchUser,
+} from "./services/github_api";
 import {
   getRangeDelta,
   getRangeDeltaLabel,
@@ -18,7 +21,7 @@ import {
   normalizeRange,
   sumSeriesField,
 } from "./services/traffic_data";
-
+import { useGithubTokenStorage } from "./services/github_token_storage";
 import RepoSelector from "./components/repo_selector";
 import TrafficChart from "./components/traffic_chart";
 import StatCard from "./components/stat_card";
@@ -26,540 +29,37 @@ import ReferrersTable from "./components/referrers_table";
 import PopularPathsTable from "./components/popular_paths_table";
 import SegmentedButton from "../../BUILTIN_COMPONENTs/input/segmented_button";
 import Button from "../../BUILTIN_COMPONENTs/input/button";
-import { Input } from "../../BUILTIN_COMPONENTs/input/input";
-import Select from "../../BUILTIN_COMPONENTs/select/select";
-import Modal from "../../BUILTIN_COMPONENTs/modal/modal";
-import Icon from "../../BUILTIN_COMPONENTs/icon/icon";
 import ArcSpinner from "../../BUILTIN_COMPONENTs/spinner/arc_spinner";
-
-/* ─────────────────────────────────────────────────────────
-   Traffic Dashboard — main page
-   ──────────────────────────────────────────────────────── */
+import { SettingsModal } from "./settings/settings_modal";
 
 const RANGE_OPTIONS = ["7d", "14d", "30d", "90d", "All"];
 const CACHE_TTL_MS = 60 * 60 * 1000;
 
-/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   SettingsRow — a single label + control row (PuPu pattern)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+const formatTimestamp = (value) => {
+  if (!value) {
+    return "Never";
+  }
 
-const SettingsRow = ({ label, description, children }) => {
-  const { theme } = useContext(ConfigContext);
-  return (
-    <div
-      style={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        padding: "14px 0",
-        gap: 24,
-      }}
-    >
-      <div style={{ flex: 1, minWidth: 0 }}>
-        <div
-          style={{
-            fontSize: 14,
-            fontFamily: theme?.font?.fontFamily || "inherit",
-            color: theme?.color || "#222",
-          }}
-        >
-          {label}
-        </div>
-        {description && (
-          <div
-            style={{
-              fontSize: 12,
-              fontFamily: theme?.font?.fontFamily || "inherit",
-              color: theme?.color || "#222",
-              opacity: 0.45,
-              marginTop: 2,
-            }}
-          >
-            {description}
-          </div>
-        )}
-      </div>
-      <div style={{ flexShrink: 0 }}>{children}</div>
-    </div>
-  );
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) {
+    return "Unknown";
+  }
+
+  return date.toLocaleString();
 };
-
-/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   SettingsSection — group of rows with a title
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-
-const SettingsSection = ({ title, children }) => {
-  const { onThemeMode } = useContext(ConfigContext);
-  const isDark = onThemeMode === "dark_mode";
-  return (
-    <div style={{ marginBottom: 8 }}>
-      <div
-        style={{
-          fontSize: 11,
-          textTransform: "uppercase",
-          letterSpacing: "1.5px",
-          color: isDark ? "rgba(255,255,255,0.35)" : "rgba(0,0,0,0.35)",
-          padding: "12px 0 4px",
-        }}
-      >
-        {title}
-      </div>
-      <div
-        style={{
-          borderTop: `1px solid ${isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)"}`,
-        }}
-      >
-        {children}
-      </div>
-    </div>
-  );
-};
-
-/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   AppearancePage
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-
-const AppearancePage = () => {
-  const {
-    onThemeMode,
-    setOnThemeMode,
-    syncWithSystemTheme,
-    setSyncWithSystemTheme,
-  } = useContext(ConfigContext);
-
-  const themeValue = syncWithSystemTheme ? "sync_with_browser" : onThemeMode;
-
-  return (
-    <div style={{ padding: "8px 0" }}>
-      <SettingsSection title="Theme">
-        <SettingsRow
-          label="Color mode"
-          description="Choose between light and dark mode"
-        >
-          <Select
-            options={[
-              { value: "light_mode", label: "Light" },
-              { value: "dark_mode", label: "Dark" },
-              { value: "sync_with_browser", label: "System" },
-            ]}
-            value={themeValue}
-            set_value={(val) => {
-              if (val === "sync_with_browser") {
-                setSyncWithSystemTheme(true);
-              } else {
-                setSyncWithSystemTheme(false);
-                setOnThemeMode(val);
-              }
-            }}
-            filterable={false}
-            style={{
-              minWidth: 140,
-              fontSize: 13,
-              paddingVertical: 4,
-              paddingHorizontal: 10,
-            }}
-            option_style={{ height: 28, padding: "4px 8px", fontSize: 13 }}
-            dropdown_style={{ padding: 4 }}
-          />
-        </SettingsRow>
-      </SettingsSection>
-    </div>
-  );
-};
-
-/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   GitHubAuthPage
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-
-const GitHubAuthPage = ({ pat, setPat, user, setUser }) => {
-  const { theme, onThemeMode } = useContext(ConfigContext);
-  const isDark = onThemeMode === "dark_mode";
-
-  const [inputValue, setInputValue] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [showToken, setShowToken] = useState(false);
-
-  const connected = !!user;
-  const maskedPat = pat ? pat.slice(0, 6) + "••••••" + pat.slice(-4) : "";
-
-  const successGreen = isDark ? "#86efac" : "#22c55e";
-  const errorRed = "#f87171";
-
-  const handleConnect = useCallback(async () => {
-    const token = inputValue.trim();
-    if (!token) return;
-    setLoading(true);
-    setError(null);
-    try {
-      const u = await fetchUser(token);
-      setPat(token);
-      setUser(u);
-      setInputValue("");
-    } catch (e) {
-      setError(e.status === 401 ? "Invalid token" : e.message);
-    } finally {
-      setLoading(false);
-    }
-  }, [inputValue, setPat, setUser]);
-
-  const handleDisconnect = useCallback(() => {
-    setPat("");
-    setUser(null);
-    setError(null);
-    setShowToken(false);
-  }, [setPat, setUser]);
-
-  return (
-    <div style={{ padding: "8px 0" }}>
-      {connected ? (
-        <>
-          {/* connected profile card */}
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 16,
-              padding: "16px 0 24px",
-            }}
-          >
-            <div
-              style={{
-                width: 48,
-                height: 48,
-                borderRadius: "50%",
-                overflow: "hidden",
-                flexShrink: 0,
-                backgroundColor: isDark
-                  ? "rgba(255,255,255,0.08)"
-                  : "rgba(0,0,0,0.06)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              {user.avatar_url ? (
-                <img
-                  src={user.avatar_url}
-                  alt=""
-                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                />
-              ) : (
-                <Icon
-                  src="user"
-                  color={theme?.color || "#222"}
-                  style={{ width: 22, height: 22, opacity: 0.5 }}
-                />
-              )}
-            </div>
-            <div>
-              <div
-                style={{
-                  fontSize: 16,
-                  fontFamily: theme?.font?.fontFamily || "inherit",
-                  color: theme?.color || "#222",
-                }}
-              >
-                {user.login || user.name || "Connected"}
-              </div>
-              <div
-                style={{
-                  fontSize: 12,
-                  fontFamily: theme?.font?.fontFamily || "inherit",
-                  color: successGreen,
-                  marginTop: 2,
-                }}
-              >
-                Connected
-              </div>
-            </div>
-          </div>
-
-          <SettingsSection title="Token">
-            <SettingsRow
-              label="Personal Access Token"
-              description={showToken ? pat : maskedPat}
-            >
-              <div style={{ display: "flex", gap: 6 }}>
-                <Button
-                  prefix_icon={showToken ? "eye_closed" : "eye_open"}
-                  onClick={() => setShowToken((v) => !v)}
-                  style={{
-                    paddingVertical: 6,
-                    paddingHorizontal: 6,
-                    borderRadius: 6,
-                    opacity: 0.65,
-                    content: {
-                      icon: { width: 16, height: 16 },
-                    },
-                  }}
-                />
-              </div>
-            </SettingsRow>
-          </SettingsSection>
-
-          <SettingsSection title="Account">
-            <SettingsRow
-              label="Disconnect"
-              description="Remove saved token and disconnect from GitHub"
-            >
-              <Button
-                prefix_icon="logout"
-                label="Disconnect"
-                onClick={handleDisconnect}
-                style={{ fontSize: 13 }}
-              />
-            </SettingsRow>
-          </SettingsSection>
-        </>
-      ) : (
-        <>
-          <SettingsSection title="Connect">
-            <div style={{ padding: "14px 0" }}>
-              <div
-                style={{
-                  fontSize: 13,
-                  color: theme?.color || "#222",
-                  opacity: 0.6,
-                  marginBottom: 12,
-                }}
-              >
-                Enter a GitHub Personal Access Token with{" "}
-                <code style={{ fontSize: 12 }}>repo</code> scope to fetch
-                traffic data.
-              </div>
-              <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-                <Input
-                  placeholder="ghp_xxxxxxxxxxxxxxxxxxxx"
-                  value={inputValue}
-                  set_value={setInputValue}
-                  on_key_down={(e) => {
-                    if (e.key === "Enter") handleConnect();
-                  }}
-                  style={{
-                    fontSize: 13,
-                    paddingVertical: 6,
-                    paddingHorizontal: 10,
-                    width: 260,
-                  }}
-                />
-                <Button
-                  label={loading ? undefined : "Connect"}
-                  prefix_icon={loading ? undefined : "link"}
-                  onClick={handleConnect}
-                  disabled={loading || !inputValue.trim()}
-                  style={{ fontSize: 13 }}
-                />
-                {loading && <ArcSpinner style={{ width: 16, height: 16 }} />}
-              </div>
-              {error && (
-                <div
-                  style={{
-                    fontSize: 12,
-                    color: errorRed,
-                    marginTop: 8,
-                  }}
-                >
-                  {error}
-                </div>
-              )}
-            </div>
-          </SettingsSection>
-        </>
-      )}
-    </div>
-  );
-};
-
-/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   SettingsModal — PuPu two-pane settings
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-
-const SETTINGS_PAGES = [
-  {
-    key: "appearance",
-    icon: "sun",
-    label: "Appearance",
-    component: AppearancePage,
-  },
-  {
-    key: "github",
-    icon: "key",
-    label: "GitHub Auth",
-    component: null, // rendered inline with props
-  },
-];
-
-const SettingsModal = ({ open, onClose, pat, setPat, user, setUser }) => {
-  const { theme, onThemeMode } = useContext(ConfigContext);
-  const isDark = onThemeMode === "dark_mode";
-  const [selectedKey, setSelectedKey] = useState("appearance");
-
-  const ActivePage = useMemo(() => {
-    const page = SETTINGS_PAGES.find((p) => p.key === selectedKey);
-    return page?.component || null;
-  }, [selectedKey]);
-
-  return (
-    <Modal open={open} onClose={onClose}>
-      <div
-        style={{
-          position: "relative",
-          width: "100%",
-          maxWidth: 720,
-          margin: "0 auto",
-          height: 480,
-          borderRadius: 14,
-          overflow: "hidden",
-          display: "flex",
-          backgroundColor: isDark
-            ? "rgba(30, 30, 30, 0.95)"
-            : "rgba(255, 255, 255, 0.95)",
-          border: isDark
-            ? "1px solid rgba(255,255,255,0.08)"
-            : "1px solid rgba(0,0,0,0.06)",
-          boxShadow: isDark
-            ? "0 16px 48px rgba(0,0,0,0.4)"
-            : "0 16px 48px rgba(0,0,0,0.08)",
-          fontFamily: theme?.font?.fontFamily || "inherit",
-        }}
-      >
-        {/* ── side menu ── */}
-        <div
-          style={{
-            width: 180,
-            flexShrink: 0,
-            backgroundColor: isDark
-              ? "rgba(255,255,255,0.03)"
-              : "rgba(0,0,0,0.025)",
-            padding: "16px 10px",
-            display: "flex",
-            flexDirection: "column",
-            gap: 2,
-            borderRight: isDark
-              ? "1px solid rgba(255,255,255,0.06)"
-              : "1px solid rgba(0,0,0,0.06)",
-          }}
-        >
-          <div
-            style={{
-              fontSize: 12,
-              textTransform: "uppercase",
-              letterSpacing: "1.5px",
-              color: theme?.color || "#222",
-              opacity: 0.3,
-              padding: "8px 12px 12px",
-            }}
-          >
-            Settings
-          </div>
-
-          {SETTINGS_PAGES.map((page) => (
-            <Button
-              key={page.key}
-              prefix_icon={page.icon}
-              label={page.label}
-              onClick={() => setSelectedKey(page.key)}
-              style={{
-                width: "100%",
-                justifyContent: "flex-start",
-                fontSize: 13,
-                opacity: selectedKey === page.key ? 1 : 0.65,
-                padding: "8px 12px",
-                borderRadius: 7,
-                iconSize: 16,
-              }}
-            />
-          ))}
-        </div>
-
-        {/* ── content area ── */}
-        <div
-          className="scrollable"
-          style={{
-            position: "relative",
-            flex: 1,
-            overflowY: "auto",
-            padding: "16px 32px",
-          }}
-        >
-          {/* close button */}
-          <Button
-            prefix_icon="close"
-            onClick={onClose}
-            style={{
-              position: "absolute",
-              top: 12,
-              right: 12,
-              paddingVertical: 6,
-              paddingHorizontal: 6,
-              borderRadius: 6,
-              opacity: 0.45,
-              zIndex: 2,
-              content: {
-                prefixIconWrap: {
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  lineHeight: 0,
-                },
-                icon: { width: 14, height: 14 },
-              },
-            }}
-          />
-
-          {/* page title */}
-          <div
-            style={{
-              fontSize: 22,
-              fontFamily: theme?.font?.fontFamily || "inherit",
-              color: theme?.color || "#222",
-              padding: "8px 0 4px",
-            }}
-          >
-            {SETTINGS_PAGES.find((p) => p.key === selectedKey)?.label ||
-              "Settings"}
-          </div>
-
-          {selectedKey === "github" ? (
-            <GitHubAuthPage
-              pat={pat}
-              setPat={setPat}
-              user={user}
-              setUser={setUser}
-            />
-          ) : (
-            ActivePage && <ActivePage />
-          )}
-        </div>
-      </div>
-    </Modal>
-  );
-};
-
-/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   TrafficDashboard
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 
 const TrafficDashboard = () => {
   const { theme, onThemeMode } = useContext(ConfigContext);
   const isDark = onThemeMode === "dark_mode";
   const fontFamily = theme?.font?.fontFamily || "Jost, sans-serif";
 
-  /* ── persistent state ── */
-  const [pat, setPat, { isLoading: patLoading }] = useIndexedStorage(
-    "github_pat",
-    "",
-  );
+  const [pat, setPat, { clearPat, isLoading: patLoading }] =
+    useGithubTokenStorage();
   const [selectedRepos, setSelectedRepos, { isLoading: selectedReposLoading }] =
-    useIndexedStorage(
-    "github_selected_repos",
-    [],
-  );
+    useIndexedStorage("github_selected_repos", []);
   const [allTrafficData, setAllTrafficData, { isLoading: trafficDataLoading }] =
     useIndexedStorage("github_traffic_data", {});
 
-  /* ── ephemeral state ── */
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(false);
   const [fetchProgress, setFetchProgress] = useState("");
@@ -569,41 +69,54 @@ const TrafficDashboard = () => {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [repoLoadingState, setRepoLoadingState] = useState({});
   const inFlightFetchesRef = useRef(new Map());
+
   const storageReady =
     !patLoading && !selectedReposLoading && !trafficDataLoading;
 
-  /* ── auto-reconnect on load if PAT exists ── */
   const reconnected = useRef(false);
   useEffect(() => {
-    if (patLoading) return;
+    if (patLoading) {
+      return;
+    }
+
     if (pat && !user && !reconnected.current) {
       reconnected.current = true;
       fetchUser(pat)
-        .then((u) => setUser(u))
+        .then((account) => setUser(account))
         .catch(() => {
-          /* stale token – do nothing */
+          reconnected.current = false;
         });
+    }
+
+    if (!pat) {
+      reconnected.current = false;
+      setUser(null);
     }
   }, [pat, patLoading, user]);
 
-  /* Auto-select first repo if none active or if the previous one was removed */
   useEffect(() => {
     if (!selectedRepos?.length) {
-      if (activeRepo) setActiveRepo(null);
+      if (activeRepo) {
+        setActiveRepo(null);
+      }
       return;
     }
 
     if (!activeRepo || !selectedRepos.includes(activeRepo)) {
       setActiveRepo(selectedRepos[0]);
     }
-  }, [selectedRepos, activeRepo]);
+  }, [activeRepo, selectedRepos]);
 
   const fetchRepoTraffic = useCallback(
     async (fullName) => {
-      if (!pat || !fullName) return null;
+      if (!pat || !fullName) {
+        return null;
+      }
 
       const inFlight = inFlightFetchesRef.current.get(fullName);
-      if (inFlight) return inFlight;
+      if (inFlight) {
+        return inFlight;
+      }
 
       const [owner, repo] = fullName.split("/");
 
@@ -635,13 +148,18 @@ const TrafficDashboard = () => {
           });
 
           return traffic;
-        } catch (e) {
-          console.warn(`Failed to fetch traffic for ${fullName}:`, e);
-          throw e;
+        } catch (error) {
+          // Keep the current cache visible if a refresh fails.
+          // eslint-disable-next-line no-console
+          console.warn(`Failed to fetch traffic for ${fullName}:`, error);
+          throw error;
         } finally {
           inFlightFetchesRef.current.delete(fullName);
           setRepoLoadingState((prev) => {
-            if (!prev[fullName]) return prev;
+            if (!prev[fullName]) {
+              return prev;
+            }
+
             const next = { ...prev };
             delete next[fullName];
             return next;
@@ -655,31 +173,34 @@ const TrafficDashboard = () => {
     [pat, setAllTrafficData],
   );
 
-  /* ── fetch all traffic data ── */
   const handleRefresh = useCallback(async () => {
-    if (!pat || !selectedRepos?.length) return;
+    if (!pat || !selectedRepos?.length) {
+      return;
+    }
 
     setLoading(true);
     try {
-      for (let i = 0; i < selectedRepos.length; i++) {
-        const fullName = selectedRepos[i];
-        const [, repo] = fullName.split("/");
-        setFetchProgress(`${i + 1}/${selectedRepos.length}  ${repo}`);
+      for (let index = 0; index < selectedRepos.length; index += 1) {
+        const fullName = selectedRepos[index];
+        const [, repoName] = fullName.split("/");
+        setFetchProgress(`${index + 1}/${selectedRepos.length}  ${repoName}`);
 
         try {
           await fetchRepoTraffic(fullName);
         } catch (_error) {
-          /* keep refreshing the remaining repos */
+          // Continue refreshing the remaining repos.
         }
       }
     } finally {
       setLoading(false);
       setFetchProgress("");
     }
-  }, [pat, selectedRepos, fetchRepoTraffic]);
+  }, [fetchRepoTraffic, pat, selectedRepos]);
 
   useEffect(() => {
-    if (!storageReady || !pat || !user || !activeRepo) return;
+    if (!storageReady || !pat || !user || !activeRepo) {
+      return;
+    }
 
     const cachedRepoData = allTrafficData?.[activeRepo];
     const needsInitialFetch = !hasRepoTrafficData(cachedRepoData);
@@ -690,16 +211,18 @@ const TrafficDashboard = () => {
 
     if (needsInitialFetch || needsBackgroundRefresh) {
       fetchRepoTraffic(activeRepo).catch(() => {
-        /* keep showing cached data / placeholder */
+        // Keep showing cached data or placeholders.
       });
     }
-  }, [storageReady, pat, user, activeRepo, allTrafficData, fetchRepoTraffic]);
+  }, [activeRepo, allTrafficData, fetchRepoTraffic, pat, storageReady, user]);
 
-  /* ── active repo data ── */
   const repoData = useMemo(() => {
-    if (!activeRepo || !allTrafficData) return null;
+    if (!activeRepo || !allTrafficData) {
+      return null;
+    }
     return allTrafficData[activeRepo] || null;
   }, [activeRepo, allTrafficData]);
+
   const normalizedRange = useMemo(() => normalizeRange(range), [range]);
   const activeRepoLoading = Boolean(activeRepo && repoLoadingState[activeRepo]);
   const hasActiveRepoData = hasRepoTrafficData(repoData);
@@ -708,10 +231,16 @@ const TrafficDashboard = () => {
     [normalizedRange],
   );
 
-  /* ── compute stats ── */
   const stats = useMemo(() => {
-    if (!repoData)
-      return { totalViews: 0, uniqueViews: 0, totalClones: 0, uniqueClones: 0 };
+    if (!repoData) {
+      return {
+        totalViews: 0,
+        uniqueViews: 0,
+        totalClones: 0,
+        uniqueClones: 0,
+      };
+    }
+
     return {
       totalViews: sumSeriesField(repoData.views, "count", normalizedRange),
       uniqueViews: sumSeriesField(repoData.views, "uniques", normalizedRange),
@@ -722,26 +251,66 @@ const TrafficDashboard = () => {
         normalizedRange,
       ),
     };
-  }, [repoData, normalizedRange]);
+  }, [normalizedRange, repoData]);
 
-  /* ── delta (current range vs previous same-length range) ── */
   const deltas = useMemo(() => {
-    if (!repoData) return {};
+    if (!repoData) {
+      return {};
+    }
 
     return {
       viewsDelta: getRangeDelta(repoData.views, "count", normalizedRange),
       clonesDelta: getRangeDelta(repoData.clones, "count", normalizedRange),
     };
-  }, [repoData, normalizedRange]);
+  }, [normalizedRange, repoData]);
 
-  /* ── colors ── */
-  const baseColor = isDark ? "#e0e0e0" : "#1a1a1a";
-  const mutedColor = isDark ? "rgba(255,255,255,0.4)" : "rgba(0,0,0,0.38)";
-  const pageBg = isDark ? "#0f0f0f" : "#fafafa";
-  const sidebarBg = isDark ? "rgba(255,255,255,0.02)" : "rgba(0,0,0,0.015)";
-  const sidebarBorder = isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)";
-  const cardBg = isDark ? "rgba(255,255,255,0.03)" : "rgba(255,255,255,0.8)";
-  const cardBorder = isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)";
+  const localDataSummary = useMemo(() => {
+    const repoEntries = Object.values(allTrafficData || {});
+    const lastFetched = repoEntries.reduce((latest, entry) => {
+      if (!entry?.lastFetched) {
+        return latest;
+      }
+
+      if (!latest) {
+        return entry.lastFetched;
+      }
+
+      return new Date(entry.lastFetched).getTime() >
+        new Date(latest).getTime()
+        ? entry.lastFetched
+        : latest;
+    }, null);
+
+    return {
+      trackedRepoCount: repoEntries.length,
+      lastFetched,
+    };
+  }, [allTrafficData]);
+
+  const handleClearLocalData = useCallback(() => {
+    setSelectedRepos([]);
+    setAllTrafficData({});
+    setActiveRepo(null);
+    setRange("All");
+    setFetchProgress("");
+    setRepoLoadingState({});
+  }, [setAllTrafficData, setSelectedRepos]);
+
+  const baseColor = isDark ? "rgba(255,255,255,0.92)" : "#151821";
+  const mutedColor = isDark ? "rgba(255,255,255,0.52)" : "rgba(21,24,33,0.56)";
+  const subtleColor = isDark ? "rgba(255,255,255,0.34)" : "rgba(21,24,33,0.34)";
+  const sidebarBorder = isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.08)";
+  const pageBackground = isDark
+    ? "radial-gradient(circle at top left, rgba(84,103,255,0.18), transparent 26%), linear-gradient(180deg, #090a0d 0%, #101217 100%)"
+    : "radial-gradient(circle at top left, rgba(125,140,255,0.18), transparent 24%), linear-gradient(180deg, #f7f8fb 0%, #edf1f7 100%)";
+  const chromeSurface = isDark ? "rgba(255,255,255,0.035)" : "rgba(255,255,255,0.72)";
+  const chromeBlur = "blur(20px)";
+  const cardBg = isDark ? "rgba(255,255,255,0.045)" : "rgba(255,255,255,0.82)";
+  const cardBorder = isDark ? "rgba(255,255,255,0.08)" : "rgba(17,24,39,0.08)";
+  const cardShadow = isDark
+    ? "0 24px 48px rgba(0,0,0,0.22)"
+    : "0 18px 40px rgba(50,60,90,0.10)";
+  const topBarBg = isDark ? "rgba(11,12,16,0.62)" : "rgba(255,255,255,0.58)";
 
   return (
     <div
@@ -751,101 +320,154 @@ const TrafficDashboard = () => {
         display: "flex",
         fontFamily,
         color: baseColor,
-        backgroundColor: pageBg,
         overflow: "hidden",
+        background: pageBackground,
       }}
     >
-      {/* ═══════════════════════════════════════════════════
-          SIDEBAR
-         ═══════════════════════════════════════════════════ */}
       <div
         style={{
-          width: sidebarOpen ? 300 : 0,
-          minWidth: sidebarOpen ? 300 : 0,
+          width: sidebarOpen ? 320 : 0,
+          minWidth: sidebarOpen ? 320 : 0,
+          transition: "width 0.28s ease, min-width 0.28s ease",
+          overflow: "hidden",
           borderRight: sidebarOpen ? `1px solid ${sidebarBorder}` : "none",
-          background: sidebarBg,
+          backgroundColor: chromeSurface,
+          backdropFilter: chromeBlur,
+          WebkitBackdropFilter: chromeBlur,
           display: "flex",
           flexDirection: "column",
-          overflow: "hidden",
-          transition: "width 0.25s, min-width 0.25s",
         }}
       >
-        {/* ── sidebar top content ── */}
+        <div style={{ padding: "26px 24px 18px" }}>
+          <div
+            style={{
+              fontSize: 11,
+              textTransform: "uppercase",
+              letterSpacing: "0.14em",
+              color: subtleColor,
+            }}
+          >
+            Desktop Tracker
+          </div>
+          <div
+            style={{
+              marginTop: 8,
+              fontSize: 28,
+              lineHeight: 1.05,
+              fontWeight: 600,
+              fontFamily: "NunitoSans, sans-serif",
+            }}
+          >
+            Repo Traffic
+          </div>
+          <div
+            style={{
+              marginTop: 10,
+              fontSize: 13,
+              lineHeight: 1.55,
+              color: mutedColor,
+              maxWidth: 260,
+            }}
+          >
+            Local-first GitHub traffic history that keeps accumulating beyond
+            GitHub&apos;s 14-day window.
+          </div>
+        </div>
+
         <div
           style={{
-            padding: "24px 20px 0",
-            display: "flex",
-            flexDirection: "column",
-            gap: 16,
+            padding: "0 16px 16px",
             flex: 1,
             overflow: "hidden",
+            display: "flex",
+            flexDirection: "column",
           }}
         >
-          {/* branding */}
           <div
             style={{
-              fontSize: 18,
-              fontWeight: 600,
-              letterSpacing: "-0.02em",
-              color: baseColor,
-            }}
-          >
-            GitHub Traffic
-          </div>
-
-          {/* repos — takes most of sidebar height */}
-          <div
-            style={{
-              flex: 1,
-              overflow: "hidden",
+              padding: 14,
+              borderRadius: 16,
+              border: `1px solid ${cardBorder}`,
+              backgroundColor: cardBg,
+              boxShadow: cardShadow,
               display: "flex",
               flexDirection: "column",
+              gap: 14,
+              minHeight: 0,
+              flex: 1,
             }}
           >
-            <RepoSelector
-              pat={pat}
-              user={user}
-              selectedRepos={selectedRepos || []}
-              setSelectedRepos={setSelectedRepos}
-            />
-          </div>
-
-          {/* refresh */}
-          {user && selectedRepos?.length > 0 && (
             <div
               style={{
                 display: "flex",
                 alignItems: "center",
-                gap: 8,
-                paddingBottom: 12,
+                justifyContent: "space-between",
+                gap: 12,
               }}
             >
-              <Button
-                label={loading ? undefined : "Fetch Traffic"}
-                prefix_icon={loading ? undefined : "arrow_down"}
-                onClick={handleRefresh}
-                disabled={loading}
-                style={{ fontSize: 13 }}
-              />
-              {loading && (
+              <div>
+                <div
+                  style={{
+                    fontSize: 12,
+                    textTransform: "uppercase",
+                    letterSpacing: "0.08em",
+                    color: subtleColor,
+                  }}
+                >
+                  Repositories
+                </div>
+                <div style={{ marginTop: 4, fontSize: 13, color: mutedColor }}>
+                  {user
+                    ? `${selectedRepos.length} selected, ${localDataSummary.trackedRepoCount} cached`
+                    : "Connect GitHub to browse repositories"}
+                </div>
+              </div>
+
+              {loading ? (
                 <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
                   <ArcSpinner style={{ width: 16, height: 16 }} />
                   <span style={{ fontSize: 11, color: mutedColor }}>
-                    {fetchProgress}
+                    {fetchProgress || "Updating"}
                   </span>
                 </div>
-              )}
+              ) : null}
             </div>
-          )}
+
+            <div style={{ minHeight: 0, flex: 1 }}>
+              <RepoSelector
+                pat={pat}
+                user={user}
+                selectedRepos={selectedRepos || []}
+                setSelectedRepos={setSelectedRepos}
+              />
+            </div>
+          </div>
         </div>
 
-        {/* ── sidebar bottom — settings button ── */}
         <div
           style={{
-            padding: "8px 10px",
-            borderTop: `1px solid ${sidebarBorder}`,
+            padding: "0 16px 18px",
+            display: "flex",
+            flexDirection: "column",
+            gap: 10,
           }}
         >
+          {user && selectedRepos?.length > 0 ? (
+            <Button
+              label={loading ? "Fetching..." : "Fetch Traffic"}
+              prefix_icon={loading ? undefined : "arrow_down"}
+              onClick={handleRefresh}
+              disabled={loading}
+              style={{
+                width: "100%",
+                justifyContent: "center",
+                fontSize: 13,
+                padding: "10px 14px",
+                borderRadius: 9,
+              }}
+            />
+          ) : null}
+
           <Button
             prefix_icon="settings"
             label="Settings"
@@ -854,288 +476,373 @@ const TrafficDashboard = () => {
               width: "100%",
               justifyContent: "flex-start",
               fontSize: 13,
-              padding: "8px 12px",
-              borderRadius: 7,
-              opacity: 0.65,
-              iconSize: 16,
+              padding: "10px 14px",
+              borderRadius: 9,
+              opacity: 0.72,
             }}
           />
         </div>
       </div>
 
-      {/* ═══════════════════════════════════════════════════
-          MAIN CONTENT
-         ═══════════════════════════════════════════════════ */}
       <div
         style={{
           flex: 1,
+          minWidth: 0,
           display: "flex",
           flexDirection: "column",
-          overflow: "hidden",
         }}
       >
-        {/* ── top bar ── */}
         <div
           style={{
-            padding: "16px 28px",
-            display: "flex",
-            alignItems: "center",
-            gap: 12,
+            padding: "22px 28px 20px",
             borderBottom: `1px solid ${sidebarBorder}`,
-            flexWrap: "wrap",
+            backgroundColor: topBarBg,
+            backdropFilter: chromeBlur,
+            WebkitBackdropFilter: chromeBlur,
+            display: "flex",
+            flexDirection: "column",
+            gap: 18,
           }}
         >
-          {/* sidebar toggle — Mini UI icon button */}
-          <Button
-            prefix_icon={sidebarOpen ? "side_menu_close" : "side_menu_left"}
-            onClick={() => setSidebarOpen((v) => !v)}
+          <div
             style={{
-              paddingVertical: 6,
-              paddingHorizontal: 6,
-              borderRadius: 6,
-              opacity: 0.55,
-              content: {
-                icon: { width: 18, height: 18 },
-              },
+              display: "flex",
+              alignItems: "center",
+              gap: 14,
+              flexWrap: "wrap",
             }}
-          />
+          >
+            <Button
+              prefix_icon={sidebarOpen ? "side_menu_close" : "side_menu_left"}
+              onClick={() => setSidebarOpen((value) => !value)}
+              style={{
+                paddingVertical: 6,
+                paddingHorizontal: 6,
+                borderRadius: 6,
+                opacity: 0.62,
+                content: {
+                  icon: { width: 18, height: 18 },
+                },
+              }}
+            />
 
-          {/* repo tabs */}
-          {selectedRepos?.length > 0 && (
-            <div style={{ display: "flex", gap: 4, flexWrap: "wrap", flex: 1 }}>
-              {selectedRepos.map((r) => {
-                const name = r.split("/")[1];
-                const isActive = r === activeRepo;
+            <div style={{ minWidth: 0, flex: 1 }}>
+              <div
+                style={{
+                  fontSize: 11,
+                  textTransform: "uppercase",
+                  letterSpacing: "0.14em",
+                  color: subtleColor,
+                }}
+              >
+                Overview
+              </div>
+              <div
+                style={{
+                  marginTop: 6,
+                  fontSize: 26,
+                  lineHeight: 1.05,
+                  fontWeight: 600,
+                  fontFamily: "NunitoSans, sans-serif",
+                }}
+              >
+                {activeRepo
+                  ? activeRepo
+                  : user
+                    ? "Select a repository"
+                    : "Connect GitHub to begin"}
+              </div>
+              <div style={{ marginTop: 8, fontSize: 13, color: mutedColor }}>
+                {user
+                  ? `Last sync: ${formatTimestamp(localDataSummary.lastFetched)}`
+                  : "Your GitHub token stays on this device."}
+              </div>
+            </div>
+
+            <SegmentedButton
+              options={RANGE_OPTIONS}
+              value={range}
+              on_change={setRange}
+              style={{ fontSize: 12 }}
+            />
+          </div>
+
+          {selectedRepos?.length > 0 ? (
+            <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+              {selectedRepos.map((repoName) => {
+                const isActive = repoName === activeRepo;
+                const label = repoName.split("/")[1];
+
                 return (
                   <button
-                    key={r}
-                    onClick={() => setActiveRepo(r)}
+                    key={repoName}
+                    onClick={() => setActiveRepo(repoName)}
                     style={{
-                      background: isActive
+                      border: `1px solid ${isActive ? "transparent" : cardBorder}`,
+                      backgroundColor: isActive
                         ? isDark
-                          ? "rgba(255,255,255,0.10)"
-                          : "rgba(0,0,0,0.07)"
-                        : "transparent",
-                      border: "none",
-                      borderRadius: 8,
-                      padding: "5px 12px",
+                          ? "rgba(147,197,253,0.18)"
+                          : "rgba(59,130,246,0.12)"
+                        : cardBg,
+                      borderRadius: 999,
+                      padding: "7px 14px",
+                      color: isActive ? baseColor : mutedColor,
                       fontFamily,
                       fontSize: 13,
                       fontWeight: isActive ? 500 : 400,
-                      color: isActive ? baseColor : mutedColor,
                       cursor: "pointer",
-                      transition: "background 0.15s",
+                      boxShadow: isActive ? cardShadow : "none",
                     }}
                   >
-                    {name}
+                    {label}
                   </button>
                 );
               })}
             </div>
-          )}
-
-          {/* range selector */}
-          <SegmentedButton
-            options={RANGE_OPTIONS}
-            value={range}
-            on_change={setRange}
-            style={{ fontSize: 12 }}
-          />
+          ) : null}
         </div>
 
-        {/* ── scrollable content area ── */}
         <div
+          className="scrollable"
           style={{
             flex: 1,
+            minHeight: 0,
             overflowY: "auto",
-            padding: "28px",
+            padding: 28,
           }}
         >
           {!user ? (
-            /* ── empty state ── */
             <div
               style={{
+                minHeight: "100%",
                 display: "flex",
-                flexDirection: "column",
                 alignItems: "center",
                 justifyContent: "center",
-                height: "100%",
-                gap: 16,
-                opacity: 0.5,
               }}
             >
-              <div style={{ fontSize: 48 }}>📊</div>
-              <div style={{ fontSize: 16, fontWeight: 500 }}>
-                GitHub Traffic Tracker
-              </div>
               <div
                 style={{
-                  fontSize: 13,
-                  color: mutedColor,
-                  textAlign: "center",
-                  maxWidth: 340,
+                  width: "min(520px, 100%)",
+                  padding: "28px 30px",
+                  borderRadius: 20,
+                  border: `1px solid ${cardBorder}`,
+                  backgroundColor: cardBg,
+                  boxShadow: cardShadow,
                 }}
               >
-                Open Settings to connect your GitHub Personal Access Token and
-                start tracking traffic data. Data accumulates over time, going
-                beyond the 14-day limit.
+                <div
+                  style={{
+                    fontSize: 12,
+                    textTransform: "uppercase",
+                    letterSpacing: "0.14em",
+                    color: subtleColor,
+                  }}
+                >
+                  Getting Started
+                </div>
+                <div
+                  style={{
+                    marginTop: 10,
+                    fontSize: 30,
+                    lineHeight: 1.05,
+                    fontWeight: 600,
+                    fontFamily: "NunitoSans, sans-serif",
+                  }}
+                >
+                  Track repository traffic locally.
+                </div>
+                <div
+                  style={{
+                    marginTop: 14,
+                    fontSize: 14,
+                    lineHeight: 1.7,
+                    color: mutedColor,
+                  }}
+                >
+                  Connect a GitHub Personal Access Token, choose the repositories
+                  you want to watch, then keep accumulating views and clones on
+                  this device over time.
+                </div>
+                <div style={{ marginTop: 18 }}>
+                  <Button
+                    prefix_icon="settings"
+                    label="Open Settings"
+                    onClick={() => setSettingsOpen(true)}
+                    style={{ fontSize: 13 }}
+                  />
+                </div>
               </div>
-              <Button
-                prefix_icon="settings"
-                label="Open Settings"
-                onClick={() => setSettingsOpen(true)}
-                style={{ fontSize: 13, marginTop: 8 }}
-              />
             </div>
           ) : !activeRepo ? (
             <div
               style={{
+                minHeight: "100%",
                 display: "flex",
-                flexDirection: "column",
                 alignItems: "center",
                 justifyContent: "center",
-                height: "100%",
-                gap: 12,
-                opacity: 0.5,
               }}
             >
-              <div style={{ fontSize: 14, color: mutedColor }}>
-                Select repos to start
+              <div
+                style={{
+                  width: "min(420px, 100%)",
+                  padding: "24px 26px",
+                  borderRadius: 18,
+                  border: `1px solid ${cardBorder}`,
+                  backgroundColor: cardBg,
+                  boxShadow: cardShadow,
+                  textAlign: "center",
+                }}
+              >
+                <div style={{ fontSize: 24, fontWeight: 600 }}>
+                  Select repositories to start
+                </div>
+                <div
+                  style={{
+                    marginTop: 10,
+                    fontSize: 14,
+                    lineHeight: 1.6,
+                    color: mutedColor,
+                  }}
+                >
+                  Your selected repositories will appear here with long-lived
+                  traffic history and referrer breakdowns.
+                </div>
               </div>
             </div>
           ) : (
-            /* ── dashboard content ── */
             <div
               style={{
                 display: "flex",
                 flexDirection: "column",
-                gap: 28,
-                maxWidth: 960,
+                gap: 22,
+                maxWidth: 1080,
               }}
             >
-              {/* stat cards */}
               <div style={{ display: "flex", gap: 14, flexWrap: "wrap" }}>
                 <StatCard
                   label="Views"
                   value={stats.totalViews}
                   delta={deltas.viewsDelta}
                   deltaLabel={deltaLabel}
-                  icon="👁"
+                  accentColor={isDark ? "#93c5fd" : "#2563eb"}
                 />
                 <StatCard
                   label="Unique Visitors"
                   value={stats.uniqueViews}
-                  icon="🧑"
+                  accentColor={isDark ? "#7dd3fc" : "#0284c7"}
                 />
                 <StatCard
                   label="Clones"
                   value={stats.totalClones}
                   delta={deltas.clonesDelta}
                   deltaLabel={deltaLabel}
-                  icon="📦"
+                  accentColor={isDark ? "#86efac" : "#16a34a"}
                 />
                 <StatCard
                   label="Unique Cloners"
                   value={stats.uniqueClones}
-                  icon="🔧"
+                  accentColor={isDark ? "#f9a8d4" : "#db2777"}
                 />
               </div>
 
-              {/* charts */}
               <div
                 style={{
-                  background: cardBg,
+                  backgroundColor: cardBg,
                   border: `1px solid ${cardBorder}`,
-                  borderRadius: 16,
+                  borderRadius: 18,
                   padding: "24px 24px 16px",
+                  boxShadow: cardShadow,
                 }}
               >
                 <TrafficChart
                   data={repoData?.views || []}
                   title="Page Views"
                   range={normalizedRange}
-                  height={240}
+                  height={250}
                   isLoading={activeRepoLoading}
                 />
               </div>
 
               <div
                 style={{
-                  background: cardBg,
+                  backgroundColor: cardBg,
                   border: `1px solid ${cardBorder}`,
-                  borderRadius: 16,
+                  borderRadius: 18,
                   padding: "24px 24px 16px",
+                  boxShadow: cardShadow,
                 }}
               >
                 <TrafficChart
                   data={repoData?.clones || []}
                   title="Git Clones"
                   range={normalizedRange}
-                  height={240}
-                  color1={isDark ? "#86efac" : "#22c55e"}
+                  height={250}
+                  color1={isDark ? "#86efac" : "#16a34a"}
                   color2={isDark ? "#fbbf24" : "#d97706"}
                   isLoading={activeRepoLoading}
                 />
               </div>
 
-              {/* tables side by side */}
               <div
                 style={{
                   display: "grid",
-                  gridTemplateColumns: "1fr 1fr",
+                  gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
                   gap: 20,
                 }}
               >
                 <div
                   style={{
-                    background: cardBg,
+                    backgroundColor: cardBg,
                     border: `1px solid ${cardBorder}`,
-                    borderRadius: 16,
+                    borderRadius: 18,
                     padding: 22,
+                    boxShadow: cardShadow,
                   }}
                 >
                   <ReferrersTable data={repoData?.referrers || []} />
                 </div>
+
                 <div
                   style={{
-                    background: cardBg,
+                    backgroundColor: cardBg,
                     border: `1px solid ${cardBorder}`,
-                    borderRadius: 16,
+                    borderRadius: 18,
                     padding: 22,
+                    boxShadow: cardShadow,
                   }}
                 >
                   <PopularPathsTable data={repoData?.paths || []} />
                 </div>
               </div>
 
-              {/* last fetched note */}
-              {repoData?.lastFetched && hasActiveRepoData && (
+              {repoData?.lastFetched && hasActiveRepoData ? (
                 <div
                   style={{
                     fontSize: 11,
-                    color: mutedColor,
+                    color: subtleColor,
                     textAlign: "right",
+                    letterSpacing: "0.03em",
                   }}
                 >
-                  Last fetched:{" "}
-                  {new Date(repoData.lastFetched).toLocaleString()}
+                  Last fetched {formatTimestamp(repoData.lastFetched)}
                 </div>
-              )}
+              ) : null}
             </div>
           )}
         </div>
       </div>
 
-      {/* ═══════════════════════════════════════════════════
-          SETTINGS MODAL
-         ═══════════════════════════════════════════════════ */}
       <SettingsModal
         open={settingsOpen}
         onClose={() => setSettingsOpen(false)}
         pat={pat}
         setPat={setPat}
+        clearPat={clearPat}
         user={user}
         setUser={setUser}
+        selectedRepos={selectedRepos || []}
+        allTrafficData={allTrafficData || {}}
+        onClearLocalData={handleClearLocalData}
       />
     </div>
   );

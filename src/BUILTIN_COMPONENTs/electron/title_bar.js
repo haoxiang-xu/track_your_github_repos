@@ -34,7 +34,7 @@ const WINDOWS_CONTROL_ICONS = {
   restore: "windows_restore_button",
 };
 const TitleBar = () => {
-  const { theme } = useContext(ConfigContext);
+  const { theme, onThemeMode } = useContext(ConfigContext);
   const [windowIsMaximized, setWindowIsMaximized] = useState(false);
 
   const isElectron = hasElectronWindowControls();
@@ -75,12 +75,18 @@ const TitleBar = () => {
 
   const topBarBackground = theme?.backgroundColor || "rgba(22, 22, 24, 0.86)";
   const topBarForeground = theme?.color || "rgba(255, 255, 255, 0.92)";
+  const isDark = onThemeMode === "dark_mode";
+  const gradientBackground = `linear-gradient(180deg, ${topBarBackground} 30%, transparent 100%)`;
 
   const controlButtonStyle = (action) => {
     const onCloseButton = action === "close";
-    const defaultBackgroundColor = onCloseButton
-      ? "rgba(255, 255, 255, 0.06)"
-      : "rgba(255, 255, 255, 0.14)";
+    const defaultBackgroundColor = isDark
+      ? onCloseButton
+        ? "rgba(255, 255, 255, 0.06)"
+        : "rgba(255, 255, 255, 0.14)"
+      : onCloseButton
+        ? "rgba(255, 255, 255, 0.06)"
+        : "rgba(255, 255, 255, 0.14)";
     return {
       root: {
         width: 30,
@@ -98,10 +104,14 @@ const TitleBar = () => {
       background: {
         hoverBackgroundColor: onCloseButton
           ? "rgba(229, 57, 53, 0.92)"
-          : "rgba(255, 255, 255, 0.18)",
+          : isDark
+            ? "rgba(255, 255, 255, 0.18)"
+            : "rgba(255, 255, 255, 0.22)",
         activeBackgroundColor: onCloseButton
           ? "rgba(210, 48, 43, 0.95)"
-          : "rgba(255, 255, 255, 0.24)",
+          : isDark
+            ? "rgba(255, 255, 255, 0.24)"
+            : "rgba(255, 255, 255, 0.28)",
       },
       content: {
         root: {
@@ -135,9 +145,9 @@ const TitleBar = () => {
         right: 0,
         height: TOP_BAR_HEIGHT,
         zIndex: 2048,
-        borderBottom: `1px solid ${theme?.foregroundColor || "rgba(255, 255, 255, 0.08)"}`,
-        backgroundColor: topBarBackground,
+        background: gradientBackground,
         color: topBarForeground,
+        WebkitBackdropFilter: "blur(20px)",
         WebkitAppRegion: "drag",
         userSelect: "none",
         WebkitUserSelect: "none",
@@ -147,7 +157,7 @@ const TitleBar = () => {
         style={{
           position: "absolute",
           top: "50%",
-          left: isDarwin ? 100 : 14,
+          left: isDarwin ? 96 : 16,
           transform: "translateY(-50%)",
           opacity: 0.84,
           fontFamily: "Jost, sans-serif",
@@ -157,7 +167,22 @@ const TitleBar = () => {
           pointerEvents: "none",
         }}
       >
-        mini ui
+        Repo Traffic
+      </div>
+
+      <div
+        style={{
+          position: "absolute",
+          top: "50%",
+          left: isDarwin ? 196 : 112,
+          transform: "translateY(-50%)",
+          opacity: 0.44,
+          fontFamily: "NunitoSans, sans-serif",
+          fontSize: 11,
+          pointerEvents: "none",
+        }}
+      >
+        desktop
       </div>
 
       {!isDarwin ? (
@@ -174,7 +199,7 @@ const TitleBar = () => {
         >
           <Button
             prefix_icon={WINDOWS_CONTROL_ICONS.minimize}
-            style={controlButtonStyle("minimize")}
+            style={{ ...controlButtonStyle("minimize"), borderRadius: "1px" }}
             onClick={() => runWindowAction("minimize")}
           />
           <Button
@@ -183,12 +208,12 @@ const TitleBar = () => {
                 ? WINDOWS_CONTROL_ICONS.restore
                 : WINDOWS_CONTROL_ICONS.maximize
             }
-            style={controlButtonStyle("maximize")}
+            style={{ ...controlButtonStyle("maximize"), borderRadius: "1px" }}
             onClick={() => runWindowAction("maximize")}
           />
           <Button
             prefix_icon={WINDOWS_CONTROL_ICONS.close}
-            style={controlButtonStyle("close")}
+            style={{ ...controlButtonStyle("close"), borderRadius: "1px" }}
             onClick={() => runWindowAction("close")}
           />
         </div>

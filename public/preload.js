@@ -36,3 +36,9 @@ contextBridge.exposeInMainWorld("windowStateAPI", {
     };
   },
 });
+
+contextBridge.exposeInMainWorld("githubTokenAPI", {
+  get: () => ipcRenderer.invoke("github-token:get"),
+  set: (token) => ipcRenderer.invoke("github-token:set", token),
+  clear: () => ipcRenderer.invoke("github-token:clear"),
+});

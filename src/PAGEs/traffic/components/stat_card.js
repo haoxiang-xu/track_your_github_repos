@@ -8,19 +8,19 @@ const StatCard = ({
   value,
   delta, // number – positive = up, negative = down
   deltaLabel, // e.g. "vs last 14d"
-  icon, // optional emoji / character
   accentColor, // override accent
 }) => {
   const { theme, onThemeMode } = useContext(ConfigContext);
   const isDark = onThemeMode === "dark_mode";
   const fontFamily = theme?.font?.fontFamily || "Jost, sans-serif";
 
-  const bg = isDark ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.025)";
-  const borderColor = isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)";
-  const baseColor = isDark ? "#e0e0e0" : "#1a1a1a";
-  const mutedColor = isDark ? "rgba(255,255,255,0.4)" : "rgba(0,0,0,0.38)";
+  const bg = isDark ? "rgba(255,255,255,0.04)" : "rgba(255,255,255,0.72)";
+  const borderColor = isDark ? "rgba(255,255,255,0.08)" : "rgba(17,24,39,0.08)";
+  const baseColor = isDark ? "#f5f5f7" : "#151821";
+  const mutedColor = isDark ? "rgba(255,255,255,0.48)" : "rgba(21,24,33,0.44)";
   const upColor = isDark ? "#86efac" : "#22c55e";
   const downColor = "#f87171";
+  const statAccent = accentColor || (isDark ? "#93c5fd" : "#2563eb");
 
   const formattedValue =
     typeof value === "number"
@@ -40,20 +40,31 @@ const StatCard = ({
     <div
       style={{
         flex: "1 1 160px",
-        minWidth: 140,
+        minWidth: 180,
         background: bg,
         border: `1px solid ${borderColor}`,
-        borderRadius: 14,
-        padding: "20px 22px",
+        borderRadius: 18,
+        padding: "18px 20px",
         display: "flex",
         flexDirection: "column",
-        gap: 8,
+        gap: 10,
         transition: "background 0.2s",
+        boxShadow: isDark
+          ? "0 18px 30px rgba(0,0,0,0.16)"
+          : "0 14px 30px rgba(50,60,90,0.08)",
       }}
     >
-      {/* top row: label + icon */}
+      <div
+        style={{
+          width: 42,
+          height: 4,
+          borderRadius: 999,
+          backgroundColor: statAccent,
+          opacity: 0.9,
+        }}
+      />
+
       <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-        {icon && <span style={{ fontSize: 15, lineHeight: 1 }}>{icon}</span>}
         <span
           style={{
             fontFamily,
@@ -71,12 +82,12 @@ const StatCard = ({
       {/* big number */}
       <span
         style={{
-          fontFamily,
-          fontSize: 32,
+          fontSize: 34,
           fontWeight: 600,
           color: baseColor,
           lineHeight: 1.1,
           letterSpacing: "-0.02em",
+          fontFamily: "NunitoSans, sans-serif",
         }}
       >
         {formattedValue}

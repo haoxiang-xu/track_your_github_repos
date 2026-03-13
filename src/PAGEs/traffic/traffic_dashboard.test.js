@@ -3,6 +3,7 @@ import TrafficDashboard from "./traffic_dashboard";
 import { ConfigContext } from "../../CONTAINERs/config/context";
 import { useIndexedStorage } from "../../BUILTIN_COMPONENTs/mini_react/mini_storage";
 import { fetchAllTraffic, fetchUser } from "./services/github_api";
+import { useGithubTokenStorage } from "./services/github_token_storage";
 
 jest.mock("../../BUILTIN_COMPONENTs/mini_react/mini_storage", () => ({
   useIndexedStorage: jest.fn(),
@@ -11,6 +12,10 @@ jest.mock("../../BUILTIN_COMPONENTs/mini_react/mini_storage", () => ({
 jest.mock("./services/github_api", () => ({
   fetchUser: jest.fn(),
   fetchAllTraffic: jest.fn(),
+}));
+
+jest.mock("./services/github_token_storage", () => ({
+  useGithubTokenStorage: jest.fn(),
 }));
 
 jest.mock("./components/repo_selector", () => ({
@@ -75,6 +80,11 @@ jest.mock("../../BUILTIN_COMPONENTs/spinner/arc_spinner", () => ({
   default: () => <div data-testid="spinner" />,
 }));
 
+jest.mock("./settings/settings_modal", () => ({
+  __esModule: true,
+  SettingsModal: ({ open }) => (open ? <div data-testid="settings-modal" /> : null),
+}));
+
 const mockStorageState = {};
 
 const clone = (value) => JSON.parse(JSON.stringify(value));
@@ -116,6 +126,11 @@ const createRepoData = (lastFetched, suffix = "10") => ({
 describe("TrafficDashboard", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    useGithubTokenStorage.mockReturnValue([
+      "token",
+      jest.fn(),
+      { clearPat: jest.fn(), isLoading: false, error: null },
+    ]);
 
     useIndexedStorage.mockImplementation((key, initialValue) => {
       const React = require("react");
@@ -143,7 +158,6 @@ describe("TrafficDashboard", () => {
 
   test("uses fresh cached data without auto-refreshing the active repo", async () => {
     seedStorageState({
-      github_pat: "token",
       github_selected_repos: ["owner/repo-one"],
       github_traffic_data: {
         "owner/repo-one": createRepoData(new Date().toISOString(), "11"),
@@ -169,7 +183,6 @@ describe("TrafficDashboard", () => {
 
   test("silently refreshes stale cached data for the active repo", async () => {
     seedStorageState({
-      github_pat: "token",
       github_selected_repos: ["owner/repo-one"],
       github_traffic_data: {
         "owner/repo-one": createRepoData(
@@ -202,7 +215,6 @@ describe("TrafficDashboard", () => {
     });
 
     seedStorageState({
-      github_pat: "token",
       github_selected_repos: ["owner/repo-one"],
       github_traffic_data: {},
     });
@@ -237,7 +249,6 @@ describe("TrafficDashboard", () => {
 
   test("manual refresh still fetches all selected repos and merges stored history", async () => {
     seedStorageState({
-      github_pat: "token",
       github_selected_repos: ["owner/repo-one", "owner/repo-two"],
       github_traffic_data: {
         "owner/repo-one": createRepoData(new Date().toISOString(), "09"),

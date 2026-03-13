@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import { useIndexedStorage } from "../../BUILTIN_COMPONENTs/mini_react/mini_storage";
 import {
   useSystemTheme,
   useWindowSize,
@@ -26,40 +27,87 @@ const ConfigContainer = ({ children }) => {
   /* { STYLE } =========================================================================================================== */
   /* { global theme } ---------------------------------------------------------------------------------------------------- */
   const system_theme = useSystemTheme();
-  const [syncWithSystemTheme, setSyncWithSystemTheme] = useState(true);
   const [theme, setTheme] = useState(null);
-  const [onThemeMode, setOnThemeMode] = useState(
+  const [syncWithSystemThemeState, setSyncWithSystemThemeState] = useState(true);
+  const [onThemeModeState, setOnThemeModeState] = useState(
     system_theme === "dark_mode" ? "dark_mode" : "light_mode",
   );
   const [availableThemes, setAvailableThemes] = useState([]);
   const [selectedTheme, setSelectedTheme] = useState(null);
+  const [storedThemeMode, setStoredThemeMode, { isLoading: themeModeLoading }] =
+    useIndexedStorage("ui_theme_mode_preference", "sync_with_system");
   const initialize_theme = useCallback(() => {
-    setOnThemeMode(system_theme);
     setAvailableThemes(Object.keys(available_themes));
     setSelectedTheme(Object.keys(available_themes)[0]);
-  }, [system_theme]);
+  }, []);
   useEffect(() => {
     initialize_theme();
   }, [initialize_theme]);
+
+  const setOnThemeMode = useCallback(
+    (nextMode) => {
+      setSyncWithSystemThemeState(false);
+      setOnThemeModeState(nextMode);
+      setStoredThemeMode(nextMode);
+    },
+    [setStoredThemeMode],
+  );
+
+  const setSyncWithSystemTheme = useCallback(
+    (nextValue) => {
+      const shouldSync = Boolean(nextValue);
+      setSyncWithSystemThemeState(shouldSync);
+      if (shouldSync) {
+        setStoredThemeMode("sync_with_system");
+        setOnThemeModeState(
+          system_theme === "dark_mode" ? "dark_mode" : "light_mode",
+        );
+        return;
+      }
+
+      setStoredThemeMode(onThemeModeState);
+    },
+    [onThemeModeState, setStoredThemeMode, system_theme],
+  );
+
+  useEffect(() => {
+    if (themeModeLoading) {
+      return;
+    }
+
+    if (storedThemeMode === "light_mode" || storedThemeMode === "dark_mode") {
+      setSyncWithSystemThemeState(false);
+      setOnThemeModeState(storedThemeMode);
+      return;
+    }
+
+    setSyncWithSystemThemeState(true);
+    setOnThemeModeState(
+      system_theme === "dark_mode" ? "dark_mode" : "light_mode",
+    );
+  }, [storedThemeMode, system_theme, themeModeLoading]);
+
   useEffect(() => {
     if (
       available_themes &&
       available_themes[selectedTheme] &&
-      available_themes[selectedTheme][onThemeMode]
+      available_themes[selectedTheme][onThemeModeState]
     ) {
-      setTheme(available_themes[selectedTheme][onThemeMode]);
+      setTheme(available_themes[selectedTheme][onThemeModeState]);
     }
-  }, [onThemeMode, selectedTheme]);
+  }, [onThemeModeState, selectedTheme]);
   useEffect(() => {
     if (theme?.backgroundColor && window.themeAPI?.setBackgroundColor) {
       window.themeAPI.setBackgroundColor(theme.backgroundColor);
     }
   }, [theme]);
   useEffect(() => {
-    if (syncWithSystemTheme && system_theme) {
-      setOnThemeMode(system_theme);
+    if (syncWithSystemThemeState && system_theme) {
+      setOnThemeModeState(
+        system_theme === "dark_mode" ? "dark_mode" : "light_mode",
+      );
     }
-  }, [syncWithSystemTheme, system_theme]);
+  }, [syncWithSystemThemeState, system_theme]);
   /* { global theme } ---------------------------------------------------------------------------------------------------- */
   /* { STYLE } =========================================================================================================== */
 
@@ -74,12 +122,12 @@ const ConfigContainer = ({ children }) => {
     <ConfigContext.Provider
       value={{
         /* { STYLE } ========================================== */
-        syncWithSystemTheme,
+        syncWithSystemTheme: syncWithSystemThemeState,
         setSyncWithSystemTheme,
         availableThemes,
         theme,
         setTheme,
-        onThemeMode,
+        onThemeMode: onThemeModeState,
         setOnThemeMode,
         /* { ENVIRONMENT } ==================================== */
         window_size,
